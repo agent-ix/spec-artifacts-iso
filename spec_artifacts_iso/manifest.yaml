@@ -60,7 +60,15 @@ artifact_types:
   template_ref: templates/nfr.md.j2
   frontmatter_schema_ref: schemas/nfr-frontmatter.schema.json
   required_sections:
-  - name: Description
+  - name: Quality Attribute
+    level: 2
+  - name: Statement
+    level: 2
+  - name: Scope
+    level: 2
+  - name: Measurement and Evaluation
+    level: 2
+  - name: Verification
     level: 2
   - name: Dependencies
     level: 2
