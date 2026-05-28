@@ -18,7 +18,7 @@ Spec authors need fast, validated generation of FR/NFR/StR/US/IT/TC/AC/CON docum
 | ID | Criteria |
 |----|----------|
 | StR-001-AC-1 | A Module activation against filament-core registers the contents this module declares. |
-| StR-001-AC-2 | Agent CLI generators (minijinja-cli) can produce valid artifacts using the templates and schemas this module ships. |
+| StR-001-AC-2 | Agent CLI generators (quire-cli) can produce valid artifacts using the templates and schemas this module ships. |
 
 ## Dependencies
 
