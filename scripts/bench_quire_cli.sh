@@ -35,9 +35,14 @@ cat > "$CTX_FR" <<'JSON'
   "id": "FR-099",
   "title": "Performance benchmark sample",
   "artifact_type": "FR",
+  "object": "core/scheduler",
   "description": "Auto-generated benchmark target.",
   "relationships": [
-    {"target": "ix://agent-ix/filament-core-service/FR-035", "type": "implements"}
+    {
+      "target": "ix://agent-ix/filament-core-service/FR-035",
+      "type": "implements",
+      "cardinality": "1..1"
+    }
   ]
 }
 JSON
