@@ -2,7 +2,7 @@
 id: {{ id }}
 title: "{{ title }}"
 artifact_type: {{ artifact_type }}
-{% if relationships %}relationships:
+{% if relationships is defined and relationships %}relationships:
 {% for rel in relationships %}  - target: "{{ rel.target }}"
     type: "{{ rel.type }}"
 {% endfor %}{% endif %}---

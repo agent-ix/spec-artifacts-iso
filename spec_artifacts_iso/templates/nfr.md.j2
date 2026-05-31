@@ -2,7 +2,7 @@
 id: {{ id }}
 title: "{{ title }}"
 artifact_type: NFR
-{% if relationships %}relationships:
+{% if relationships is defined and relationships %}relationships:
 {% for rel in relationships %}  - target: "{{ rel.target }}"
     type: "{{ rel.type }}"
 {% endfor %}{% endif %}---
@@ -18,8 +18,9 @@ The system **SHALL** {{ statement | default("describe an atomic measurable const
 
 ## Scope
 
-- Applies to: {{ scope.applies_to | default("TODO") }}
-- Operational context: {{ scope.context | default("TODO") }}
+{% set _scope = scope if scope is defined and scope else {} %}
+- Applies to: {{ _scope.applies_to | default("TODO") }}
+- Operational context: {{ _scope.context | default("TODO") }}
 
 ## Rationale
 

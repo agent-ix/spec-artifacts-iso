@@ -11,6 +11,7 @@ import re
 
 import pytest
 import yaml
+from jinja2 import StrictUndefined
 from jinja2.sandbox import SandboxedEnvironment
 
 PKG_ROOT = pathlib.Path(__file__).resolve().parent.parent / "spec_artifacts_iso"
@@ -45,6 +46,17 @@ def test_manifest_validates_against_fr035_schema() -> None:
 
 def _render(template_text: str, ctx: dict) -> str:
     env = SandboxedEnvironment(keep_trailing_newline=True)
+    return env.from_string(template_text).render(**ctx)
+
+
+def _render_strict(template_text: str, ctx: dict) -> str:
+    """Render the way quire does: undefined access is an error, not "".
+
+    The default SandboxedEnvironment silently swallows undefined values, so it
+    never catches templates that crash quire's strict-undefined engine on a
+    missing optional field (e.g. `{% if relationships %}` with no relationships).
+    """
+    env = SandboxedEnvironment(keep_trailing_newline=True, undefined=StrictUndefined)
     return env.from_string(template_text).render(**ctx)
 
 
@@ -197,6 +209,29 @@ def test_fr_sparse_context_leaves_placeholder_required_sections() -> None:
     assert issues, "sparse FR unexpectedly passed required-section validation"
     assert "Acceptance Criteria" in flagged
     assert "Dependencies" in flagged
+
+
+@pytest.mark.parametrize("at", _artifact_types(), ids=lambda at: at["name"])
+def test_template_renders_under_strict_undefined_minimal_context(at: dict) -> None:
+    """Every template must render under strict-undefined with ONLY the required
+    fields — no relationships, object, or scope supplied.
+
+    This mirrors quire's render engine. Guards against the regression where an
+    unguarded `{% if relationships %}` (or `scope.applies_to` on an undefined
+    `scope`) crashed every non-FR archetype while the non-strict suite stayed
+    green.
+    """
+    template = (PKG_ROOT / at["template_ref"]).read_text()
+    ctx = {
+        "id": f"{at['name']}-001",
+        "title": f"Sample {at['name']}",
+        "artifact_type": at["name"],
+        "description": "Render test.",
+    }
+    output = _render_strict(template, ctx)
+    for sec in at.get("required_sections", []):
+        heading = "#" * sec["level"] + " " + sec["name"]
+        assert heading in output, f"missing required section heading: {heading}"
 
 
 @pytest.mark.parametrize("at", _artifact_types(), ids=lambda at: at["name"])
