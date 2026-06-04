@@ -9,7 +9,7 @@ relationships:
 <!-- AC authoring skeleton (spec-artifacts-iso). Fill every section with
      substantive content. Contract (manifest body_extraction asserts):
      - Description, Body, Dependencies are required H2 sections (level 2).
-     - Keep headings unique per level; ≤2 levels of nesting. -->
+     - Keep headings unique per level; nest ≤2 levels below the H1 title (through H3). -->
 # [AC-001] Mismatched digest is rejected
 
 ## Description

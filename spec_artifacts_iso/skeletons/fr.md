@@ -13,7 +13,7 @@ relationships:
        with ≥1 data row; the ID column matches ^<this-doc-id>-CON-\d+$.
      - Acceptance Criteria table headers MUST be exactly: ID | Criteria | Verification
        with ≥1 data row; the ID column matches ^<this-doc-id>-AC-\d+$.
-     - Keep headings unique per level; ≤2 levels of nesting. -->
+     - Keep headings unique per level; nest ≤2 levels below the H1 title (through H3). -->
 # [FR-001] Verify checksums on artifact import
 
 ## Description

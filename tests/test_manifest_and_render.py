@@ -65,26 +65,62 @@ def _artifact_types():
     return manifest.get("artifact_types", [])
 
 
+_HEADING_REGEX_RE = re.compile(r"^\^(?P<name>.+?)\$$")
+
+
 def _required_sections(at: dict, level: int | None = None) -> list[dict]:
-    """Derive ``[{name, level}]`` from the unified-shape ``body_extraction``.
+    """Derive ``[{name, level, kind}]`` from the unified-shape ``body_extraction``.
 
     FR-035 CR-002 retired ``required_sections``; structural completeness is
-    now expressed by ``section_body`` locators that carry an ``assert.level``
-    facet. This helper recovers the section list the render parity tests need.
+    now expressed by locators that each pin a heading the document must carry:
+
+    * ``from: section_body`` — the heading whose *body* must be substantive;
+      ``assert.level`` gives its level. ``kind == "section_body"``.
+    * ``from: heading`` — a heading-presence locator (e.g. FR's
+      ``Specification`` H2). Its name comes from the anchored ``regex``
+      (``^Name$``) and its level from ``level``. ``kind == "heading"``.
+    * ``from: table_row``/``list_item``/``code_block`` with ``under_section`` —
+      requires the named section heading to exist (so its child element can
+      be located). Level comes from the locator's ``assert.section_level``
+      when present, else 2. ``kind == "heading"``.
+
+    Recovering the heading-presence locators (not just ``section_body``)
+    closes the render-parity blind spot where ``Constraints``/``Specification``
+    H2 headings — pinned only via ``from: heading`` / ``under_section`` — were
+    never asserted by the parity tests, even though ``validate_document``
+    enforces them.
+
     Pass ``level`` to restrict to a single heading level (e.g. the top-level
     content-quality checks only inspect ``level=2`` sections).
     """
     be = at.get("body_extraction") or {}
     match = (be.get("yield_pattern") or {}).get("match") or {}
     out: list[dict] = []
-    for loc in match.values():
-        if not isinstance(loc, dict) or loc.get("from") != "section_body":
-            continue
-        assert_facet = loc.get("assert") or {}
-        sec_level = assert_facet.get("level", 2)
+    seen: set[tuple[int, str]] = set()
+
+    def add(name: str, sec_level: int, kind: str) -> None:
         if level is not None and sec_level != level:
+            return
+        key = (sec_level, name.lower())
+        if key in seen:
+            return
+        seen.add(key)
+        out.append({"name": name, "level": sec_level, "kind": kind})
+
+    for loc in match.values():
+        if not isinstance(loc, dict):
             continue
-        out.append({"name": loc["after_heading"], "level": sec_level})
+        from_ = loc.get("from")
+        assert_facet = loc.get("assert") or {}
+        if from_ == "section_body":
+            add(loc["after_heading"], assert_facet.get("level", 2), "section_body")
+        elif from_ == "heading":
+            m = _HEADING_REGEX_RE.match(loc.get("regex") or "")
+            if m:
+                add(m.group("name"), loc.get("level", 2), "heading")
+        elif loc.get("under_section"):
+            # table_row / list_item / code_block pin their parent section.
+            add(loc["under_section"], assert_facet.get("section_level", 2), "heading")
     return out
 
 
@@ -128,6 +164,12 @@ def required_section_issues(markdown: str, required_sections: list[dict]) -> lis
     sections = _split_sections(markdown, level=2)
     issues: list[str] = []
     for sec in required_sections:
+        # Only `section_body` locators promise substantive prose; heading-only
+        # locators (e.g. `Specification`, whose body is its H3 children, or
+        # `Constraints`, whose body is a table) are content-checked by their
+        # own asserts/child locators, not by these prose-placeholder rules.
+        if sec.get("kind", "section_body") != "section_body":
+            continue
         name = sec["name"]
         if name not in sections:
             issues.append(f"{name}: missing")
@@ -378,6 +420,12 @@ def test_it002_ac2_fr_mutations_fail() -> None:
     deleted = re.sub(
         r"## Acceptance Criteria.*?(?=\n## Dependencies)", "", base, flags=re.DOTALL
     )
+    # Guard the mutation: a section-order change would make the lookahead
+    # no-op, leaving `deleted == base` and silently asserting on the
+    # unmutated doc. Fail loudly instead.
+    assert (
+        "## Acceptance Criteria" not in deleted and deleted != base
+    ), "AC-deletion mutation did not apply (section order changed?)"
     assert "missing" in reasons(deleted)
     # b. break an Acceptance-Criteria column header
     bad_cols = base.replace(

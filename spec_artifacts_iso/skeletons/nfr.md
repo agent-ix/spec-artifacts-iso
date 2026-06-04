@@ -11,7 +11,7 @@ relationships:
      - All H2 sections below are required (heading level 2).
      - Measurement and Evaluation table headers MUST be exactly:
        Metric | Target | Threshold | Method with ≥1 data row.
-     - Keep headings unique per level; ≤2 levels of nesting. -->
+     - Keep headings unique per level; nest ≤2 levels below the H1 title (through H3). -->
 # [NFR-001] Import throughput under sustained load
 
 ## Quality Attribute
