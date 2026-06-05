@@ -22,10 +22,18 @@ relationships:
 > placeholder defaults). The skeleton-removal of `templates/` and `template_ref:`
 > manifest lines is an implementation task; this FR fixes the contract.
 
-The system **SHALL** declare every ISO archetype (FR, NFR, StR, US, IT, TC, AC, CON)
-in the **unified archetype shape** (filament-core FR-035 CR-002; quire-rs ADR 0003):
-`frontmatter_schema_ref` + `body_extraction` with `assert` facets; **no
-`template_ref`**, no `required_sections`, no `variants`.
+The system **SHALL** declare every ISO **artifact** archetype (FR, NFR, StR, US, IT,
+TC, AC, CON) in the **unified archetype shape** (filament-core FR-035 CR-002;
+quire-rs ADR 0003): `frontmatter_schema_ref` + `body_extraction` with `assert`
+facets; **no `template_ref`**, no `required_sections`, no `variants`.
+
+> **Note (master-requirements):** the module also registers a ninth archetype,
+> `master-requirements` (the root `spec.md`), specified by **FR-003**. Its contract
+> differs from the eight ISO artifact archetypes — it has no `id`/`title`
+> frontmatter, asserts the canonical master-spec sections, and constrains
+> `component_type` to a kebab-case pattern — so the "all eight" criteria below
+> scope to the ISO **artifact** archetypes; `master-requirements` is covered by
+> FR-003-AC-1/AC-8.
 
 Each archetype's `body_extraction` **SHALL** assert its required structure such that
 quire-rs `validate_document` (quire-rs FR-032) accepts a conformant authored
@@ -58,7 +66,7 @@ archetype's `body_extraction` asserts.
 
 | ID | Criteria | Verification |
 |----|----------|--------------|
-| FR-002-AC-1 | All eight archetypes declare `body_extraction` with `assert` facets; none declare `template_ref`, `required_sections`, or `variants` | Schema Test |
+| FR-002-AC-1 | Every registered `artifact_types` entry (the eight ISO artifact archetypes plus `master-requirements`) declares `body_extraction` with `assert` facets; none declare `template_ref`, `required_sections`, or `variants` | Schema Test |
 | FR-002-AC-2 | A conformant authored `FR` markdown artifact passes `validate_document`; copies with a missing required section, wrong Acceptance-Criteria columns, or a non-contiguous AC id each fail with a line-numbered diagnostic | Integration Test |
 | FR-002-AC-3 | Acceptance-Criteria id asserts use `{id}` so a row prefixed with a different artifact's id fails | Integration Test |
 | FR-002-AC-4 | Every archetype's declared headings are unique per level across its skeleton | Schema Test |

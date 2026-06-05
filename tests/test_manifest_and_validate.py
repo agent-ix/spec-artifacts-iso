@@ -38,6 +38,7 @@ _SKELETON_FILE = {
     "TC": "tc",
     "AC": "ac",
     "CON": "con",
+    "master-requirements": "spec",
 }
 
 
@@ -94,6 +95,41 @@ def test_fr002_schema_rejects_template_ref_on_artifact_type() -> None:
 def _artifact_types():
     manifest = yaml.safe_load(MANIFEST_PATH.read_text())
     return manifest.get("artifact_types", [])
+
+
+# ─── FR-003: master-requirements archetype ───────────────────────────────
+
+
+def test_fr003_ac1_master_requirements_archetype_registered() -> None:
+    """FR-003-AC-1: a ``master-requirements`` artifact_type is declared with a
+    frontmatter_schema_ref and a body_extraction carrying assert facets."""
+    at = next(
+        (a for a in _artifact_types() if a["name"] == "master-requirements"), None
+    )
+    assert at is not None, "manifest declares no master-requirements artifact_type"
+    assert at.get("frontmatter_schema_ref"), "master-requirements lacks a schema ref"
+    match = ((at.get("body_extraction") or {}).get("yield_pattern") or {}).get(
+        "match"
+    ) or {}
+    assert match, "master-requirements has no body_extraction match locators"
+    assert any(
+        isinstance(loc, dict) and loc.get("assert") for loc in match.values()
+    ), "master-requirements has no assert facets"
+
+
+def test_fr003_ac2_master_requirements_frontmatter_schema_shape() -> None:
+    """FR-003-AC-2 (TC-SCHEMA-006): the master-requirements frontmatter schema
+    requires artifact_type/name/org/component_type, does NOT require id/title, and
+    constrains component_type to kebab-case ``^[a-z][a-z0-9-]*$``."""
+    at = next(a for a in _artifact_types() if a["name"] == "master-requirements")
+    schema_path = PKG_ROOT / at["frontmatter_schema_ref"]
+    schema = json.loads(schema_path.read_text())
+    required = set(schema.get("required", []))
+    assert required == {"artifact_type", "name", "org", "component_type"}, required
+    assert "id" not in required and "title" not in required
+    props = schema["properties"]
+    assert props["artifact_type"] == {"const": "master-requirements"}
+    assert props["component_type"]["pattern"] == "^[a-z][a-z0-9-]*$"
 
 
 _HEADING_REGEX_RE = re.compile(r"^\^(?P<name>.+?)\$$")
@@ -185,19 +221,29 @@ def _skeleton_text(name: str) -> str:
     return (SKELETONS_DIR / f"{_SKELETON_FILE[name]}.md").read_text()
 
 
-def _skeleton_doc_id(name: str) -> str:
+def _skeleton_doc_id(name: str) -> str | None:
+    """Return the skeleton's frontmatter ``id``, or ``None`` if it has none.
+
+    The eight ISO artifact archetypes seed an ``id`` (used for ``{id}``-pattern
+    parity); the ``master-requirements`` master spec has no ``id`` field, so this
+    is optional and callers guard on it before use."""
     fm = re.match(r"---\n(.*?)\n---\n", _skeleton_text(name), re.DOTALL)
     assert fm, f"{name} skeleton missing frontmatter"
-    return yaml.safe_load(fm.group(1))["id"]
+    return yaml.safe_load(fm.group(1)).get("id")
 
 
 def _skeleton_headings(markdown: str) -> list[tuple[int, str]]:
-    """Return ``[(level, text)]`` for every ATX heading below the H1 title."""
+    """Return ``[(level, text)]`` for every ATX heading, including the H1 title.
+
+    The H1 is included so an archetype that asserts a literal H1 (e.g.
+    ``master-requirements`` → ``# Master Requirements Specification``) is covered
+    by the parity checks. Archetypes whose H1 carries a variable title (``[FR-001]
+    …``) simply never assert level 1, so the reverse-parity check skips it."""
     body = _strip_frontmatter(markdown)
     out: list[tuple[int, str]] = []
     for line in body.splitlines():
         m = re.match(r"^(#{1,6})\s+(.*\S)\s*$", line)
-        if m and len(m.group(1)) >= 2:  # skip the H1 document title
+        if m:
             out.append((len(m.group(1)), m.group(2).strip()))
     return out
 
@@ -321,15 +367,22 @@ def test_fr002_ac6_asserts_derived_from_skeleton(name: str) -> None:
             f"(section {tbl['section']}) not found in skeleton tables {skel_tables}"
         )
 
-    # 3. every asserted id_pattern (after {id} interpolation) matches a seeded id
-    seeded_ids = re.findall(rf"\|\s*({re.escape(doc_id)}-[A-Z]+-\d+)\s*\|", md)
-    for pat in _asserted_id_patterns(at):
-        rx = re.compile(pat.replace("{id}", re.escape(doc_id)))
-        matching = [sid for sid in seeded_ids if rx.match(sid)]
-        assert matching, (
-            f"{name}: id_pattern {pat!r} matches none of the skeleton's "
-            f"seeded ids {seeded_ids}"
+    # 3. every asserted id_pattern (after {id} interpolation) matches a seeded id.
+    # The master-requirements archetype asserts no id_patterns and has no doc id.
+    id_patterns = _asserted_id_patterns(at)
+    if id_patterns:
+        assert doc_id, (
+            f"{name}: declares id_pattern asserts but the skeleton frontmatter "
+            f"has no id to interpolate"
         )
+        seeded_ids = re.findall(rf"\|\s*({re.escape(doc_id)}-[A-Z]+-\d+)\s*\|", md)
+        for pat in id_patterns:
+            rx = re.compile(pat.replace("{id}", re.escape(doc_id)))
+            matching = [sid for sid in seeded_ids if rx.match(sid)]
+            assert matching, (
+                f"{name}: id_pattern {pat!r} matches none of the skeleton's "
+                f"seeded ids {seeded_ids}"
+            )
 
 
 # ─── I2: literal consistency, both directions (FR-002-AC-7) ──────────────
