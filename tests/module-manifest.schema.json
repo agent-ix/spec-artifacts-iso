@@ -91,17 +91,12 @@
     },
     "ArtifactTypeEntry": {
       "type": "object",
-      "description": "Unified archetype contract (FR-035 CR-002). template_ref is optional (render is legacy); required_sections and variants are REMOVED and REJECTED — structural completeness is expressed via body_extraction asserts.",
+      "description": "Unified archetype contract (FR-035 CR-002). template_ref, required_sections, and variants are REMOVED and REJECTED (additionalProperties:false → 422) — render is gone. Structural completeness is expressed via body_extraction asserts.",
       "required": ["name", "grammar_ref", "frontmatter_schema_ref"],
       "additionalProperties": false,
       "properties": {
         "name": { "type": "string", "minLength": 1 },
         "grammar_ref": { "type": "string", "minLength": 1 },
-        "template_ref": {
-          "type": "string",
-          "pattern": "\\.md\\.j2$",
-          "description": "OPTIONAL. Relative path to a Jinja-subset .md.j2 template. Absent => archetype is non-renderable but still validatable/extractable. CON-3/CON-4 apply only when present."
-        },
         "frontmatter_schema_ref": { "type": "string", "minLength": 1 },
         "body_extraction": {
           "$ref": "#/$defs/BodyExtraction",

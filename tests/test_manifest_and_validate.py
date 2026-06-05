@@ -67,6 +67,30 @@ def test_manifest_validates_against_fr035_schema() -> None:
     ]
 
 
+def test_fr002_schema_rejects_template_ref_on_artifact_type() -> None:
+    """FR-002: the bundled FR-035 schema must REJECT ``template_ref`` on an
+    ArtifactTypeEntry (render is gone; additionalProperties:false → error)."""
+    try:
+        from jsonschema import Draft202012Validator
+    except ImportError:
+        pytest.skip("jsonschema lib missing draft 2020-12 support")
+    schema_path = (
+        pathlib.Path(__file__).resolve().parent / "module-manifest.schema.json"
+    )
+    if not schema_path.exists():
+        pytest.skip("FR-035 schema not bundled with tests")
+    schema = json.loads(schema_path.read_text())
+    manifest = yaml.safe_load(MANIFEST_PATH.read_text())
+    artifact_types = manifest.get("artifact_types") or []
+    assert artifact_types, "manifest declares no artifact_types to mutate"
+    mutated = artifact_types[0] | {"template_ref": "fr.md.j2"}
+    manifest = {**manifest, "artifact_types": [mutated, *artifact_types[1:]]}
+    errors = list(Draft202012Validator(schema).iter_errors(manifest))
+    assert any(
+        "template_ref" in e.message for e in errors
+    ), "schema accepted template_ref on an artifact type; it must be rejected"
+
+
 def _artifact_types():
     manifest = yaml.safe_load(MANIFEST_PATH.read_text())
     return manifest.get("artifact_types", [])
