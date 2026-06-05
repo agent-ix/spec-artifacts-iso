@@ -5,7 +5,7 @@ dynamic = ["version"]
 [tool.poetry]
 name = "spec_artifacts_iso"
 version = "0.1.0"  # Placeholder, dynamically replaced
-description = "Filament Module: ISO-style spec artifact templates (FR/NFR/StR/US/IT/TC/AC/CON) — Jinja .md.j2 templates + frontmatter JSON Schemas + iso-spec-core grammar"
+description = "Filament Module: ISO-style spec artifacts (FR/NFR/StR/US/IT/TC/AC/CON) — unified-shape archetypes + authoring skeletons + frontmatter JSON Schemas + iso-spec-core grammar, validated by quire-rs (no render templates)"
 authors = ["Agent IX <agents@agent-ix.dev>"]
 packages = [{ include = "spec_artifacts_iso" }]
 

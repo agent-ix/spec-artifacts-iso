@@ -1,6 +1,6 @@
 # 🐍 spec-artifacts-iso
 
-> Filament Module: ISO-style spec artifact templates (FR/NFR/StR/US/IT/TC/AC/CON) — Jinja .md.j2 templates + frontmatter JSON Schemas + iso-spec-core grammar
+> Filament Module: ISO-style spec artifacts (FR/NFR/StR/US/IT/TC/AC/CON) — unified-shape archetypes (frontmatter JSON Schemas + `body_extraction` asserts) with per-archetype authoring **skeletons** as the source of truth, validated by quire-rs. No render templates.
 
 ---
 

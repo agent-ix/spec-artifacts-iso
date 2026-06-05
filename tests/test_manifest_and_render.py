@@ -1,6 +1,19 @@
-"""Auto-generated test: manifest validates against FR-035 + every template renders.
+"""Manifest validation + unified-shape (FR-002) assert↔skeleton parity tests.
 
-Pulls the FR-035 JSON Schema URL or uses a local copy bundled with the package.
+Render templates were removed (FR-002 CR, 2026-06-04): the per-archetype
+skeletons are the authoring source of truth and quire-rs ``validate_document``
+enforces structure with no render step. These tests therefore cover:
+
+* manifest loads + validates against the FR-035 module-manifest schema;
+* the unified archetype shape (no ``template_ref`` / ``required_sections`` /
+  ``variants``; ``body_extraction`` carries ``assert`` facets);
+* I1/I2/I3 (FR-002-AC-6/7/8): the manifest asserts and the per-archetype
+  skeleton are mutually consistent (heading sets + levels, literal table
+  headers, id patterns), and heading-presence locators are distinguished from
+  ``section_body`` locators whose body the skeleton fills substantively;
+* IT-002: each filled skeleton passes ``validate_document``, mutations fail,
+  and ``extract`` yields a record (requires the quire wheel exposing the
+  FR-032 markdown validator; skipped cleanly otherwise).
 """
 
 from __future__ import annotations
@@ -11,11 +24,21 @@ import re
 
 import pytest
 import yaml
-from jinja2 import StrictUndefined
-from jinja2.sandbox import SandboxedEnvironment
 
 PKG_ROOT = pathlib.Path(__file__).resolve().parent.parent / "spec_artifacts_iso"
 MANIFEST_PATH = PKG_ROOT / "manifest.yaml"
+SKELETONS_DIR = PKG_ROOT / "skeletons"
+
+_SKELETON_FILE = {
+    "FR": "fr",
+    "NFR": "nfr",
+    "StR": "str",
+    "US": "us",
+    "IT": "it",
+    "TC": "tc",
+    "AC": "ac",
+    "CON": "con",
+}
 
 
 def test_manifest_loads() -> None:
@@ -44,22 +67,6 @@ def test_manifest_validates_against_fr035_schema() -> None:
     ]
 
 
-def _render(template_text: str, ctx: dict) -> str:
-    env = SandboxedEnvironment(keep_trailing_newline=True)
-    return env.from_string(template_text).render(**ctx)
-
-
-def _render_strict(template_text: str, ctx: dict) -> str:
-    """Render the way quire does: undefined access is an error, not "".
-
-    The default SandboxedEnvironment silently swallows undefined values, so it
-    never catches templates that crash quire's strict-undefined engine on a
-    missing optional field (e.g. `{% if relationships %}` with no relationships).
-    """
-    env = SandboxedEnvironment(keep_trailing_newline=True, undefined=StrictUndefined)
-    return env.from_string(template_text).render(**ctx)
-
-
 def _artifact_types():
     manifest = yaml.safe_load(MANIFEST_PATH.read_text())
     return manifest.get("artifact_types", [])
@@ -71,27 +78,21 @@ _HEADING_REGEX_RE = re.compile(r"^\^(?P<name>.+?)\$$")
 def _required_sections(at: dict, level: int | None = None) -> list[dict]:
     """Derive ``[{name, level, kind}]`` from the unified-shape ``body_extraction``.
 
-    FR-035 CR-002 retired ``required_sections``; structural completeness is
-    now expressed by locators that each pin a heading the document must carry:
+    FR-035 CR-002 retired ``required_sections``; structural completeness is now
+    expressed by locators that each pin a heading the document must carry:
 
-    * ``from: section_body`` — the heading whose *body* must be substantive;
-      ``assert.level`` gives its level. ``kind == "section_body"``.
-    * ``from: heading`` — a heading-presence locator (e.g. FR's
-      ``Specification`` H2). Its name comes from the anchored ``regex``
-      (``^Name$``) and its level from ``level``. ``kind == "heading"``.
-    * ``from: table_row``/``list_item``/``code_block`` with ``under_section`` —
-      requires the named section heading to exist (so its child element can
-      be located). Level comes from the locator's ``assert.section_level``
-      when present, else 2. ``kind == "heading"``.
+    * ``from: section_body`` — the heading whose *body* must be substantive
+      (FR-002-AC-8 / I3). ``assert.level`` gives its level. ``kind ==
+      "section_body"``.
+    * ``from: heading`` — a heading-presence locator (e.g. FR's ``Specification``
+      H2). Its name comes from the anchored ``regex`` (``^Name$``) and its level
+      from ``level``. ``kind == "heading"``.
+    * ``from: table_row`` / ``list_item`` / ``code_block`` with ``under_section``
+      — requires the named section heading to exist (so its child element can be
+      located). Level comes from ``assert.section_level`` when present, else 2.
+      ``kind == "heading"``.
 
-    Recovering the heading-presence locators (not just ``section_body``)
-    closes the render-parity blind spot where ``Constraints``/``Specification``
-    H2 headings — pinned only via ``from: heading`` / ``under_section`` — were
-    never asserted by the parity tests, even though ``validate_document``
-    enforces them.
-
-    Pass ``level`` to restrict to a single heading level (e.g. the top-level
-    content-quality checks only inspect ``level=2`` sections).
+    Pass ``level`` to restrict to a single heading level.
     """
     be = at.get("body_extraction") or {}
     match = (be.get("yield_pattern") or {}).get("match") or {}
@@ -124,22 +125,83 @@ def _required_sections(at: dict, level: int | None = None) -> list[dict]:
     return out
 
 
-def _fr_artifact_type() -> dict:
-    for at in _artifact_types():
-        if at["name"] == "FR":
-            return at
-    raise AssertionError("FR artifact type missing from manifest")
+def _asserted_tables(at: dict) -> list[dict]:
+    """Return ``[{section, columns}]`` for every table locator with ``columns``."""
+    be = at.get("body_extraction") or {}
+    match = (be.get("yield_pattern") or {}).get("match") or {}
+    out: list[dict] = []
+    for loc in match.values():
+        if not isinstance(loc, dict) or loc.get("from") != "table_row":
+            continue
+        cols = (loc.get("assert") or {}).get("columns")
+        if cols:
+            out.append({"section": loc.get("under_section"), "columns": list(cols)})
+    return out
+
+
+def _asserted_id_patterns(at: dict) -> list[str]:
+    """Return every ``assert.id_pattern`` declared by a table locator."""
+    be = at.get("body_extraction") or {}
+    match = (be.get("yield_pattern") or {}).get("match") or {}
+    out: list[str] = []
+    for loc in match.values():
+        if not isinstance(loc, dict):
+            continue
+        pat = (loc.get("assert") or {}).get("id_pattern")
+        if pat:
+            out.append(pat)
+    return out
+
+
+def _strip_frontmatter(markdown: str) -> str:
+    return re.sub(r"^---\n.*?\n---\n", "", markdown, count=1, flags=re.DOTALL)
+
+
+def _skeleton_text(name: str) -> str:
+    return (SKELETONS_DIR / f"{_SKELETON_FILE[name]}.md").read_text()
+
+
+def _skeleton_doc_id(name: str) -> str:
+    fm = re.match(r"---\n(.*?)\n---\n", _skeleton_text(name), re.DOTALL)
+    assert fm, f"{name} skeleton missing frontmatter"
+    return yaml.safe_load(fm.group(1))["id"]
+
+
+def _skeleton_headings(markdown: str) -> list[tuple[int, str]]:
+    """Return ``[(level, text)]`` for every ATX heading below the H1 title."""
+    body = _strip_frontmatter(markdown)
+    out: list[tuple[int, str]] = []
+    for line in body.splitlines():
+        m = re.match(r"^(#{1,6})\s+(.*\S)\s*$", line)
+        if m and len(m.group(1)) >= 2:  # skip the H1 document title
+            out.append((len(m.group(1)), m.group(2).strip()))
+    return out
+
+
+def _skeleton_table_headers(markdown: str) -> list[list[str]]:
+    """Return the column list of every markdown table header row in the body."""
+    body = _strip_frontmatter(markdown)
+    lines = body.splitlines()
+    out: list[list[str]] = []
+    for i, line in enumerate(lines):
+        if not line.lstrip().startswith("|"):
+            continue
+        nxt = lines[i + 1] if i + 1 < len(lines) else ""
+        # Header row is the one immediately followed by the |---|---| separator.
+        if re.match(r"^\s*\|[\s:|-]+\|\s*$", nxt) and "-" in nxt:
+            cols = [c.strip() for c in line.strip().strip("|").split("|")]
+            out.append([c for c in cols])
+    return out
 
 
 def _split_sections(markdown: str, level: int = 2) -> dict:
     """Return {section_name: body_text} for headings at the given level."""
-    body = re.sub(r"^---\n.*?\n---\n", "", markdown, count=1, flags=re.DOTALL)
+    body = _strip_frontmatter(markdown)
     sections: dict[str, str] = {}
     current: str | None = None
     buf: list[str] = []
     prefix = "#" * level + " "
     for line in body.splitlines():
-        # A heading at exactly `level` opens a section; deeper headings stay in body.
         if line.startswith(prefix) and not line[level + 1 :].startswith("#"):
             if current is not None:
                 sections[current] = "\n".join(buf).strip()
@@ -155,194 +217,14 @@ def _split_sections(markdown: str, level: int = 2) -> dict:
 _PLACEHOLDER_TOKENS = ("TODO", "TBD", "{{", "}}", "placeholder", "none specified")
 
 
-def required_section_issues(markdown: str, required_sections: list[dict]) -> list[str]:
-    """Flag required sections that are missing, empty, or placeholder/default-filled.
-
-    Mirrors the specify workflow's validate stage: `quire validate` passing is
-    necessary but not sufficient — required sections must carry substantive content.
-    """
-    sections = _split_sections(markdown, level=2)
-    issues: list[str] = []
-    for sec in required_sections:
-        # Only `section_body` locators promise substantive prose; heading-only
-        # locators (e.g. `Specification`, whose body is its H3 children, or
-        # `Constraints`, whose body is a table) are content-checked by their
-        # own asserts/child locators, not by these prose-placeholder rules.
-        if sec.get("kind", "section_body") != "section_body":
-            continue
-        name = sec["name"]
-        if name not in sections:
-            issues.append(f"{name}: missing")
-            continue
-        body = sections[name]
-        if not body:
-            issues.append(f"{name}: empty")
-            continue
-        lowered = body.lower()
-        for token in _PLACEHOLDER_TOKENS:
-            if token.lower() in lowered:
-                issues.append(f"{name}: contains placeholder token {token!r}")
-                break
-        else:
-            # Dependencies default to `none` on both ends — treat as unfilled.
-            if name == "Dependencies":
-                up = re.search(r"\*\*Upstream\*\*:\s*(.+)", body)
-                down = re.search(r"\*\*Downstream\*\*:\s*(.+)", body)
-                up_v = up.group(1).strip().lower() if up else "none"
-                down_v = down.group(1).strip().lower() if down else "none"
-                if up_v in ("none", "") and down_v in ("none", ""):
-                    issues.append(
-                        "Dependencies: only default 'none' upstream/downstream"
-                    )
-    return issues
-
-
-_HAPPY_FR_CTX = {
-    "id": "FR-9002",
-    "title": "Verify checksums on artifact import",
-    "artifact_type": "FR",
-    "object": "artifact-import",
-    "relationships": [{"target": "ix://spec/usecase/US-001", "type": "implements"}],
-    "description": (
-        "The system SHALL verify the SHA-256 checksum of every imported artifact "
-        "before persisting it, rejecting any artifact whose computed digest does "
-        "not match the declared digest."
-    ),
-    "inputs": (
-        "- Imported artifact bytes\n"
-        "- Declared SHA-256 digest from the import manifest"
-    ),
-    "outputs": (
-        "- Accepted artifact persisted to the store\n"
-        "- Rejection error with the digest pair"
-    ),
-    "behavior": (
-        "- The system SHALL compute the SHA-256 digest of the artifact bytes "
-        "on import.\n"
-        "- The system SHALL reject the artifact when the computed digest "
-        "differs from the declared digest.\n"
-        "- The system SHALL persist the artifact only after a successful "
-        "digest match."
-    ),
-    "constraints": (
-        "| ID | Constraint | Type | Validation |\n"
-        "|----|------------|------|------------|\n"
-        "| FR-9002-CON-1 | Digest computation SHALL use SHA-256 only "
-        "| Security | Integration Test |"
-    ),
-    "acceptance_criteria": (
-        "| ID | Criteria | Verification |\n"
-        "|----|----------|--------------|\n"
-        "| FR-9002-AC-1 | Given a matching digest, the artifact is persisted "
-        "| Integration Test |\n"
-        "| FR-9002-AC-2 | Given a mismatched digest, the import is rejected "
-        "| Integration Test |"
-    ),
-    "upstream": "US-001 artifact import",
-    "downstream": "IT-001 checksum rejection coverage",
-}
-
-_SPARSE_FR_CTX = {
-    "id": "FR-9001",
-    "title": "Underfilled FR",
-    "artifact_type": "FR",
-    "description": "The system SHALL do the thing.",
-}
-
-
-def test_fr_happy_context_has_no_placeholder_required_sections() -> None:
-    """A full FR context renders every required section with substantive content.
-
-    Fails against the pre-fix template, which hardcoded a TODO Acceptance
-    Criteria table with no input variable, so even a perfect context produced
-    placeholders.
-    """
-    at = _fr_artifact_type()
-    template = (PKG_ROOT / at["template_ref"]).read_text()
-    output = _render(template, _HAPPY_FR_CTX)
-    issues = required_section_issues(output, _required_sections(at, level=2))
-    assert issues == [], f"happy FR still has placeholder required sections: {issues}"
-
-
-def test_fr_sparse_context_leaves_placeholder_required_sections() -> None:
-    """A minimal FR context renders placeholder required sections and is rejected."""
-    at = _fr_artifact_type()
-    template = (PKG_ROOT / at["template_ref"]).read_text()
-    output = _render(template, _SPARSE_FR_CTX)
-    issues = required_section_issues(output, _required_sections(at, level=2))
-    flagged = " ".join(issues)
-    assert issues, "sparse FR unexpectedly passed required-section validation"
-    assert "Acceptance Criteria" in flagged
-    assert "Dependencies" in flagged
-
-
-@pytest.mark.parametrize("at", _artifact_types(), ids=lambda at: at["name"])
-def test_template_renders_under_strict_undefined_minimal_context(at: dict) -> None:
-    """Every template must render under strict-undefined with ONLY the required
-    fields — no relationships, object, or scope supplied.
-
-    This mirrors quire's render engine. Guards against the regression where an
-    unguarded `{% if relationships %}` (or `scope.applies_to` on an undefined
-    `scope`) crashed every non-FR archetype while the non-strict suite stayed
-    green.
-    """
-    template = (PKG_ROOT / at["template_ref"]).read_text()
-    ctx = {
-        "id": f"{at['name']}-001",
-        "title": f"Sample {at['name']}",
-        "artifact_type": at["name"],
-        "description": "Render test.",
-    }
-    output = _render_strict(template, ctx)
-    for sec in _required_sections(at):
-        heading = "#" * sec["level"] + " " + sec["name"]
-        assert heading in output, f"missing required section heading: {heading}"
-
-
-@pytest.mark.parametrize("at", _artifact_types(), ids=lambda at: at["name"])
-def test_template_renders_and_contains_required_sections(at: dict) -> None:
-    template_path = PKG_ROOT / at["template_ref"]
-    assert template_path.exists(), f"missing template {template_path}"
-    ctx = {
-        "id": f"{at['name']}-001",
-        "title": f"Sample {at['name']}",
-        "artifact_type": at["name"],
-        "description": "Render test.",
-        "relationships": [],
-        "scope": {"applies_to": "test", "context": "rendering"},
-    }
-    output = _render(template_path.read_text(), ctx)
-    # Frontmatter present and round-trips
-    m = re.match(r"---\n(.*?)\n---\n", output, re.DOTALL)
-    assert m, "rendered output missing frontmatter"
-    fm = yaml.safe_load(m.group(1))
-    assert fm["id"] == ctx["id"]
-    assert fm["artifact_type"] == ctx["artifact_type"]
-    # Required sections present
-    for sec in _required_sections(at):
-        heading = "#" * sec["level"] + " " + sec["name"]
-        assert heading in output, f"missing required section heading: {heading}"
-
-
-# ─── Unified-shape (FR-002 / FR-035 CR-002) ──────────────────────────────
-
-SKELETONS_DIR = PKG_ROOT / "skeletons"
-_SKELETON_FILE = {
-    "FR": "fr",
-    "NFR": "nfr",
-    "StR": "str",
-    "US": "us",
-    "IT": "it",
-    "TC": "tc",
-    "AC": "ac",
-    "CON": "con",
-}
+# ─── Unified shape (FR-002-AC-1 / AC-4) ──────────────────────────────────
 
 
 @pytest.mark.parametrize("at", _artifact_types(), ids=lambda at: at["name"])
 def test_fr002_ac1_unified_shape_no_retired_fields(at: dict) -> None:
-    """FR-002-AC-1: every archetype declares body_extraction with asserts and
-    declares neither required_sections nor variants."""
+    """FR-002-AC-1: every archetype declares ``body_extraction`` with asserts and
+    declares none of ``template_ref`` / ``required_sections`` / ``variants``."""
+    assert "template_ref" not in at, f"{at['name']} still declares template_ref"
     assert "required_sections" not in at, f"{at['name']} declares required_sections"
     assert "variants" not in at, f"{at['name']} still declares variants"
     be = at.get("body_extraction") or {}
@@ -351,6 +233,14 @@ def test_fr002_ac1_unified_shape_no_retired_fields(at: dict) -> None:
     assert any(
         isinstance(loc, dict) and loc.get("assert") for loc in match.values()
     ), f"{at['name']} has no assert facets"
+
+
+def test_fr002_ac1_no_template_dir_or_refs() -> None:
+    """FR-002-AC-1: templates/ is removed and no archetype references one."""
+    assert not (PKG_ROOT / "templates").exists(), "templates/ directory still present"
+    raw = MANIFEST_PATH.read_text()
+    assert "template_ref" not in raw, "manifest still mentions template_ref"
+    assert ".md.j2" not in raw, "manifest still references a .md.j2 template"
 
 
 @pytest.mark.parametrize("at", _artifact_types(), ids=lambda at: at["name"])
@@ -363,6 +253,9 @@ def test_fr002_ac4_headings_unique_per_level(at: dict) -> None:
         seen.add(key)
 
 
+# ─── Skeleton presence (FR-002-AC-5 structural half) ─────────────────────
+
+
 @pytest.mark.parametrize("name", sorted(_SKELETON_FILE), ids=lambda n: n)
 def test_fr002_skeleton_exists_and_has_required_headings(name: str) -> None:
     """Each archetype ships an authoring skeleton carrying its required headings."""
@@ -373,6 +266,120 @@ def test_fr002_skeleton_exists_and_has_required_headings(name: str) -> None:
     for sec in _required_sections(at):
         heading = "#" * sec["level"] + " " + sec["name"]
         assert heading in text, f"{name} skeleton missing heading: {heading}"
+
+
+# ─── I1: assert ↔ skeleton parity (FR-002-AC-6) ──────────────────────────
+
+
+@pytest.mark.parametrize("name", sorted(_SKELETON_FILE), ids=lambda n: n)
+def test_fr002_ac6_asserts_derived_from_skeleton(name: str) -> None:
+    """FR-002-AC-6 (I1): the manifest asserts are consistent with / derived from
+    the skeleton — every asserted heading exists in the skeleton at the asserted
+    level, every asserted table's header row is present in the skeleton, and every
+    asserted id_pattern matches the skeleton's seeded ids."""
+    at = next(a for a in _artifact_types() if a["name"] == name)
+    md = _skeleton_text(name)
+    skel_headings = set(_skeleton_headings(md))
+    skel_tables = _skeleton_table_headers(md)
+    doc_id = _skeleton_doc_id(name)
+
+    # 1. every asserted heading exists at the asserted level
+    for sec in _required_sections(at):
+        assert (sec["level"], sec["name"]) in skel_headings, (
+            f"{name}: asserted heading {sec['name']!r} (H{sec['level']}) "
+            f"absent from skeleton"
+        )
+
+    # 2. every asserted table header row appears verbatim in the skeleton
+    for tbl in _asserted_tables(at):
+        assert tbl["columns"] in skel_tables, (
+            f"{name}: asserted table columns {tbl['columns']} "
+            f"(section {tbl['section']}) not found in skeleton tables {skel_tables}"
+        )
+
+    # 3. every asserted id_pattern (after {id} interpolation) matches a seeded id
+    seeded_ids = re.findall(rf"\|\s*({re.escape(doc_id)}-[A-Z]+-\d+)\s*\|", md)
+    for pat in _asserted_id_patterns(at):
+        rx = re.compile(pat.replace("{id}", re.escape(doc_id)))
+        matching = [sid for sid in seeded_ids if rx.match(sid)]
+        assert matching, (
+            f"{name}: id_pattern {pat!r} matches none of the skeleton's "
+            f"seeded ids {seeded_ids}"
+        )
+
+
+# ─── I2: literal consistency, both directions (FR-002-AC-7) ──────────────
+
+
+@pytest.mark.parametrize("name", sorted(_SKELETON_FILE), ids=lambda n: n)
+def test_fr002_ac7_literal_consistency_both_directions(name: str) -> None:
+    """FR-002-AC-7 (I2): the skeleton's heading set and literal table header rows
+    match the archetype's asserts exactly — a diff in either direction fails.
+
+    Forward: skeleton ⊇ asserts (covered by AC-6). Reverse: every *asserted-level*
+    skeleton heading and every skeleton table that carries an asserted column set
+    must itself be asserted, so the skeleton can't drift ahead of the contract."""
+    at = next(a for a in _artifact_types() if a["name"] == name)
+    md = _skeleton_text(name)
+
+    asserted_headings = {(s["level"], s["name"]) for s in _required_sections(at)}
+    asserted_levels = {lvl for lvl, _ in asserted_headings}
+    # Reverse-direction: any skeleton heading at an asserted level must be asserted.
+    for lvl, text in _skeleton_headings(md):
+        if lvl in asserted_levels:
+            assert (lvl, text) in asserted_headings, (
+                f"{name}: skeleton heading {text!r} (H{lvl}) is not asserted "
+                f"by the manifest (skeleton drifted ahead of the contract)"
+            )
+
+    asserted_cols = [t["columns"] for t in _asserted_tables(at)]
+    for cols in _skeleton_table_headers(md):
+        assert cols in asserted_cols, (
+            f"{name}: skeleton table {cols} has no matching manifest assert "
+            f"(asserted column sets: {asserted_cols})"
+        )
+
+
+# ─── I3: locator-kind distinction + substantive bodies (FR-002-AC-8) ─────
+
+
+@pytest.mark.parametrize("name", sorted(_SKELETON_FILE), ids=lambda n: n)
+def test_fr002_ac8_locator_kinds_and_substantive_bodies(name: str) -> None:
+    """FR-002-AC-8 (I3): heading-presence locators are distinguished from
+    ``section_body`` locators; the skeleton supplies substantive (non-empty,
+    non-placeholder) body for every ``section_body``-asserted section."""
+    at = next(a for a in _artifact_types() if a["name"] == name)
+    sections = _required_sections(at)
+    kinds = {s["kind"] for s in sections}
+    assert kinds, f"{name}: no required sections derived"
+    assert kinds <= {"section_body", "heading"}, f"{name}: unexpected locator kinds"
+
+    md = _skeleton_text(name)
+    body_sections = _split_sections(md, level=2)
+    for sec in sections:
+        if sec["kind"] != "section_body" or sec["level"] != 2:
+            continue
+        name_ = sec["name"]
+        assert name_ in body_sections, f"{name}: section_body {name_!r} missing"
+        body = body_sections[name_]
+        assert body, f"{name}: section_body {name_!r} is empty in skeleton"
+        lowered = body.lower()
+        for token in _PLACEHOLDER_TOKENS:
+            assert token.lower() not in lowered, (
+                f"{name}: section_body {name_!r} carries placeholder token "
+                f"{token!r}"
+            )
+        if name_ == "Dependencies":
+            up = re.search(r"\*\*Upstream\*\*:\s*(.+)", body)
+            down = re.search(r"\*\*Downstream\*\*:\s*(.+)", body)
+            up_v = up.group(1).strip().lower() if up else "none"
+            down_v = down.group(1).strip().lower() if down else "none"
+            assert not (
+                up_v in ("none", "") and down_v in ("none", "")
+            ), f"{name}: Dependencies only carries default 'none' values"
+
+
+# ─── IT-002: validate / mutate / extract against the quire wheel ─────────
 
 
 def _quire_doc_validator():
@@ -390,14 +397,12 @@ def _quire_doc_validator():
 def test_it002_ac1_skeleton_validates(name: str) -> None:
     """IT-002-AC-1 / FR-002-AC-5: a filled skeleton passes validate_document.
 
-    Skips when the installed quire wheel predates the markdown-default
-    validator (FR-032); the round-trip is verified out-of-band against a
-    locally-built quire-rs wheel until that ships to the registry.
-    """
+    Skips when the installed quire wheel predates the markdown-default validator
+    (FR-032); build/install a local quire-rs >=0.3.6 wheel to exercise it."""
     quire = _quire_doc_validator()
     if quire is None:
         pytest.skip("quire wheel lacks validate_document (FR-032)")
-    text = (SKELETONS_DIR / f"{_SKELETON_FILE[name]}.md").read_text()
+    text = _skeleton_text(name)
     res = quire.validate_document(name, str(PKG_ROOT), text)
     assert res["is_valid"], res["errors"]
 
@@ -408,7 +413,7 @@ def test_it002_ac2_fr_mutations_fail() -> None:
     quire = _quire_doc_validator()
     if quire is None:
         pytest.skip("quire wheel lacks validate_document (FR-032)")
-    base = (SKELETONS_DIR / "fr.md").read_text()
+    base = _skeleton_text("FR")
     root = str(PKG_ROOT)
 
     def reasons(doc: str) -> set[str]:
@@ -420,9 +425,8 @@ def test_it002_ac2_fr_mutations_fail() -> None:
     deleted = re.sub(
         r"## Acceptance Criteria.*?(?=\n## Dependencies)", "", base, flags=re.DOTALL
     )
-    # Guard the mutation: a section-order change would make the lookahead
-    # no-op, leaving `deleted == base` and silently asserting on the
-    # unmutated doc. Fail loudly instead.
+    # Guard the mutation: a section-order change would make the lookahead a
+    # no-op, leaving deleted == base and silently asserting on the unmutated doc.
     assert (
         "## Acceptance Criteria" not in deleted and deleted != base
     ), "AC-deletion mutation did not apply (section order changed?)"
@@ -450,6 +454,6 @@ def test_it002_ac3_extract_yields_record(name: str) -> None:
     quire = _quire_doc_validator()
     if quire is None or not hasattr(quire, "extract"):
         pytest.skip("quire wheel lacks extract")
-    text = (SKELETONS_DIR / f"{_SKELETON_FILE[name]}.md").read_text()
+    text = _skeleton_text(name)
     out = quire.extract(name, str(PKG_ROOT), text)
     assert out["extraction"], out
