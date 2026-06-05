@@ -52,7 +52,9 @@ by a different `spec.md` shape. This supersedes the prior two-template split
 - The frontmatter schema **SHALL** type the optional fields it observes across the
   corpus — `implementation_language` (string|null), `tags` (array of string),
   `depends_on` (array), `standards_alignment` (array of string), `relationships`
-  (array of `{target ^ix://, type, cardinality}`), `security_critical` (boolean) —
+  (array of `{target ^ix://, type, cardinality, …}` — relationship items allow
+  **extra annotation keys** like `note`/`models`/`endpoints`, so a decorative
+  annotation is not a validation failure), `security_critical` (boolean) —
   and **SHALL** keep `additionalProperties: true` so a spec carrying an extra key
   is not rejected (the known keys are still type-checked). Unlike the FR/US
   schemas, it **SHALL NOT** require `id` or `title` (the master spec has neither).
