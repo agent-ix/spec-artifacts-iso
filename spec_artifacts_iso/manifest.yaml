@@ -43,8 +43,14 @@ artifact_types:
   - references
   - constrains
   - supersedes
+  - specifies
   examples: []
   lint_rules_ref: []
+  # Format-walkthrough decisions #1-#4 (2026-06-11): the `## Specification`
+  # umbrella was never intended — Inputs/Outputs/Behavior are level-2
+  # sections and OPTIONAL (object-kind FRs carry their kind's anchors
+  # instead); Constraints is optional (no filler rows). Description +
+  # AC table + Dependencies remain the required FR core.
   body_extraction:
     yield_pattern:
       match:
@@ -54,35 +60,28 @@ artifact_types:
           required: true
           assert:
             level: 2
-        specification:
-          from: heading
-          level: 2
-          regex: ^Specification$
-          required: true
-          assert:
-            level: 2
         inputs:
           from: section_body
           after_heading: Inputs
-          required: true
+          required: false
           assert:
-            level: 3
+            level: 2
         outputs:
           from: section_body
           after_heading: Outputs
-          required: true
+          required: false
           assert:
-            level: 3
+            level: 2
         behavior:
           from: section_body
           after_heading: Behavior
-          required: true
+          required: false
           assert:
-            level: 3
+            level: 2
         constraints_table:
           from: table_row
           under_section: Constraints
-          required: true
+          required: false
           assert:
             columns:
             - ID
@@ -127,15 +126,20 @@ artifact_types:
   - depends_on
   examples: []
   lint_rules_ref: []
+  # Format-walkthrough decision #9 (2026-06-11): required NFR core is
+  # Statement + Measurement and Evaluation table + Verification.
+  # `quality_attribute` moved to FRONTMATTER (enum over ISO 25010
+  # attributes, see schemas/nfr-frontmatter.schema.json) — the old
+  # one-line `## Quality Attribute` section is retired. Scope /
+  # Rationale / Dependencies / Acceptance Criteria are optional.
   body_extraction:
     yield_pattern:
       match:
         quality_attribute:
-          from: section_body
-          after_heading: Quality Attribute
-          required: true
-          assert:
-            level: 2
+          from: frontmatter_field
+          path:
+          - quality_attribute
+          required: false
         statement:
           from: section_body
           after_heading: Statement
@@ -145,13 +149,13 @@ artifact_types:
         scope:
           from: section_body
           after_heading: Scope
-          required: true
+          required: false
           assert:
             level: 2
         rationale:
           from: section_body
           after_heading: Rationale
-          required: true
+          required: false
           assert:
             level: 2
         measurement_and_evaluation:
@@ -177,10 +181,16 @@ artifact_types:
           required: true
           assert:
             level: 2
+        acceptance_criteria:
+          from: section_body
+          after_heading: Acceptance Criteria
+          required: false
+          assert:
+            level: 2
         dependencies:
           from: section_body
           after_heading: Dependencies
-          required: true
+          required: false
           assert:
             level: 2
 - name: StR
@@ -433,4 +443,16 @@ artifact_types:
 doc_kinds:
 - spec
 object_types: []
-lint_rules: []
+# Advisory lint rules (quire-rs FR-036; format-walkthrough decision #14):
+# AC Verification cells use the ISO 29148 verification methods, optionally
+# annotated with test-case references — `Test (TC-035)`. Evaluated by
+# `quire lint`; never blocks validation/extraction/sync.
+lint_rules:
+- type: table_column_values
+  id: ac-verification-method
+  archetypes: [FR]
+  section: Acceptance Criteria
+  column: Verification
+  allowed: [Inspection, Analysis, Demonstration, Test]
+  annotation_pattern: '\(TC-\d+(,\s*TC-\d+)*\)'
+  severity: warning

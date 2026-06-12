@@ -4,6 +4,30 @@
 
 ---
 
+## ✍️ Authoring conventions (format-walkthrough decisions, 2026-06-11)
+
+- **FR body**: required = `## Description` + `## Acceptance Criteria` (table).
+  `## Inputs` / `## Outputs` / `## Behavior` / `## Constraints` /
+  `## Dependencies` are optional, all at **level 2** — there is no
+  `## Specification` umbrella. Object FRs carry their kind's anchor sections
+  instead of I/O.
+- **`object:` frontmatter** is the canonical object-kind field (never
+  `object_type:`). It is optional for vanilla behavioral FRs and required for
+  object FRs — kind anchors and extraction hang off it.
+- **NFR body**: required = `## Statement` + `## Measurement and Evaluation`
+  (`Metric|Target|Threshold|Method` table) + `## Verification`;
+  `quality_attribute` is a frontmatter enum (ISO 25010), not a section.
+- **AC Verification cells** use the ISO 29148 methods — `Inspection`,
+  `Analysis`, `Demonstration`, `Test` — optionally annotated `Test (TC-035)`.
+  Checked by the module's `ac-verification-method` lint rule (`quire lint`).
+- **Relationships**: author the explicit `relationships:` array (typed verbs,
+  incl. `specifies` for object FR → behavioral FR). Bare-ID sugar fields
+  (`depends_on:` etc.) are read-side ingestion tolerance only — except in
+  `spec.md` (master-requirements), where `depends_on:` is the repo-level
+  dependency manifest.
+
+---
+
 ## 📐 Project Structure and Development Philosophy
 
 - **Library Name:** `spec_artifacts_iso`
