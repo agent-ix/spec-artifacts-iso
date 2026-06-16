@@ -1,7 +1,7 @@
 ---
 id: FR-002
 title: "Archetypes use the unified shape and validate authored markdown"
-artifact_type: FR
+type: FR
 relationships:
   - target: "ix://agent-ix/filament-core-service/FR-035"
     type: "implements"

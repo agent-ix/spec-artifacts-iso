@@ -1,7 +1,7 @@
 ---
 id: StR-001
 title: "ISO-style spec artifact archetypes"
-artifact_type: StR
+type: StR
 ---
 # [StR-001] ISO-style spec artifact archetypes
 

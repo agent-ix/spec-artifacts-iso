@@ -1,7 +1,7 @@
 ---
 id: FR-003
 title: "The master requirements spec is a validated archetype"
-artifact_type: FR
+type: FR
 relationships:
   - target: "ix://agent-ix/quire-rs/spec/functional/FR-032"
     type: "consumes"

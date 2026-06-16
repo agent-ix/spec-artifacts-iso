@@ -1,7 +1,7 @@
 ---
 id: IT-003
 title: "Master requirements spec validates end-to-end"
-artifact_type: IT
+type: IT
 relationships:
   - target: "ix://agent-ix/spec-artifacts-iso/FR-003"
     type: "verifies"

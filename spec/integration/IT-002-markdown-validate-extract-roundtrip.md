@@ -1,7 +1,7 @@
 ---
 id: IT-002
 title: "Direct-markdown validate + extract roundtrip"
-artifact_type: IT
+type: IT
 relationships:
   - target: "ix://agent-ix/spec-artifacts-iso/FR-002"
     type: "verifies"
