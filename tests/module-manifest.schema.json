@@ -162,7 +162,8 @@
         "min_rows": { "type": "integer", "minimum": 0 },
         "min_items": { "type": "integer", "minimum": 0 },
         "id_column": { "type": "string", "minLength": 1 },
-        "id_pattern": { "type": "string", "minLength": 1 }
+        "id_pattern": { "type": "string", "minLength": 1 },
+        "matches": { "type": "string", "minLength": 1 }
       }
     },
     "Locator": {
@@ -270,12 +271,18 @@
         "description": { "type": "string", "minLength": 1 },
         "severity": { "type": "string", "enum": ["error", "warning", "info"] },
         "pattern": {
-          "type": "object",
-          "required": ["kind"],
-          "properties": {
-            "kind": { "type": "string", "minLength": 1 }
-          },
-          "additionalProperties": true
+          "description": "Either an object pattern (legacy `{kind: ...}`) or a regex string (e.g. `section_body_pattern` rules whose body regex is a bare string).",
+          "oneOf": [
+            {
+              "type": "object",
+              "required": ["kind"],
+              "properties": {
+                "kind": { "type": "string", "minLength": 1 }
+              },
+              "additionalProperties": true
+            },
+            { "type": "string", "minLength": 1 }
+          ]
         }
       }
     }

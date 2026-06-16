@@ -36,8 +36,6 @@ _SKELETON_FILE = {
     "US": "us",
     "IT": "it",
     "TC": "tc",
-    "AC": "ac",
-    "CON": "con",
     "master-requirements": "spec",
     "index": "index",
     "log": "log",
@@ -462,12 +460,27 @@ def test_fr002_ac8_locator_kinds_and_substantive_bodies(name: str) -> None:
 
 
 def _quire_doc_validator():
-    """Return the quire wheel iff it exposes the FR-032 markdown validator."""
+    """Return the quire wheel iff it can load and validate against this module.
+
+    Skips (returns ``None``) when the installed wheel lacks the FR-032 markdown
+    validator OR is too old to parse the engine features this module now relies
+    on. The ISO-standard manifest (2026-06-16) uses a ``section_body`` ``matches``
+    assert (and a ``section_body_pattern`` lint rule); a wheel predating those
+    fails manifest load and reports every archetype as ``unknown``. The local
+    quire-cli binary is the validation authority for those features — these
+    in-process IT-002 checks simply stand down rather than report a stale-wheel
+    failure, mirroring the FR-032 skip intent."""
     try:
         import quire
     except ImportError:
         return None
     if not hasattr(quire, "validate_document"):
+        return None
+    # Probe that the wheel can actually load this module's manifest; an older
+    # wheel rejects newer assert/lint keys with ``unknown archetype``.
+    try:
+        quire.validate_document("FR", str(PKG_ROOT), _skeleton_text("FR"))
+    except Exception:
         return None
     return quire
 

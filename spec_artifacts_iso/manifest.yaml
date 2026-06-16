@@ -1,7 +1,7 @@
 manifest_version: 1.0.0
 name: spec-artifacts-iso
 version: 0.1.0
-description: "Filament Module: ISO-style spec artifacts (FR, NFR, StR, US, IT, TC, AC, CON) — unified-shape archetypes (frontmatter schema + body_extraction asserts) validated by quire-rs; per-archetype authoring skeletons are the source of truth (no render templates); iso-spec-core grammar"
+description: "Filament Module: ISO-style spec artifacts (FR, NFR, StR, US, IT, TC) — unified-shape archetypes (frontmatter schema + body_extraction asserts) validated by quire-rs; per-archetype authoring skeletons are the source of truth (no render templates); iso-spec-core grammar"
 archetypes:
 - kind: spec
   name: Spec
@@ -204,25 +204,72 @@ artifact_types:
   - references
   examples: []
   lint_rules_ref: []
+  # ISO-standard (2026-06-16): required StR core is Stakeholder Need +
+  # Rationale + Validation Criteria (ISO/IEC/IEEE 29148 stakeholder-requirement
+  # triad — the need, why it exists, and how its satisfaction is judged).
+  # Stakeholders / context / constraints / dependencies / priority / notes /
+  # traceability are optional.
   body_extraction:
     yield_pattern:
       match:
-        description:
+        stakeholder_need:
           from: section_body
-          after_heading: Description
+          after_heading: Stakeholder Need
           required: true
           assert:
             level: 2
-        body:
+        rationale:
           from: section_body
-          after_heading: Body
+          after_heading: Rationale
           required: true
+          assert:
+            level: 2
+        validation_criteria:
+          from: section_body
+          after_heading: Validation Criteria
+          required: true
+          assert:
+            level: 2
+        stakeholders:
+          from: section_body
+          after_heading: Stakeholders
+          required: false
+          assert:
+            level: 2
+        context_and_assumptions:
+          from: section_body
+          after_heading: Context and Assumptions
+          required: false
+          assert:
+            level: 2
+        stakeholder_constraints:
+          from: section_body
+          after_heading: Stakeholder Constraints (Contextual)
+          required: false
           assert:
             level: 2
         dependencies:
           from: section_body
           after_heading: Dependencies
-          required: true
+          required: false
+          assert:
+            level: 2
+        priority_and_risk:
+          from: section_body
+          after_heading: Priority and Risk (Informative)
+          required: false
+          assert:
+            level: 2
+        notes:
+          from: section_body
+          after_heading: Notes (Informative)
+          required: false
+          assert:
+            level: 2
+        traceability:
+          from: section_body
+          after_heading: Traceability
+          required: false
           assert:
             level: 2
 - name: US
@@ -236,25 +283,66 @@ artifact_types:
   - references
   examples: []
   lint_rules_ref: []
+  # ISO-standard (2026-06-16): required US core is just `Story` (ISO/IEC/IEEE
+  # 29148 user-story shape — As a / I want / So that, enforced by a `matches`
+  # regex). Every other section is OPTIONAL and contextual/informative — a US
+  # carries discovery context, not normative requirements.
   body_extraction:
     yield_pattern:
       match:
-        description:
+        story:
           from: section_body
-          after_heading: Description
+          after_heading: Story
           required: true
           assert:
             level: 2
-        body:
+            matches: '(?is)\bas an?\b.+\bi want\b.+\bso that\b'
+        context:
           from: section_body
-          after_heading: Body
-          required: true
+          after_heading: Context
+          required: false
+          assert:
+            level: 2
+        acceptance_examples:
+          from: section_body
+          after_heading: Acceptance Examples (Illustrative)
+          required: false
+          assert:
+            level: 2
+        options:
+          from: section_body
+          after_heading: Options (Exploratory)
+          required: false
+          assert:
+            level: 2
+        constraints:
+          from: section_body
+          after_heading: Constraints (Contextual)
+          required: false
           assert:
             level: 2
         dependencies:
           from: section_body
-          after_heading: Dependencies
-          required: true
+          after_heading: Dependencies (Contextual)
+          required: false
+          assert:
+            level: 2
+        priority_and_risk:
+          from: section_body
+          after_heading: Priority and Risk (Informative)
+          required: false
+          assert:
+            level: 2
+        notes:
+          from: section_body
+          after_heading: Notes (Informative)
+          required: false
+          assert:
+            level: 2
+        traceability:
+          from: section_body
+          after_heading: Traceability (Informative)
+          required: false
           assert:
             level: 2
 - name: IT
@@ -268,25 +356,71 @@ artifact_types:
   - references
   examples: []
   lint_rules_ref: []
+  # ISO-standard (2026-06-16): ISO/IEC/IEEE 29119 integration-test core is the
+  # six-section required set — Objective, Target Integration, Preconditions,
+  # Inputs, Test Procedure, Expected Results. Metadata / dependencies / notes /
+  # traceability are optional.
   body_extraction:
     yield_pattern:
       match:
-        description:
+        objective:
           from: section_body
-          after_heading: Description
+          after_heading: Objective
           required: true
           assert:
             level: 2
-        body:
+        target_integration:
           from: section_body
-          after_heading: Body
+          after_heading: Target Integration
           required: true
+          assert:
+            level: 2
+        preconditions:
+          from: section_body
+          after_heading: Preconditions
+          required: true
+          assert:
+            level: 2
+        inputs:
+          from: section_body
+          after_heading: Inputs
+          required: true
+          assert:
+            level: 2
+        test_procedure:
+          from: section_body
+          after_heading: Test Procedure
+          required: true
+          assert:
+            level: 2
+        expected_results:
+          from: section_body
+          after_heading: Expected Results
+          required: true
+          assert:
+            level: 2
+        metadata:
+          from: section_body
+          after_heading: Metadata
+          required: false
           assert:
             level: 2
         dependencies:
           from: section_body
           after_heading: Dependencies
-          required: true
+          required: false
+          assert:
+            level: 2
+        notes:
+          from: section_body
+          after_heading: Notes
+          required: false
+          assert:
+            level: 2
+        traceability:
+          from: section_body
+          after_heading: Traceability
+          required: false
           assert:
             level: 2
 - name: TC
@@ -299,6 +433,8 @@ artifact_types:
   - references
   examples: []
   lint_rules_ref: []
+  # ISO-standard (2026-06-16): minimal test-case core (ISO/IEC/IEEE 29119
+  # test-case essentials) — Description, Test Procedure, Expected Results.
   body_extraction:
     yield_pattern:
       match:
@@ -308,79 +444,22 @@ artifact_types:
           required: true
           assert:
             level: 2
-        body:
+        test_procedure:
           from: section_body
-          after_heading: Body
+          after_heading: Test Procedure
           required: true
           assert:
             level: 2
-        dependencies:
+        expected_results:
           from: section_body
-          after_heading: Dependencies
+          after_heading: Expected Results
           required: true
           assert:
             level: 2
-- name: AC
-  grammar_ref: iso-spec-core
-  frontmatter_schema_ref: schemas/ac-frontmatter.schema.json
-  defaults:
-    id_pattern: AC-{next:03d}
-  allowed_links:
-  - verifies
-  examples: []
-  lint_rules_ref: []
-  body_extraction:
-    yield_pattern:
-      match:
-        description:
-          from: section_body
-          after_heading: Description
-          required: true
-          assert:
-            level: 2
-        body:
-          from: section_body
-          after_heading: Body
-          required: true
-          assert:
-            level: 2
-        dependencies:
-          from: section_body
-          after_heading: Dependencies
-          required: true
-          assert:
-            level: 2
-- name: CON
-  grammar_ref: iso-spec-core
-  frontmatter_schema_ref: schemas/con-frontmatter.schema.json
-  defaults:
-    id_pattern: CON-{next:03d}
-  allowed_links:
-  - constrains
-  - references
-  examples: []
-  lint_rules_ref: []
-  body_extraction:
-    yield_pattern:
-      match:
-        description:
-          from: section_body
-          after_heading: Description
-          required: true
-          assert:
-            level: 2
-        body:
-          from: section_body
-          after_heading: Body
-          required: true
-          assert:
-            level: 2
-        dependencies:
-          from: section_body
-          after_heading: Dependencies
-          required: true
-          assert:
-            level: 2
+# ISO-standard (2026-06-16): AC and CON archetypes removed — zero corpus usage.
+# Acceptance Criteria are carried by the FR `## Acceptance Criteria` table and
+# Constraints by the FR `## Constraints` table; standalone AC/CON artifacts are
+# redundant with that normative FR structure.
 - name: master-requirements
   grammar_ref: iso-spec-core
   frontmatter_schema_ref: schemas/master-requirements-frontmatter.schema.json
@@ -490,4 +569,37 @@ lint_rules:
   column: Verification
   allowed: [Inspection, Analysis, Demonstration, Test]
   annotation_pattern: '\(TC-\d+(,\s*TC-\d+)*\)'
+  severity: warning
+# ISO-standard (2026-06-16): normative-language + per-step success-criteria
+# advisories (quire-rs FR-036 `section_body_pattern`). The body of the named
+# section must contain a match for `pattern`; a missing section produces no
+# finding (structural presence is validation's job). Advisory only — `quire
+# lint` reports these and never blocks validation/extraction/sync.
+- type: section_body_pattern
+  id: fr-shall-language
+  archetypes: [FR]
+  section: Description
+  pattern: '(?i)\b(shall|must|require)'
+  message: "FR Description should use normative language (shall/must) per ISO/IEC/IEEE 29148."
+  severity: warning
+- type: section_body_pattern
+  id: nfr-shall-language
+  archetypes: [NFR]
+  section: Statement
+  pattern: '(?i)\b(shall|must|require)'
+  message: "NFR Statement should use normative language (shall/must) per ISO/IEC/IEEE 29148."
+  severity: warning
+- type: section_body_pattern
+  id: str-shall-language
+  archetypes: [StR]
+  section: Stakeholder Need
+  pattern: '(?i)\b(shall|must|require)'
+  message: "Stakeholder Need should state a normative expectation (shall/must/require) per ISO/IEC/IEEE 29148."
+  severity: warning
+- type: section_body_pattern
+  id: it-success-criteria
+  archetypes: [IT]
+  section: Test Procedure
+  pattern: '\bIT-\d+-SC-\d+'
+  message: "Integration Test Procedure should declare per-step success criteria (IT-XXX-SC-NN)."
   severity: warning
