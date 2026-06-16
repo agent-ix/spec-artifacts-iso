@@ -1,7 +1,7 @@
 ---
 id: FR-001
 title: "Verify checksums on artifact import"
-artifact_type: FR
+type: FR
 relationships:
   - target: "ix://agent-ix/example/US-001"
     type: "implements"

@@ -1,7 +1,7 @@
 ---
 id: NFR-001
 title: "Import throughput under sustained load"
-artifact_type: NFR
+type: NFR
 quality_attribute: performance_efficiency
 relationships:
   - target: "ix://agent-ix/example/FR-001"

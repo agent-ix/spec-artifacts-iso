@@ -1,7 +1,7 @@
 ---
 id: IT-001
 title: "Checksum mismatch rejects the import"
-artifact_type: IT
+type: IT
 relationships:
   - target: "ix://agent-ix/example/FR-001"
     type: "verifies"

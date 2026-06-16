@@ -1,7 +1,7 @@
 ---
 id: US-001
 title: "Import an artifact with integrity verification"
-artifact_type: US
+type: US
 relationships:
   - target: "ix://agent-ix/example/StR-001"
     type: "traces_to"

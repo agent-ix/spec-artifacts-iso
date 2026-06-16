@@ -1,7 +1,7 @@
 ---
 id: TC-001
 title: "Reject artifact with mismatched digest"
-artifact_type: TC
+type: TC
 relationships:
   - target: "ix://agent-ix/example/FR-001"
     type: "verifies"

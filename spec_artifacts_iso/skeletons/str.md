@@ -1,7 +1,7 @@
 ---
 id: StR-001
 title: "Operators need tamper-evident artifact imports"
-artifact_type: StR
+type: StR
 relationships:
   - target: "ix://agent-ix/example/FR-001"
     type: "satisfied_by"

@@ -1,7 +1,7 @@
 ---
 id: AC-001
 title: "Mismatched digest is rejected"
-artifact_type: AC
+type: AC
 relationships:
   - target: "ix://agent-ix/example/FR-001"
     type: "verifies"

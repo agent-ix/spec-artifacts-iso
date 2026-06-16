@@ -39,6 +39,8 @@ _SKELETON_FILE = {
     "AC": "ac",
     "CON": "con",
     "master-requirements": "spec",
+    "index": "index",
+    "log": "log",
 }
 
 
@@ -119,16 +121,16 @@ def test_fr003_ac1_master_requirements_archetype_registered() -> None:
 
 def test_fr003_ac2_master_requirements_frontmatter_schema_shape() -> None:
     """FR-003-AC-2 (TC-SCHEMA-006): the master-requirements frontmatter schema
-    requires artifact_type/name/org/component_type, does NOT require id/title, and
+    requires type/name/org/component_type, does NOT require id/title, and
     constrains component_type to kebab-case ``^[a-z][a-z0-9-]*$``."""
     at = next(a for a in _artifact_types() if a["name"] == "master-requirements")
     schema_path = PKG_ROOT / at["frontmatter_schema_ref"]
     schema = json.loads(schema_path.read_text())
     required = set(schema.get("required", []))
-    assert required == {"artifact_type", "name", "org", "component_type"}, required
+    assert required == {"type", "name", "org", "component_type"}, required
     assert "id" not in required and "title" not in required
     props = schema["properties"]
-    assert props["artifact_type"] == {"const": "master-requirements"}
+    assert props["type"] == {"const": "master-requirements"}
     assert props["component_type"]["pattern"] == "^[a-z][a-z0-9-]*$"
 
 

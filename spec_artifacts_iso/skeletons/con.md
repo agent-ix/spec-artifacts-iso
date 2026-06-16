@@ -1,7 +1,7 @@
 ---
 id: CON-001
 title: "Digest algorithm is fixed to SHA-256"
-artifact_type: CON
+type: CON
 relationships:
   - target: "ix://agent-ix/example/FR-001"
     type: "constrains"
