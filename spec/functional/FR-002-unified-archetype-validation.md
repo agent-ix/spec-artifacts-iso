@@ -42,19 +42,18 @@ per-archetype **skeleton** is the canonical example an author fills; it is the
 authoring source of truth and its structure **SHALL** be consistent with the
 archetype's `body_extraction` asserts.
 
-## Specification
 
-### Inputs
+## Inputs
 
 - `spec_artifacts_iso/manifest.yaml` (unified archetype declarations)
 - An authored markdown artifact for an archetype
 
-### Outputs
+## Outputs
 
 - A `ValidationResult` (pass / line-numbered failures) from `validate_document`
 - An extracted data record from `extract` over the same `body_extraction`
 
-### Behavior
+## Behavior
 
 - Each archetype **SHALL** assert section presence at the declared heading level, required tables (exact `columns`, `min_rows`), required lists (`min_items`), and id patterns where applicable.
 - Acceptance-criteria / constraint id asserts **SHALL** use `{id}` interpolation (quire-rs FR-034) so row ids are prefixed with the document's own id and contiguous.

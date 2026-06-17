@@ -32,18 +32,17 @@ by a different `spec.md` shape. This supersedes the prior two-template split
 (`spec-template.md` vs `app-spec-template.md`); the application-specific sections
 (Domain Model, Security Model) become **optional** sections of the one shape.
 
-## Specification
 
-### Inputs
+## Inputs
 
 - `spec_artifacts_iso/manifest.yaml` (the `master-requirements` artifact_type)
 - An authored `spec/spec.md` master requirements document
 
-### Outputs
+## Outputs
 
 - A `ValidationResult` (pass / line-numbered failures) from `validate_document`
 
-### Behavior
+## Behavior
 
 - The frontmatter schema **SHALL** require `artifact_type` (const
   `master-requirements`), `name` (non-empty string), `org` (non-empty string), and

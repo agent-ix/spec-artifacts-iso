@@ -1,3 +1,8 @@
+---
+type: TestMatrix
+id: TM-001
+title: "Test Matrix"
+---
 # Test Matrix
 
 | FR | IT | Status |
