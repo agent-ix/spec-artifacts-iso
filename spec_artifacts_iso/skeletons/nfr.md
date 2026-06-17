@@ -60,5 +60,5 @@ reduce to metrics (e.g. "evidence artifacts live under the owning packet").
 
 ## Dependencies
 
-- **Upstream**: FR-001 checksum verification on import
+- **Upstream**: [FR-001](../functional/FR-001-verify-checksums.md) checksum verification on import
 - **Downstream**: capacity-planning runbook

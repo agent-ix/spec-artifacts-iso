@@ -30,7 +30,14 @@ relationships:
      - Relationships: author the explicit `relationships:` array (the
        only form carrying a typed verb, incl. `specifies` for object FR
        → behavioral FR); bare-ID sugar fields like `depends_on:` are
-       read-side tolerance only — do not author them.
+       read-side tolerance only — do not author them. Frontmatter
+       `relationships` targets stay `ix://…` (structured edges).
+     - Internal references in BODY prose (Description, Dependencies, AC
+       prose) are RELATIVE-PATH links to the sibling artifact —
+       `[FR-002](./FR-002-….md)`, `[US-001](../usecase/US-001-….md)`
+       (ADR 0007) — so they become real graph edges, not text. Cross-repo
+       references use `ix://org/repo/name`. `quire fix` converts bare-id
+       mentions into these relative-path links for you.
      - Keep headings unique per level; nest ≤2 levels below the H1 title
        (through H3). -->
 # [FR-001] Verify checksums on artifact import
@@ -73,5 +80,5 @@ declared digest.
 
 ## Dependencies
 
-- **Upstream**: US-001 artifact import
-- **Downstream**: IT-001 checksum rejection coverage
+- **Upstream**: [US-001](../usecase/US-001-artifact-import.md) artifact import
+- **Downstream**: [IT-001](../integration/IT-001-checksum-rejection.md) checksum rejection coverage
