@@ -76,7 +76,7 @@ follows:
 ## References
 
 - ISO/IEC/IEEE 29148 — Requirements engineering.
-- filament-core-service FR-035 — Module Manifest Schema (the upstream this Module
+- filament-core-service [FR-035](ix://agent-ix/filament-core-service/FR-035) — Module Manifest Schema (the upstream this Module
   activates against).
 - quire-rs `validate_document` — the structural validation engine that enforces
   the archetypes declared here.

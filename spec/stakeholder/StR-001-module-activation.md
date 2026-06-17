@@ -41,4 +41,4 @@ This need is considered satisfied when both of the following hold:
 
 ## Dependencies
 
-- **Upstream**: filament-core-service FR-035 (Module Manifest Schema)
+- **Upstream**: filament-core-service [FR-035](ix://agent-ix/filament-core-service/FR-035) (Module Manifest Schema)

@@ -67,7 +67,7 @@ by a different `spec.md` shape. This supersedes the prior two-template split
 - Optional sections (e.g. **Domain Model**, **Security Model**) and any additional
   H2 sections **SHALL** be accepted (the contract asserts required structure, it
   does not forbid extra sections), subject to per-level heading uniqueness
-  (quire-rs FR-035).
+  (quire-rs [FR-035](ix://agent-ix/quire-rs/FR-035)).
 - The archetype **SHALL** ship an authoring **skeleton** (`skeletons/spec.md`) — the
   single canonical master-spec example, the authoring source of truth — whose
   structure is consistent with the body asserts ([FR-002-AC-6](./FR-002-unified-archetype-validation.md)/7/8 parity).
@@ -94,5 +94,5 @@ by a different `spec.md` shape. This supersedes the prior two-template split
 
 ## Dependencies
 
-- **Upstream**: quire-rs FR-031/FR-032 (markdown validate, frontmatter schema), filament-core FR-035 (unified manifest shape)
+- **Upstream**: quire-rs [FR-031](ix://agent-ix/quire-rs/FR-031)/FR-032 (markdown validate, frontmatter schema), filament-core FR-035 (unified manifest shape)
 - **Downstream**: the `/specify` master-spec authoring workflow; the spec-create-spec single-template merge; the ecosystem normalization sweep

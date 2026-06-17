@@ -36,7 +36,7 @@ facets; **no `template_ref`**, no `required_sections`, no `variants`.
 > [FR-003-AC-1](./FR-003-master-requirements-archetype.md)/AC-8.
 
 Each archetype's `body_extraction` **SHALL** assert its required structure such that
-quire-rs `validate_document` (quire-rs FR-032) accepts a conformant authored
+quire-rs `validate_document` (quire-rs [FR-032](ix://agent-ix/quire-rs/FR-032)) accepts a conformant authored
 markdown artifact and rejects structural violations — without any render step. The
 per-archetype **skeleton** is the canonical example an author fills; it is the
 authoring source of truth and its structure **SHALL** be consistent with the
@@ -56,8 +56,8 @@ archetype's `body_extraction` asserts.
 ## Behavior
 
 - Each archetype **SHALL** assert section presence at the declared heading level, required tables (exact `columns`, `min_rows`), required lists (`min_items`), and id patterns where applicable.
-- Acceptance-criteria / constraint id asserts **SHALL** use `{id}` interpolation (quire-rs FR-034) so row ids are prefixed with the document's own id and contiguous.
-- Archetype structure **SHALL** keep headings unique per level (quire-rs FR-035) and fit the 2-level nesting ceiling (quire-rs ADR 0005 #4).
+- Acceptance-criteria / constraint id asserts **SHALL** use `{id}` interpolation (quire-rs [FR-034](ix://agent-ix/quire-rs/FR-034)) so row ids are prefixed with the document's own id and contiguous.
+- Archetype structure **SHALL** keep headings unique per level (quire-rs [FR-035](ix://agent-ix/quire-rs/FR-035)) and fit the 2-level nesting ceiling (quire-rs ADR 0005 #4).
 - Each archetype **SHALL** ship an authoring **skeleton** (the canonical example an author fills) — the authoring source of truth, replacing the removed `.md.j2` templates and their placeholder defaults.
 - The manifest `body_extraction` asserts (`columns`, `level`, `id_pattern`, etc.) and the per-archetype skeleton **SHALL** be **mutually consistent**: the skeleton is a conformant instance of its own asserts, and the asserts are derived from / describe the skeleton's structure — neither is authoritative in isolation.
 
@@ -72,9 +72,9 @@ archetype's `body_extraction` asserts.
 | FR-002-AC-5 | Each archetype ships an authoring skeleton that itself passes `validate_document` once filled with substantive content | Integration Test |
 | FR-002-AC-6 | **(I1 — assert↔skeleton parity)** For every archetype, the manifest `body_extraction` asserts (heading set + levels, table `columns`, `id_pattern`s) are **consistent with / derived from** that archetype's skeleton: each asserted heading exists in the skeleton at the asserted level, each asserted table's literal header row matches the skeleton's table headers exactly, and each `id_pattern` matches the skeleton's seeded ids. This is a parity requirement, not mere presence. | Schema Test |
 | FR-002-AC-7 | **(I2 — literal-consistency)** Each skeleton's heading set and literal table header rows match its archetype's asserts **exactly** (same text, same order, same level) — a diff in either direction fails. | Schema Test |
-| FR-002-AC-8 | **(I3 — locator-kind distinction)** The asserts distinguish **heading-presence** locators (assert a heading exists at a given level) from **`section_body`** locators (assert the section's content is non-empty / non-placeholder per quire-rs FR-032). Each required ISO section is classified as one or the other, and the skeleton supplies substantive (non-placeholder) body for every `section_body`-asserted section. | Schema + Integration Test |
+| FR-002-AC-8 | **(I3 — locator-kind distinction)** The asserts distinguish **heading-presence** locators (assert a heading exists at a given level) from **`section_body`** locators (assert the section's content is non-empty / non-placeholder per quire-rs [FR-032](ix://agent-ix/quire-rs/FR-032)). Each required ISO section is classified as one or the other, and the skeleton supplies substantive (non-placeholder) body for every `section_body`-asserted section. | Schema + Integration Test |
 
 ## Dependencies
 
-- **Upstream**: filament-core-service FR-035 (CR-002 unified shape, render removed), quire-rs FR-031/FR-032/FR-033/FR-034/FR-035
+- **Upstream**: filament-core-service [FR-035](ix://agent-ix/filament-core-service/FR-035) (CR-002 unified shape, render removed), quire-rs [FR-031](ix://agent-ix/quire-rs/FR-031)/FR-032/FR-033/FR-034/FR-035
 - **Downstream**: the `/specify` authoring workflow; consumers validating ISO artifacts
