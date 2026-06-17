@@ -28,12 +28,12 @@ quire-rs ADR 0003): `frontmatter_schema_ref` + `body_extraction` with `assert`
 facets; **no `template_ref`**, no `required_sections`, no `variants`.
 
 > **Note (master-requirements):** the module also registers a ninth archetype,
-> `master-requirements` (the root `spec.md`), specified by **FR-003**. Its contract
+> `master-requirements` (the root `spec.md`), specified by **[FR-003](./FR-003-master-requirements-archetype.md)**. Its contract
 > differs from the eight ISO artifact archetypes — it has no `id`/`title`
 > frontmatter, asserts the canonical master-spec sections, and constrains
 > `component_type` to a kebab-case pattern — so the "all eight" criteria below
 > scope to the ISO **artifact** archetypes; `master-requirements` is covered by
-> FR-003-AC-1/AC-8.
+> [FR-003-AC-1](./FR-003-master-requirements-archetype.md)/AC-8.
 
 Each archetype's `body_extraction` **SHALL** assert its required structure such that
 quire-rs `validate_document` (quire-rs FR-032) accepts a conformant authored

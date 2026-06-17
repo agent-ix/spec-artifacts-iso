@@ -70,7 +70,7 @@ by a different `spec.md` shape. This supersedes the prior two-template split
   (quire-rs FR-035).
 - The archetype **SHALL** ship an authoring **skeleton** (`skeletons/spec.md`) — the
   single canonical master-spec example, the authoring source of truth — whose
-  structure is consistent with the body asserts (FR-002-AC-6/7/8 parity).
+  structure is consistent with the body asserts ([FR-002-AC-6](./FR-002-unified-archetype-validation.md)/7/8 parity).
 
 ## Constraints
 
@@ -90,7 +90,7 @@ by a different `spec.md` shape. This supersedes the prior two-template split
 | FR-003-AC-5 | A master spec whose `component_type` is multi-word / capitalized / underscored / empty (e.g. `"Fast API Service"`, `React_Lib`, `""`) fails the kebab-case pattern. (An unquoted trailing `# …` is a YAML comment and is correctly ignored, not a violation.) | Integration Test |
 | FR-003-AC-6 | A master spec missing the H1 title or any required canonical section (Purpose/Scope/System Overview/Requirements Architecture/References) fails with a line-numbered diagnostic | Integration Test |
 | FR-003-AC-7 | A master spec carrying optional sections (Domain Model, Security Model) and additional H2 sections still passes | Integration Test |
-| FR-003-AC-8 | The `master-requirements` skeleton (`skeletons/spec.md`) itself passes `validate_document` and satisfies the assert↔skeleton parity checks (FR-002-AC-6/7/8) | Schema + Integration Test |
+| FR-003-AC-8 | The `master-requirements` skeleton (`skeletons/spec.md`) itself passes `validate_document` and satisfies the assert↔skeleton parity checks ([FR-002-AC-6](./FR-002-unified-archetype-validation.md)/7/8) | Schema + Integration Test |
 
 ## Dependencies
 
