@@ -2,7 +2,7 @@
 
 > Filament Module: ISO-style spec artifacts (FR, NFR, StR, US, IT, TC) — unified-shape archetypes (frontmatter schema + body_extraction asserts) validated by quire-rs; per-archetype authoring skeletons are the source of truth (no render templates); iso-spec-core grammar
 
-An Agent-IX Filament module loaded by [`quire-cli`](https://github.com/agent-ix/quire-cli) and [`ix-spec`](https://github.com/agent-ix/ix-spec). The module path is `spec_artifacts_iso`: a `manifest.yaml`, per-kind authoring `skeletons/`, and frontmatter `schemas/`. It contributes doc-backed `archetypes` and `artifact_types` (ISO-style requirement artifacts) — no embedded `object_types`.
+An Agent-IX Filament module loaded by [`quire-cli`](https://github.com/agent-ix/quire-cli) and [`quoin`](https://github.com/agent-ix/quoin). The module path is `spec_artifacts_iso`: a `manifest.yaml`, per-kind authoring `skeletons/`, and frontmatter `schemas/`. It contributes doc-backed `archetypes` and `artifact_types` (ISO-style requirement artifacts) — no embedded `object_types`.
 
 ## Installing quire-cli
 
@@ -39,17 +39,17 @@ The `Spec` archetype (kind `spec`) is a doc-backed container that holds ISO-styl
 
 ## How this module is used
 
-### With ix-spec (recommended)
+### With quoin (recommended)
 
 ```bash
-ix-spec plugin install path:../spec-artifacts-iso   # bundled root module; shown for completeness
-ix-spec catalog list                                # list available artifact kinds
-ix-spec catalog show FR                             # inspect the FR skeleton + schema
-ix-spec write . --types FR,NFR                      # scaffold new artifacts
-ix-spec review                                      # validate + review the spec
+quoin plugin install path:../spec-artifacts-iso   # bundled root module; shown for completeness
+quoin catalog list                                # list available artifact kinds
+quoin catalog show FR                             # inspect the FR skeleton + schema
+quoin write . --types FR,NFR                      # scaffold new artifacts
+quoin review                                      # validate + review the spec
 ```
 
-See https://github.com/agent-ix/ix-spec.
+See https://github.com/agent-ix/quoin.
 
 ### With quire-cli directly
 
