@@ -43,6 +43,7 @@ artifact_types:
   - references
   - constrains
   - supersedes
+  - extends
   - specifies
   examples: []
   lint_rules_ref: []
@@ -124,6 +125,7 @@ artifact_types:
   - constrains
   - references
   - depends_on
+  - traces_to
   examples: []
   lint_rules_ref: []
   # Format-walkthrough decision #9 (2026-06-11): required NFR core is
@@ -202,6 +204,7 @@ artifact_types:
   - satisfied_by
   - depends_on
   - references
+  - supersedes
   examples: []
   lint_rules_ref: []
   # ISO-standard (2026-06-16): required StR core is Stakeholder Need +
@@ -283,6 +286,7 @@ artifact_types:
   - references
   - implements
   - exercises
+  - depends_on
   examples: []
   lint_rules_ref: []
   # ISO-standard (2026-06-16): required US core is just `Story` (ISO/IEC/IEEE
@@ -476,6 +480,9 @@ artifact_types:
   - requires
   - implements
   - references
+  - supersedes
+  - peer
+  - contained_by
   examples: []
   lint_rules_ref: []
   body_extraction:
@@ -616,6 +623,7 @@ edge_types:
   contains: { description: "Composition; the source owns the target's lifecycle.", category: structural, inverse: part_of }
   aggregates: { description: "Aggregate root owns member entities.", category: structural, inverse: part_of }
   composes: { description: "Value object composed of other value objects/enums.", category: structural }
+  contained_by: { description: "This spec/requirement is a child of a parent bundle's master-requirements.", category: structural, inverse: contains }
   # behavioral
   calls: { description: "Synchronous invocation.", category: behavioral, inverse: called_by }
   triggers: { description: "Initiates a process or action.", category: behavioral, inverse: triggered_by }
@@ -675,6 +683,7 @@ edge_types:
   traces_to: { description: "Traceability link (matrix/coverage).", category: traceability }
   verifies: { description: "Test/integration artifact verifies a requirement.", category: traceability }
   exercises: { description: "User story exercises a functional requirement.", category: traceability }
+  peer: { description: "Lateral sibling linkage between peer specs/bundles.", category: traceability }
 
 # ── Role registry (quire-rs FR-040) ──────────────────────────────────────
 # Capability tags object types opt into; cross-domain `allowed_links` target a
