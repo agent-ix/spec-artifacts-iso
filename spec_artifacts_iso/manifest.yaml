@@ -222,6 +222,7 @@ artifact_types:
   - supersedes
   - traces_to
   - extends
+  - represents
   examples: []
   lint_rules_ref: []
   # ISO-standard (2026-06-16): required StR core is Stakeholder Need +
@@ -507,6 +508,7 @@ artifact_types:
   - uses
   - imports
   - generated_from
+  - aggregates
   examples: []
   lint_rules_ref: []
   body_extraction:
