@@ -281,6 +281,8 @@ artifact_types:
   - satisfied_by
   - traces_to
   - references
+  - implements
+  - exercises
   examples: []
   lint_rules_ref: []
   # ISO-standard (2026-06-16): required US core is just `Story` (ISO/IEC/IEEE
@@ -603,3 +605,87 @@ lint_rules:
   pattern: '\bIT-\d+-SC-\d+'
   message: "Integration Test Procedure should declare per-step success criteria (IT-XXX-SC-NN)."
   severity: warning
+
+# ── Edge-type registry (quire-rs FR-040) ─────────────────────────────────
+# The controlled relationship-verb vocabulary for the whole ecosystem.
+# Merged first-wins across active modules; each verb used in an artifact's or
+# object's `allowed_links` must appear here (else an advisory UnknownEdgeType).
+# category ∈ structural|behavioral|dataflow|dependency|realization|governance|traceability
+edge_types:
+  # structural
+  contains: { description: "Composition; the source owns the target's lifecycle.", category: structural, inverse: part_of }
+  aggregates: { description: "Aggregate root owns member entities.", category: structural, inverse: part_of }
+  composes: { description: "Value object composed of other value objects/enums.", category: structural }
+  # behavioral
+  calls: { description: "Synchronous invocation.", category: behavioral, inverse: called_by }
+  triggers: { description: "Initiates a process or action.", category: behavioral, inverse: triggered_by }
+  transitions_to: { description: "State-machine flow to another state.", category: behavioral }
+  raises: { description: "State machine raises a domain event.", category: behavioral }
+  guards: { description: "Permission/policy guards access to a surface.", category: behavioral }
+  # dataflow
+  reads: { description: "Non-mutating data access.", category: dataflow }
+  writes: { description: "Mutating data access.", category: dataflow }
+  publishes: { description: "Asynchronous emission to a channel.", category: dataflow, inverse: consumed_by }
+  consumes: { description: "Asynchronous reception from a channel.", category: dataflow }
+  emits: { description: "Source produces the target domain event.", category: dataflow, inverse: emitted_by }
+  carries: { description: "Channel/event carries a payload type.", category: dataflow }
+  renders: { description: "UI component renders a data type.", category: dataflow }
+  serializes: { description: "Binary format serializes a data schema.", category: dataflow }
+  # dependency
+  depends_on: { description: "Requires the target to exist/function.", category: dependency }
+  requires: { description: "Security/configuration precondition.", category: dependency }
+  implements: { description: "Fulfils an interface/contract.", category: dependency, inverse: implemented_by }
+  extends: { description: "Extends an interface/extension point.", category: dependency }
+  conforms_to: { description: "Conforms to an external contract.", category: dependency }
+  persists: { description: "Repository persists an aggregate/entity.", category: dependency }
+  owns: { description: "Entity owns a state machine.", category: dependency }
+  # realization (concrete → abstract)
+  represents: { description: "A DTO/schema mirrors a domain object.", category: realization }
+  exposes: { description: "Technical surface for a domain object/operation.", category: realization, inverse: exposed_by }
+  operates_on: { description: "Process/endpoint manipulates a domain object.", category: realization }
+  realizes: { description: "Realizes an enterprise capability/intent.", category: realization }
+  decomposes: { description: "Capability decomposes into sub-capabilities.", category: realization }
+  supports: { description: "Supports a value stream / higher objective.", category: realization }
+  # governance (cross-cutting)
+  classifies: { description: "Assigns a data classification to a target.", category: governance }
+  protects: { description: "Control protects an asset/surface.", category: governance }
+  governs: { description: "Principle/policy governs a target.", category: governance }
+  measures: { description: "SLI/SLO/KPI measures a target.", category: governance }
+  deploys: { description: "Deployment deploys a runtime component.", category: governance }
+  configures: { description: "Configuration configures a target.", category: governance }
+  migrates: { description: "Migration evolves a data schema.", category: governance }
+  throttles: { description: "Rate limit throttles a surface.", category: governance }
+  grants: { description: "Role/permission grants a scope/permission.", category: governance }
+  encrypts: { description: "Encryption key encrypts a secret/classification.", category: governance }
+  mitigates: { description: "Control mitigates a threat/risk/vulnerability.", category: governance }
+  threatens: { description: "Threat endangers an asset/attack surface.", category: governance }
+  exploits: { description: "Threat exploits a vulnerability.", category: governance }
+  affects: { description: "Vulnerability affects an asset/attack surface.", category: governance }
+  arises_from: { description: "Risk arises from a threat/vulnerability.", category: governance }
+  escalates_to: { description: "Alert escalates to an incident.", category: governance }
+  remediates: { description: "Runbook remediates an incident/alert.", category: governance }
+  correlates: { description: "Incident correlates with an alert.", category: governance }
+  breaches: { description: "Incident breaches an SLO.", category: governance }
+  # traceability (spec-meta)
+  references: { description: "Loose, untyped linkage.", category: traceability }
+  constrains: { description: "Imposes a constraint on the target.", category: traceability }
+  supersedes: { description: "Replaces a prior artifact.", category: traceability, inverse: superseded_by }
+  specifies: { description: "Object FR specifies a behavioral FR.", category: traceability }
+  satisfied_by: { description: "Stakeholder requirement satisfied by the target.", category: traceability }
+  traces_to: { description: "Traceability link (matrix/coverage).", category: traceability }
+  verifies: { description: "Test/integration artifact verifies a requirement.", category: traceability }
+  exercises: { description: "User story exercises a functional requirement.", category: traceability }
+
+# ── Role registry (quire-rs FR-040) ──────────────────────────────────────
+# Capability tags object types opt into; cross-domain `allowed_links` target a
+# role instead of a concrete cross-module type name.
+roles:
+  domain-object: { description: "A business-model type (entity, value object, aggregate, nested entity)." }
+  persistable: { description: "May be stored by a repository." }
+  event-like: { description: "A domain or audit event." }
+  externally-exposed: { description: "A surface reachable from outside the system." }
+  deployable: { description: "A runtime component that is deployed." }
+  measurable: { description: "A target whose health/value is measured." }
+  configurable: { description: "A target driven by configuration." }
+  business-intent: { description: "An enterprise capability/function/value-stream the system realizes." }
+  sensitive: { description: "Carries secret or otherwise sensitive material." }

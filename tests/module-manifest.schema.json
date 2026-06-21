@@ -4,7 +4,11 @@
   "title": "Filament Module Manifest",
   "description": "Normative schema for filament-core-service modules.manifest payload (FR-035).",
   "type": "object",
-  "required": ["manifest_version", "name", "version"],
+  "required": [
+    "manifest_version",
+    "name",
+    "version"
+  ],
   "additionalProperties": false,
   "properties": {
     "manifest_version": {
@@ -22,38 +26,60 @@
       "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+(-[0-9A-Za-z.-]+)?(\\+[0-9A-Za-z.-]+)?$",
       "description": "Module SemVer."
     },
-    "description": { "type": "string" },
+    "description": {
+      "type": "string"
+    },
     "depends_on": {
       "type": "array",
       "items": {
         "type": "object",
-        "required": ["name", "version_range"],
+        "required": [
+          "name",
+          "version_range"
+        ],
         "additionalProperties": false,
         "properties": {
-          "name": { "type": "string", "minLength": 1 },
-          "version_range": { "type": "string", "minLength": 1 }
+          "name": {
+            "type": "string",
+            "minLength": 1
+          },
+          "version_range": {
+            "type": "string",
+            "minLength": 1
+          }
         }
       }
     },
     "archetypes": {
       "type": "array",
-      "items": { "$ref": "#/$defs/ArchetypeEntry" }
+      "items": {
+        "$ref": "#/$defs/ArchetypeEntry"
+      }
     },
     "object_types": {
       "type": "array",
-      "items": { "$ref": "#/$defs/ObjectTypeEntry" }
+      "items": {
+        "$ref": "#/$defs/ObjectTypeEntry"
+      }
     },
     "grammars": {
       "type": "array",
-      "items": { "$ref": "#/$defs/GrammarEntry" }
+      "items": {
+        "$ref": "#/$defs/GrammarEntry"
+      }
     },
     "artifact_types": {
       "type": "array",
-      "items": { "$ref": "#/$defs/ArtifactTypeEntry" }
+      "items": {
+        "$ref": "#/$defs/ArtifactTypeEntry"
+      }
     },
     "doc_kinds": {
       "type": "array",
-      "items": { "type": "string", "minLength": 1 },
+      "items": {
+        "type": "string",
+        "minLength": 1
+      },
       "uniqueItems": true
     },
     "state_schemas": {
@@ -61,43 +87,104 @@
       "additionalProperties": {
         "description": "Inline JSON Schema (draft 2020-12) OR a relative path to a schema file.",
         "anyOf": [
-          { "type": "object" },
-          { "type": "string", "minLength": 1 }
+          {
+            "type": "object"
+          },
+          {
+            "type": "string",
+            "minLength": 1
+          }
         ]
       }
     },
     "lint_rules": {
       "type": "array",
-      "items": { "$ref": "#/$defs/LintRuleEntry" }
+      "items": {
+        "$ref": "#/$defs/LintRuleEntry"
+      }
+    },
+    "edge_types": {
+      "type": "object",
+      "additionalProperties": {
+        "$ref": "#/$defs/EdgeTypeEntry"
+      },
+      "description": "CR-003 (FR-040): mergeable edge-type registry \u2014 verb -> {description, category, inverse?}."
+    },
+    "roles": {
+      "type": "object",
+      "additionalProperties": {
+        "$ref": "#/$defs/RoleEntry"
+      },
+      "description": "CR-003 (FR-040): mergeable role registry \u2014 capability tag -> {description}."
     }
   },
   "$defs": {
     "ArchetypeEntry": {
       "type": "object",
-      "required": ["kind"],
+      "required": [
+        "kind"
+      ],
       "additionalProperties": true,
       "properties": {
-        "kind": { "type": "string", "minLength": 1 },
-        "name": { "type": "string", "minLength": 1 },
-        "description": { "type": "string" },
-        "icon": { "type": "string" },
-        "parent_kind": { "type": "string" },
-        "supports_membership": { "type": "boolean", "default": false },
-        "doc_backed": { "type": "boolean", "default": false },
-        "has_service": { "type": "boolean", "default": false },
-        "state_schema_ref": { "type": "string" },
-        "composition": { "type": "object" }
+        "kind": {
+          "type": "string",
+          "minLength": 1
+        },
+        "name": {
+          "type": "string",
+          "minLength": 1
+        },
+        "description": {
+          "type": "string"
+        },
+        "icon": {
+          "type": "string"
+        },
+        "parent_kind": {
+          "type": "string"
+        },
+        "supports_membership": {
+          "type": "boolean",
+          "default": false
+        },
+        "doc_backed": {
+          "type": "boolean",
+          "default": false
+        },
+        "has_service": {
+          "type": "boolean",
+          "default": false
+        },
+        "state_schema_ref": {
+          "type": "string"
+        },
+        "composition": {
+          "type": "object"
+        }
       }
     },
     "ArtifactTypeEntry": {
       "type": "object",
-      "description": "Unified archetype contract (FR-035 CR-002). template_ref, required_sections, and variants are REMOVED and REJECTED (additionalProperties:false → 422) — render is gone. Structural completeness is expressed via body_extraction asserts.",
-      "required": ["name", "grammar_ref", "frontmatter_schema_ref"],
+      "description": "Unified archetype contract (FR-035 CR-002). template_ref, required_sections, and variants are REMOVED and REJECTED (additionalProperties:false \u2192 422) \u2014 render is gone. Structural completeness is expressed via body_extraction asserts.",
+      "required": [
+        "name",
+        "grammar_ref",
+        "frontmatter_schema_ref"
+      ],
       "additionalProperties": false,
       "properties": {
-        "name": { "type": "string", "minLength": 1 },
-        "grammar_ref": { "type": "string", "minLength": 1 },
-        "frontmatter_schema_ref": { "type": "string", "minLength": 1 },
+        "name": {
+          "type": "string",
+          "minLength": 1
+        },
+        "grammar_ref": {
+          "type": "string",
+          "minLength": 1
+        },
+        "frontmatter_schema_ref": {
+          "type": "string",
+          "minLength": 1
+        },
         "body_extraction": {
           "$ref": "#/$defs/BodyExtraction",
           "description": "Locator DSL (FR-035 CR-002). Each locator MAY carry an `assert` facet driving structural validation in quire-rs validate_document. Supersedes required_sections."
@@ -109,43 +196,79 @@
         "defaults": {
           "type": "object",
           "properties": {
-            "id_pattern": { "type": "string" },
-            "frontmatter": { "type": "object" }
+            "id_pattern": {
+              "type": "string"
+            },
+            "frontmatter": {
+              "type": "object"
+            }
           },
           "additionalProperties": true
         },
         "allowed_links": {
           "type": "array",
-          "items": { "type": "string", "minLength": 1 },
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
           "uniqueItems": true
         },
         "examples": {
           "type": "array",
-          "items": { "type": "string", "minLength": 1 }
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
         },
         "lint_rules_ref": {
           "type": "array",
-          "items": { "type": "string", "minLength": 1 },
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
           "uniqueItems": true
         }
       }
     },
     "ObjectTypeEntry": {
       "type": "object",
-      "required": ["name"],
+      "required": [
+        "name"
+      ],
       "additionalProperties": true,
       "properties": {
-        "name": { "type": "string", "minLength": 1 },
-        "description": { "type": "string" },
-        "data_schema": { "type": "object" },
-        "body_extraction": { "$ref": "#/$defs/BodyExtraction" },
+        "name": {
+          "type": "string",
+          "minLength": 1
+        },
+        "description": {
+          "type": "string"
+        },
+        "data_schema": {
+          "type": "object"
+        },
+        "body_extraction": {
+          "$ref": "#/$defs/BodyExtraction"
+        },
         "allowed_links": {
           "type": "object",
           "additionalProperties": {
             "type": "array",
-            "items": { "type": "string", "minLength": 1 },
+            "items": {
+              "type": "string",
+              "minLength": 1
+            },
             "uniqueItems": true
           }
+        },
+        "roles": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "uniqueItems": true,
+          "description": "CR-003 (FR-040): capability tags this object type opts into."
         }
       }
     },
@@ -154,32 +277,60 @@
       "description": "Optional `assert` facet on a body-extraction locator (FR-033). All keys optional; additionalProperties:false rejects typos at load time. Deep per-locator-kind validity (e.g. `columns` only on table_row) is enforced by quire-rs load-time validation.",
       "additionalProperties": false,
       "properties": {
-        "level": { "type": "integer", "minimum": 1, "maximum": 6 },
+        "level": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 6
+        },
         "columns": {
           "type": "array",
-          "items": { "type": "string", "minLength": 1 }
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
         },
-        "min_rows": { "type": "integer", "minimum": 0 },
-        "min_items": { "type": "integer", "minimum": 0 },
-        "id_column": { "type": "string", "minLength": 1 },
-        "id_pattern": { "type": "string", "minLength": 1 },
-        "matches": { "type": "string", "minLength": 1 }
+        "min_rows": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "min_items": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "id_column": {
+          "type": "string",
+          "minLength": 1
+        },
+        "id_pattern": {
+          "type": "string",
+          "minLength": 1
+        },
+        "matches": {
+          "type": "string",
+          "minLength": 1
+        }
       }
     },
     "Locator": {
       "description": "A body-extraction locator: a single primitive (object with a `from` key) or an ordered fallback chain (array of primitives).",
       "oneOf": [
-        { "$ref": "#/$defs/LocatorPrimitive" },
+        {
+          "$ref": "#/$defs/LocatorPrimitive"
+        },
         {
           "type": "array",
-          "items": { "$ref": "#/$defs/LocatorPrimitive" },
+          "items": {
+            "$ref": "#/$defs/LocatorPrimitive"
+          },
           "minItems": 1
         }
       ]
     },
     "LocatorPrimitive": {
       "type": "object",
-      "required": ["from"],
+      "required": [
+        "from"
+      ],
       "properties": {
         "from": {
           "type": "string",
@@ -192,16 +343,25 @@
             "heading"
           ]
         },
-        "required": { "type": "boolean", "default": true },
-        "regex": { "type": "string" },
-        "assert": { "$ref": "#/$defs/LocatorAssert" }
+        "required": {
+          "type": "boolean",
+          "default": true
+        },
+        "regex": {
+          "type": "string"
+        },
+        "assert": {
+          "$ref": "#/$defs/LocatorAssert"
+        }
       }
     },
     "BodyExtraction": {
       "type": "object",
       "description": "Body-extraction DSL (FR-011/FR-033). Wraps a `yield_pattern` and optional `emit_edges`. quire-rs enforces the match-XOR-iterate_over rule and deep per-locator-kind assert validity at load time.",
       "additionalProperties": false,
-      "required": ["yield_pattern"],
+      "required": [
+        "yield_pattern"
+      ],
       "properties": {
         "yield_pattern": {
           "type": "object",
@@ -210,27 +370,44 @@
           "properties": {
             "match": {
               "type": "object",
-              "additionalProperties": { "$ref": "#/$defs/Locator" }
+              "additionalProperties": {
+                "$ref": "#/$defs/Locator"
+              }
             },
             "iterate_over": {
               "type": "object",
-              "required": ["section_path", "kind"],
+              "required": [
+                "section_path",
+                "kind"
+              ],
               "additionalProperties": false,
               "properties": {
                 "section_path": {
                   "type": "array",
-                  "items": { "type": "string", "minLength": 1 }
+                  "items": {
+                    "type": "string",
+                    "minLength": 1
+                  }
                 },
                 "kind": {
                   "type": "string",
-                  "enum": ["heading", "list_item", "table_row"]
+                  "enum": [
+                    "heading",
+                    "list_item",
+                    "table_row"
+                  ]
                 },
-                "depth": { "type": "integer", "minimum": 1 }
+                "depth": {
+                  "type": "integer",
+                  "minimum": 1
+                }
               }
             },
             "per_match": {
               "type": "object",
-              "additionalProperties": { "$ref": "#/$defs/Locator" }
+              "additionalProperties": {
+                "$ref": "#/$defs/Locator"
+              }
             }
           }
         },
@@ -238,10 +415,16 @@
           "type": "array",
           "items": {
             "type": "object",
-            "required": ["type", "target"],
+            "required": [
+              "type",
+              "target"
+            ],
             "additionalProperties": false,
             "properties": {
-              "type": { "type": "string", "minLength": 1 },
+              "type": {
+                "type": "string",
+                "minLength": 1
+              },
               "target": {}
             }
           }
@@ -250,15 +433,28 @@
     },
     "GrammarEntry": {
       "type": "object",
-      "required": ["name"],
+      "required": [
+        "name"
+      ],
       "additionalProperties": true,
       "properties": {
-        "name": { "type": "string", "minLength": 1 },
-        "version": { "type": "string", "minLength": 1 },
-        "description": { "type": "string" },
+        "name": {
+          "type": "string",
+          "minLength": 1
+        },
+        "version": {
+          "type": "string",
+          "minLength": 1
+        },
+        "description": {
+          "type": "string"
+        },
         "doc_kinds": {
           "type": "array",
-          "items": { "type": "string", "minLength": 1 },
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
           "uniqueItems": true
         }
       }
@@ -267,22 +463,86 @@
       "type": "object",
       "additionalProperties": true,
       "properties": {
-        "name": { "type": "string", "minLength": 1 },
-        "description": { "type": "string", "minLength": 1 },
-        "severity": { "type": "string", "enum": ["error", "warning", "info"] },
+        "name": {
+          "type": "string",
+          "minLength": 1
+        },
+        "description": {
+          "type": "string",
+          "minLength": 1
+        },
+        "severity": {
+          "type": "string",
+          "enum": [
+            "error",
+            "warning",
+            "info"
+          ]
+        },
         "pattern": {
           "description": "Either an object pattern (legacy `{kind: ...}`) or a regex string (e.g. `section_body_pattern` rules whose body regex is a bare string).",
           "oneOf": [
             {
               "type": "object",
-              "required": ["kind"],
+              "required": [
+                "kind"
+              ],
               "properties": {
-                "kind": { "type": "string", "minLength": 1 }
+                "kind": {
+                  "type": "string",
+                  "minLength": 1
+                }
               },
               "additionalProperties": true
             },
-            { "type": "string", "minLength": 1 }
+            {
+              "type": "string",
+              "minLength": 1
+            }
           ]
+        }
+      }
+    },
+    "EdgeTypeEntry": {
+      "type": "object",
+      "required": [
+        "description",
+        "category"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "description": {
+          "type": "string",
+          "minLength": 1
+        },
+        "category": {
+          "type": "string",
+          "enum": [
+            "structural",
+            "behavioral",
+            "dataflow",
+            "dependency",
+            "realization",
+            "governance",
+            "traceability"
+          ]
+        },
+        "inverse": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    },
+    "RoleEntry": {
+      "type": "object",
+      "required": [
+        "description"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "description": {
+          "type": "string",
+          "minLength": 1
         }
       }
     }
