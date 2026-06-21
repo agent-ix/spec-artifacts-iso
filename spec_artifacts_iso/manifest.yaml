@@ -45,6 +45,16 @@ artifact_types:
   - supersedes
   - extends
   - specifies
+  - governs
+  - supports
+  - traces_to
+  - represents
+  - derives_from
+  - migrated_from
+  - uses
+  - projection_of
+  - delegates_to
+  - manages
   examples: []
   lint_rules_ref: []
   # Format-walkthrough decisions #1-#4 (2026-06-11): the `## Specification`
@@ -126,6 +136,11 @@ artifact_types:
   - references
   - depends_on
   - traces_to
+  - verifies
+  - supersedes
+  - extends
+  - uses
+  - derives_from
   examples: []
   lint_rules_ref: []
   # Format-walkthrough decision #9 (2026-06-11): required NFR core is
@@ -205,6 +220,8 @@ artifact_types:
   - depends_on
   - references
   - supersedes
+  - traces_to
+  - extends
   examples: []
   lint_rules_ref: []
   # ISO-standard (2026-06-16): required StR core is Stakeholder Need +
@@ -287,6 +304,8 @@ artifact_types:
   - implements
   - exercises
   - depends_on
+  - derives_from
+  - migrated_from
   examples: []
   lint_rules_ref: []
   # ISO-standard (2026-06-16): required US core is just `Story` (ISO/IEC/IEEE
@@ -483,6 +502,11 @@ artifact_types:
   - supersedes
   - peer
   - contained_by
+  - contains
+  - deploys
+  - uses
+  - imports
+  - generated_from
   examples: []
   lint_rules_ref: []
   body_extraction:
@@ -622,7 +646,7 @@ edge_types:
   # structural
   contains: { description: "Composition; the source owns the target's lifecycle.", category: structural, inverse: part_of }
   aggregates: { description: "Aggregate root owns member entities.", category: structural, inverse: part_of }
-  composes: { description: "Value object composed of other value objects/enums.", category: structural }
+  composes: { description: "Value object composed of other value objects/enums.", category: structural, inverse: composed_by }
   contained_by: { description: "This spec/requirement is a child of a parent bundle's master-requirements.", category: structural, inverse: contains }
   # behavioral
   calls: { description: "Synchronous invocation.", category: behavioral, inverse: called_by }
@@ -637,18 +661,18 @@ edge_types:
   consumes: { description: "Asynchronous reception from a channel.", category: dataflow }
   emits: { description: "Source produces the target domain event.", category: dataflow, inverse: emitted_by }
   carries: { description: "Channel/event carries a payload type.", category: dataflow }
-  renders: { description: "UI component renders a data type.", category: dataflow }
+  renders: { description: "UI component renders a data type.", category: dataflow, inverse: rendered_by }
   serializes: { description: "Binary format serializes a data schema.", category: dataflow }
   # dependency
   depends_on: { description: "Requires the target to exist/function.", category: dependency }
-  requires: { description: "Security/configuration precondition.", category: dependency }
+  requires: { description: "Security/configuration precondition.", category: dependency, inverse: required_by }
   implements: { description: "Fulfils an interface/contract.", category: dependency, inverse: implemented_by }
   extends: { description: "Extends an interface/extension point.", category: dependency }
   conforms_to: { description: "Conforms to an external contract.", category: dependency }
   persists: { description: "Repository persists an aggregate/entity.", category: dependency }
   owns: { description: "Entity owns a state machine.", category: dependency }
   # realization (concrete → abstract)
-  represents: { description: "A DTO/schema mirrors a domain object.", category: realization }
+  represents: { description: "A concrete artifact represents/mirrors another (DTO↔domain object, or a parallel spec).", category: realization }
   exposes: { description: "Technical surface for a domain object/operation.", category: realization, inverse: exposed_by }
   operates_on: { description: "Process/endpoint manipulates a domain object.", category: realization }
   realizes: { description: "Realizes an enterprise capability/intent.", category: realization }
@@ -676,14 +700,38 @@ edge_types:
   breaches: { description: "Incident breaches an SLO.", category: governance }
   # traceability (spec-meta)
   references: { description: "Loose, untyped linkage.", category: traceability }
-  constrains: { description: "Imposes a constraint on the target.", category: traceability }
+  constrains: { description: "Imposes a constraint on the target.", category: traceability, inverse: constrained_by }
   supersedes: { description: "Replaces a prior artifact.", category: traceability, inverse: superseded_by }
   specifies: { description: "Object FR specifies a behavioral FR.", category: traceability }
-  satisfied_by: { description: "Stakeholder requirement satisfied by the target.", category: traceability }
+  satisfied_by: { description: "Stakeholder requirement satisfied by the target.", category: traceability, inverse: satisfies }
   traces_to: { description: "Traceability link (matrix/coverage).", category: traceability }
   verifies: { description: "Test/integration artifact verifies a requirement.", category: traceability }
   exercises: { description: "User story exercises a functional requirement.", category: traceability }
   peer: { description: "Lateral sibling linkage between peer specs/bundles.", category: traceability }
+  # ── FR-041 ecosystem vocabulary (2026-06-21): verbs the real corpus uses ──
+  # behavioral
+  delegates_to: { description: "Source delegates behaviour/handling to the target.", category: behavioral }
+  # dependency
+  uses: { description: "Source uses the target capability/module.", category: dependency, inverse: used_by }
+  imports: { description: "Source imports definitions/models from the target.", category: dependency }
+  blocks: { description: "Source blocks progress on or resolution of the target.", category: dependency, inverse: blocked_by }
+  # realization
+  projection_of: { description: "Source is a projection/view of the target.", category: realization, inverse: projected_by }
+  # governance (credential/lifecycle relations)
+  manages: { description: "Source manages the lifecycle of the target.", category: governance, inverse: managed_by }
+  issues: { description: "Source issues the target credential/token.", category: governance, inverse: issued_by }
+  revokes: { description: "Source revokes the target credential/grant.", category: governance, inverse: revoked_by }
+  rotates: { description: "Source rotates the target key/secret.", category: governance, inverse: rotated_by }
+  signs: { description: "Source signs the target artifact/token.", category: governance, inverse: signed_by }
+  advertises: { description: "Source advertises the target capability/endpoint.", category: governance, inverse: advertised_by }
+  # traceability (lineage / provenance / review)
+  derives_from: { description: "Source is derived/refined from the target (decomposition lineage).", category: traceability, inverse: derives_into }
+  migrated_from: { description: "Source was carried over from the target during a migration.", category: traceability }
+  generated_from: { description: "Source was generated from the target by a tool/source.", category: traceability }
+  reviews: { description: "A review assesses the target artifact.", category: traceability, inverse: reviewed_by }
+  relates_to: { description: "Loose associative link between decisions/records.", category: traceability }
+  found_in: { description: "A finding was identified in the target.", category: traceability }
+  covers: { description: "A test/matrix covers the target requirement.", category: traceability, inverse: covered_by }
 
 # ── Role registry (quire-rs FR-040) ──────────────────────────────────────
 # Capability tags object types opt into; cross-domain `allowed_links` target a
