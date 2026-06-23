@@ -16,7 +16,10 @@ relationships:
        Constraints (Contextual), Dependencies, Priority and Risk
        (Informative), Notes (Informative), Traceability.
      - State the need normatively (shall/must/require) — a `str-shall-language`
-       lint advisory checks this.
+       lint advisory checks this. The need SHOULD also follow EARS (advisory
+       grammar `iso-spec-core`, FR-042): one `shall`, a concrete response;
+       the subject may be the stakeholder or product (`The operator shall
+       …`), not only "the system". `quire validate` warns on violations.
      - Keep headings unique per level; nest ≤2 levels below the H1 title. -->
 # [StR-001] Operators need tamper-evident artifact imports
 
