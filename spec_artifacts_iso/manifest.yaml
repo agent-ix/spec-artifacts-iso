@@ -589,6 +589,37 @@ artifact_types:
           required: true
           assert:
             level: 2
+- name: Glossary
+  # FR-044: a project Ubiquitous-Language glossary. Its `## Terms` table
+  # (Term | Definition) is harvested by quire-rs and fed to the EARS
+  # object-aware vague-response check as accepted concrete terms.
+  grammar_ref: iso-spec-core
+  frontmatter_schema_ref: schemas/glossary-frontmatter.schema.json
+  defaults:
+    id_pattern: GLO-{next:03d}
+  allowed_links:
+  - references
+  - depends_on
+  examples: []
+  lint_rules_ref: []
+  body_extraction:
+    yield_pattern:
+      match:
+        terms:
+          from: section_body
+          after_heading: Terms
+          required: true
+          assert:
+            level: 2
+        terms_table:
+          from: table_row
+          under_section: Terms
+          required: true
+          assert:
+            columns:
+            - Term
+            - Definition
+            min_rows: 1
 doc_kinds:
 - spec
 object_types: []
