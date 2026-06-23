@@ -116,6 +116,13 @@
         "$ref": "#/$defs/RoleEntry"
       },
       "description": "CR-003 (FR-040): mergeable role registry \u2014 capability tag -> {description}."
+    },
+    "lexicon": {
+      "type": "object",
+      "additionalProperties": {
+        "$ref": "#/$defs/LexiconTermEntry"
+      },
+      "description": "FR-043: mergeable concrete-term lexicon \u2014 term -> {definition, optional category}. The EARS object-aware vague-response check (FR-042) consumes the merged keys as accepted concrete objects; the engine carries no hardcoded noun list."
     }
   },
   "$defs": {
@@ -541,6 +548,23 @@
       "additionalProperties": false,
       "properties": {
         "description": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    },
+    "LexiconTermEntry": {
+      "type": "object",
+      "required": [
+        "definition"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "definition": {
+          "type": "string",
+          "minLength": 1
+        },
+        "category": {
           "type": "string",
           "minLength": 1
         }
