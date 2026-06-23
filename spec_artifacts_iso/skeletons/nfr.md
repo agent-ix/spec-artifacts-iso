@@ -21,6 +21,11 @@ relationships:
        IS the NFR's acceptance-criteria equivalent; use the optional
        Acceptance Criteria section only for policy NFRs whose
        compliance checks don't reduce to metrics.
+     - The Statement SHOULD follow EARS (advisory grammar `iso-spec-core`,
+       FR-042): one `shall`, a named subject, a concrete response. NFRs are
+       typically ubiquitous or state-driven (`The system shall sustain …
+       while under load`); a trigger is not required and its absence is
+       never a defect. `quire validate` warns on violations (never blocks).
      - Keep headings unique per level; nest ≤2 levels below the H1 title
        (through H3). -->
 # [NFR-001] Import throughput under sustained load

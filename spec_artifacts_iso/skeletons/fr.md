@@ -38,6 +38,15 @@ relationships:
        (ADR 0007) — so they become real graph edges, not text. Cross-repo
        references use `ix://org/repo/name`. `quire fix` converts bare-id
        mentions into these relative-path links for you.
+     - Requirement statements (Description, Behavior, Constraints cells)
+       SHOULD follow EARS (advisory grammar `iso-spec-core`, FR-042): one
+       `shall` per statement, a named subject, and a concrete response —
+       avoid vague verbs (`support`/`handle`/`manage`/`process`/`provide`/
+       `enable`). When conditional, lead with a canonical trigger:
+       `When <event>, the <system> shall …` (event) / `While <state>, …`
+       (state) / `If <cond>, then the <system> shall …` (unwanted) /
+       `Where <feature>, …` (optional) — NOT `On startup, …`. `quire
+       validate` warns on violations; the warnings never block.
      - Keep headings unique per level; nest ≤2 levels below the H1 title
        (through H3). -->
 # [FR-001] Verify checksums on artifact import
