@@ -8,7 +8,7 @@ relationships:
   - target: "ix://agent-ix/spec-artifacts-iso/FR-002"
     type: "extends"
 ---
-# [FR-003] The master requirements spec is a validated archetype
+# FR-003: The master requirements spec is a validated archetype
 
 ## Description
 

@@ -8,7 +8,7 @@ relationships:
   - target: "ix://agent-ix/quire-rs/spec/functional/FR-032"
     type: "verifies"
 ---
-# [IT-003] Master requirements spec validates end-to-end
+# IT-003: Master requirements spec validates end-to-end
 
 ## Objective
 

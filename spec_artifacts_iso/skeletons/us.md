@@ -19,7 +19,7 @@ relationships:
      - A US carries discovery context, NOT normative requirements; nothing
        here is binding or verification criteria.
      - Keep headings unique per level; nest ≤2 levels below the H1 title. -->
-# [US-001] Import an artifact with integrity verification
+# US-001: Import an artifact with integrity verification
 
 ## Story
 
@@ -43,13 +43,13 @@ informs later requirements rather than specifying them.
 These examples clarify the operator's expectations. They are illustrative only —
 not test cases and not verification criteria.
 
-### [US-001-EX-1] Intact artifact is accepted
+### US-001-EX-1: Intact artifact is accepted
 
 - **Given** an artifact whose contents are unchanged since it was built
 - **When** the operator imports it
 - **Then** the import succeeds and the operator sees a confirmation
 
-### [US-001-EX-2] Corrupted artifact is surfaced
+### US-001-EX-2: Corrupted artifact is surfaced
 
 - **Given** an artifact whose bytes were altered in transit
 - **When** the operator imports it

@@ -10,7 +10,7 @@ relationships:
   - target: "ix://agent-ix/spec-artifacts-iso/FR-001"
     type: "extends"
 ---
-# [FR-002] Archetypes use the unified shape and validate authored markdown
+# FR-002: Archetypes use the unified shape and validate authored markdown
 
 ## Description
 

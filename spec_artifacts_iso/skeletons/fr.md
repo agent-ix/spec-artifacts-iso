@@ -49,7 +49,7 @@ relationships:
        validate` warns on violations; the warnings never block.
      - Keep headings unique per level; nest ≤2 levels below the H1 title
        (through H3). -->
-# [FR-001] Verify checksums on artifact import
+# FR-001: Verify checksums on artifact import
 
 ## Description
 

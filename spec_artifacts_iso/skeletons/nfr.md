@@ -28,7 +28,7 @@ relationships:
        never a defect. `quire validate` warns on violations (never blocks).
      - Keep headings unique per level; nest ≤2 levels below the H1 title
        (through H3). -->
-# [NFR-001] Import throughput under sustained load
+# NFR-001: Import throughput under sustained load
 
 ## Statement
 

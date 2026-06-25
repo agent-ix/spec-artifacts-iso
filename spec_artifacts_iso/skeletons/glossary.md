@@ -17,7 +17,7 @@ scope: order-management
        glossary intent); common industry terms ship in the module lexicons
        and need not be repeated here.
      - Keep headings unique per level. -->
-# [GLO-001] Order Management Glossary
+# GLO-001: Order Management Glossary
 
 ## Terms
 
