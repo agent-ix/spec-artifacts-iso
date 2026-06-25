@@ -13,7 +13,7 @@ relationships:
      - Keep it minimal — a test case is a single concrete check; richer
        orchestration belongs in an IT artifact.
      - Keep headings unique per level; nest ≤2 levels below the H1 title. -->
-# [TC-001] Reject artifact with mismatched digest
+# TC-001: Reject artifact with mismatched digest
 
 ## Description
 

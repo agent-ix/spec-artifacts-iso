@@ -21,7 +21,7 @@ relationships:
        the subject may be the stakeholder or product (`The operator shall
        …`), not only "the system". `quire validate` warns on violations.
      - Keep headings unique per level; nest ≤2 levels below the H1 title. -->
-# [StR-001] Operators need tamper-evident artifact imports
+# StR-001: Operators need tamper-evident artifact imports
 
 ## Stakeholder Need
 

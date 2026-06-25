@@ -16,7 +16,7 @@ relationships:
        IT-XXX-SC-NN tokens (the `it-success-criteria` lint advisory checks
        this); give each discrete action its own step.
      - Keep headings unique per level; nest ≤2 levels below the H1 title. -->
-# [IT-001] Checksum mismatch rejects the import
+# IT-001: Checksum mismatch rejects the import
 
 ## Objective
 

@@ -8,7 +8,7 @@ relationships:
   - target: "ix://agent-ix/quire-rs/spec/functional/FR-032"
     type: "verifies"
 ---
-# [IT-002] Direct-markdown validate + extract roundtrip
+# IT-002: Direct-markdown validate + extract roundtrip
 
 ## Objective
 

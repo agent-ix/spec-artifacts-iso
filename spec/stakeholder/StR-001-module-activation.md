@@ -3,7 +3,7 @@ id: StR-001
 title: "ISO-style spec artifact archetypes"
 type: StR
 ---
-# [StR-001] ISO-style spec artifact archetypes
+# StR-001: ISO-style spec artifact archetypes
 
 > **CR (render removal — 2026-06-04):** templates are removed; the per-archetype
 > **skeletons** are the authoring source of truth. The need is reframed from
