@@ -2,7 +2,7 @@
   "name": "@agent-ix/spec-artifacts-iso",
   "version": "0.0.0-managed",
   "description": "Filament Module: ISO-style spec artifacts (FR/NFR/StR/US/IT/TC/AC/CON) — unified-shape archetypes + authoring skeletons + frontmatter JSON Schemas + iso-spec-core grammar, validated by quire-rs (no render templates)",
-  "license": "MIT",
+  "license": "AGPL-3.0-or-later",
   "author": "Agent IX <agents@agent-ix.dev>",
   "keywords": [
     "agent-ix",
