@@ -1,0 +1,33 @@
+{
+  "name": "@agent-ix/spec-artifacts-iso",
+  "version": "0.0.0-managed",
+  "description": "Filament Module: ISO-style spec artifacts (FR/NFR/StR/US/IT/TC/AC/CON) — unified-shape archetypes + authoring skeletons + frontmatter JSON Schemas + iso-spec-core grammar, validated by quire-rs (no render templates)",
+  "license": "MIT",
+  "author": "Agent IX <agents@agent-ix.dev>",
+  "keywords": [
+    "agent-ix",
+    "filament",
+    "filament-module",
+    "quoin",
+    "quire",
+    "spec"
+  ],
+  "files": [
+    "manifest.yaml",
+    "schemas/",
+    "skeletons/",
+    "README.md",
+    "LICENSE"
+  ],
+  "scripts": {
+    "prepack": "node scripts/stage-npm.mjs"
+  },
+  "publishConfig": {
+    "registry": "https://registry.npmjs.org/",
+    "access": "public"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/agent-ix/spec-artifacts-iso.git"
+  }
+}
