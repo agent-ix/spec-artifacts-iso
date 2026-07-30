@@ -4,7 +4,7 @@ title: "Import throughput under sustained load"
 type: NFR
 quality_attribute: performance_efficiency
 relationships:
-  - target: "ix://agent-ix/example/FR-001"
+  - target: "ix://example-org/example/FR-001"
     type: "constrains"
 ---
 <!-- NFR authoring skeleton (spec-artifacts-iso). Fill every section with

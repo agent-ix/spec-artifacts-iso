@@ -3,7 +3,7 @@ id: StR-001
 title: "Operators need tamper-evident artifact imports"
 type: StR
 relationships:
-  - target: "ix://agent-ix/example/FR-001"
+  - target: "ix://example-org/example/FR-001"
     type: "satisfied_by"
 ---
 <!-- StR authoring skeleton (spec-artifacts-iso). ISO/IEC/IEEE 29148 stakeholder

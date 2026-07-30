@@ -1,7 +1,7 @@
 ---
 type: master-requirements
 name: example-service
-org: agent-ix
+org: example-org
 component_type: fastapi-service
 implementation_language: python
 tags:
@@ -10,7 +10,7 @@ depends_on: []
 standards_alignment:
   - iso-iec-ieee-29148
 relationships:
-  - target: "ix://agent-ix/identity/FR-001"
+  - target: "ix://example-org/identity/FR-001"
     type: "depends_on"
     cardinality: "1:1"
 security_critical: false

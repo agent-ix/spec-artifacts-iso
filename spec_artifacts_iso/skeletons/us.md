@@ -3,7 +3,7 @@ id: US-001
 title: "Import an artifact with integrity verification"
 type: US
 relationships:
-  - target: "ix://agent-ix/example/StR-001"
+  - target: "ix://example-org/example/StR-001"
     type: "traces_to"
 ---
 <!-- US authoring skeleton (spec-artifacts-iso). ISO/IEC/IEEE 29148 user story.

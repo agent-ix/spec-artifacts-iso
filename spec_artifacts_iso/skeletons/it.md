@@ -3,7 +3,7 @@ id: IT-001
 title: "Checksum mismatch rejects the import"
 type: IT
 relationships:
-  - target: "ix://agent-ix/example/FR-001"
+  - target: "ix://example-org/example/FR-001"
     type: "verifies"
 ---
 <!-- IT authoring skeleton (spec-artifacts-iso). ISO/IEC/IEEE 29119 integration

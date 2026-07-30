@@ -3,7 +3,7 @@ id: FR-001
 title: "Verify checksums on artifact import"
 type: FR
 relationships:
-  - target: "ix://agent-ix/example/US-001"
+  - target: "ix://example-org/example/US-001"
     type: "implements"
 ---
 <!-- FR authoring skeleton (spec-artifacts-iso). Fill every section with

@@ -3,7 +3,7 @@ id: TC-001
 title: "Reject artifact with mismatched digest"
 type: TC
 relationships:
-  - target: "ix://agent-ix/example/FR-001"
+  - target: "ix://example-org/example/FR-001"
     type: "verifies"
 ---
 <!-- TC authoring skeleton (spec-artifacts-iso). ISO/IEC/IEEE 29119 test case.
