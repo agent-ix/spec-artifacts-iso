@@ -30,14 +30,10 @@ mechanically rather than by review.
 
 ## Validation Criteria
 
-This need is considered satisfied when both of the following hold:
-
-- A Module activation against filament-core registers the contributions this
-  Module declares (its archetype, grammar, artifact types, and frontmatter
-  schemas).
-- Agent CLI authors (quire-cli) can author and validate artifacts using the
-  skeletons, the `body_extraction` asserts, and the frontmatter schemas this
-  Module ships, with no template render.
+| ID | Criteria | Validation |
+|----|----------|------------|
+| StR-001-VC-1 | A Module activation against filament-core registers the contributions this Module declares — its archetype, grammar, artifact types, and frontmatter schemas. | Demonstration |
+| StR-001-VC-2 | Agent CLI authors (quire-cli) can author and validate artifacts using the skeletons, the `body_extraction` asserts, and the frontmatter schemas this Module ships, with no template render. | Demonstration |
 
 ## Dependencies
 

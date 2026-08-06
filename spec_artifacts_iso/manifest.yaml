@@ -198,12 +198,36 @@ artifact_types:
           required: true
           assert:
             level: 2
+        # Optional by design: a *measurable* NFR's acceptance criteria are its
+        # `Metric | Target | Threshold | Method` rows above, and it omits this
+        # section entirely. This section is for a *policy* NFR whose compliance
+        # checks do not reduce to a number ("evidence artifacts live under the
+        # owning packet"). When present it takes the FR table shape, so the
+        # section is either absent or well-formed — never unstructured prose.
         acceptance_criteria:
           from: section_body
           after_heading: Acceptance Criteria
           required: false
           assert:
             level: 2
+            # `required: false` on the table below only means "no table, no
+            # finding" — on its own it would let a *present* AC section stay
+            # unstructured prose, which is exactly what this change removes.
+            # Requiring the header row in the section body is what makes the
+            # section either absent or well-formed.
+            matches: '(?m)^\s*\|\s*ID\s*\|\s*Criteria\s*\|\s*Verification\s*\|'
+        acceptance_criteria_table:
+          from: table_row
+          under_section: Acceptance Criteria
+          required: false
+          assert:
+            columns:
+            - ID
+            - Criteria
+            - Verification
+            min_rows: 1
+            id_column: ID
+            id_pattern: '^{id}-AC-\d+$'
         dependencies:
           from: section_body
           after_heading: Dependencies
@@ -251,6 +275,28 @@ artifact_types:
           required: true
           assert:
             level: 2
+        # Binding criteria are addressable rows, on every archetype that has
+        # them (FR, NFR, StR). The heading stays `Validation Criteria` and the
+        # column stays `Validation`: ISO/IEC/IEEE 29148 splits *validation*
+        # (evidence the requirements for a specific intended use are fulfilled
+        # — the reference is the stakeholder's real need) from *verification*
+        # (evidence the specified requirements are fulfilled — the reference is
+        # the spec). A Stakeholder Requirements Specification is validated; a
+        # System/Software Requirements Specification is verified. The table
+        # shape and the heading name are independent decisions, and only the
+        # shape is being unified.
+        validation_criteria_table:
+          from: table_row
+          under_section: Validation Criteria
+          required: true
+          assert:
+            columns:
+            - ID
+            - Criteria
+            - Validation
+            min_rows: 1
+            id_column: ID
+            id_pattern: '^{id}-VC-\d+$'
         stakeholders:
           from: section_body
           after_heading: Stakeholders
@@ -630,9 +676,24 @@ object_types: []
 lint_rules:
 - type: table_column_values
   id: ac-verification-method
-  archetypes: [FR]
+  archetypes: [FR, NFR]
   section: Acceptance Criteria
   column: Verification
+  allowed: [Inspection, Analysis, Demonstration, Test]
+  annotation_pattern: '\(TC-\d+(,\s*TC-\d+)*\)'
+  severity: warning
+# StR's sibling. ISO/IEC/IEEE 15288 and 29148 apply **one** method taxonomy to
+# both verification and validation — what differs is the reference you check
+# against, not the technique — so the vocabulary and annotation pattern are
+# reused unchanged and only the column name differs. Expect StR rows to skew to
+# `Demonstration`, since a stakeholder need is usually confirmed in an
+# operational context; `Test` stays legitimate (operational test and
+# evaluation) and is not excluded.
+- type: table_column_values
+  id: vc-validation-method
+  archetypes: [StR]
+  section: Validation Criteria
+  column: Validation
   allowed: [Inspection, Analysis, Demonstration, Test]
   annotation_pattern: '\(TC-\d+(,\s*TC-\d+)*\)'
   severity: warning

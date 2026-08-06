@@ -538,6 +538,80 @@ def test_it002_ac2_fr_mutations_fail() -> None:
     assert "duplicate-heading" in reasons(dup)
 
 
+def test_str_validation_criteria_table_is_binding() -> None:
+    """StR binding criteria are addressable rows under `## Validation Criteria`.
+
+    The heading and the `Validation` column are deliberately NOT renamed to the
+    FR spelling: ISO/IEC/IEEE 29148 validates a stakeholder requirement against
+    the stakeholder's real need and verifies a system requirement against the
+    spec. Only the table shape is unified (spec-artifacts-iso#9)."""
+    quire = _quire_doc_validator()
+    if quire is None:
+        pytest.skip("quire wheel lacks validate_document (FR-032)")
+    base = _skeleton_text("StR")
+    root = str(PKG_ROOT)
+
+    def reasons(doc: str) -> set[str]:
+        res = quire.validate_document("StR", root, doc)
+        assert not res["is_valid"], doc
+        return {e["reason"] for e in res["errors"]}
+
+    # a. the pre-change shape — a prose paragraph — no longer validates.
+    prose = re.sub(
+        r"\| ID \| Criteria \| Validation \|.*?(?=\n## )",
+        "This need is satisfied when the digest is checked at import.\n",
+        base,
+        flags=re.DOTALL,
+    )
+    assert "| ID | Criteria | Validation |" not in prose and prose != base
+    assert "missing" in reasons(prose)
+
+    # b. the FR column spelling is rejected — the naming split is enforced,
+    #    not merely documented.
+    assert "assert" in reasons(
+        base.replace(
+            "| ID | Criteria | Validation |", "| ID | Criteria | Verification |"
+        )
+    )
+
+    # c. the sub-id kind is `-VC-`, not `-AC-`.
+    assert "assert" in reasons(base.replace("StR-001-VC-1", "StR-001-AC-1"))
+
+
+def test_nfr_acceptance_criteria_is_absent_or_well_formed() -> None:
+    """NFR's AC section stays optional but takes the FR table shape when present.
+
+    A *measurable* NFR's criteria are its `Metric | Target | Threshold | Method`
+    rows and it omits the section; a *policy* NFR authors the table. What is no
+    longer accepted is a present-but-unstructured section — the case a bare
+    `required: false` on the table would have let through (spec-artifacts-iso#9)."""
+    quire = _quire_doc_validator()
+    if quire is None:
+        pytest.skip("quire wheel lacks validate_document (FR-032)")
+    base = _skeleton_text("NFR")
+    root = str(PKG_ROOT)
+
+    # a. omitting the section entirely is legitimate — the measurable case.
+    without = re.sub(r"## Acceptance Criteria.*?(?=\n## )", "", base, flags=re.DOTALL)
+    assert "## Acceptance Criteria" not in without and without != base
+    assert quire.validate_document("NFR", root, without)["is_valid"]
+
+    # b. present but unstructured is not.
+    prose = re.sub(
+        r"\| ID \| Criteria \| Verification \|.*?(?=\n## )",
+        "Optional prose about policy NFRs.\n",
+        base,
+        flags=re.DOTALL,
+    )
+    assert prose != base
+    res = quire.validate_document("NFR", root, prose)
+    assert not res["is_valid"]
+    assert "assert" in {e["reason"] for e in res["errors"]}
+
+    # c. present and well-formed is.
+    assert quire.validate_document("NFR", root, base)["is_valid"]
+
+
 @pytest.mark.parametrize("name", sorted(_SKELETON_FILE), ids=lambda n: n)
 def test_it002_ac3_extract_yields_record(name: str) -> None:
     """IT-002-AC-3: extract over the conformant skeleton yields a record whose
