@@ -12,6 +12,18 @@ relationships:
      - REQUIRED (level 2): Stakeholder Need (what the stakeholder needs, no
        solution), Rationale (why the need exists), Validation Criteria (how
        satisfaction is judged).
+     - Validation Criteria table headers MUST be exactly:
+       ID | Criteria | Validation with >=1 data row, ids `StR-NNN-VC-N`.
+       The column is `Validation`, not `Verification`: ISO/IEC/IEEE 29148
+       validates a stakeholder requirement against the stakeholder's real
+       need, and verifies a system requirement against the spec. The method
+       vocabulary is the same four
+       (Inspection | Analysis | Demonstration | Test, optionally annotated
+       `(TC-035)`) — a `vc-validation-method` lint advisory checks it — but
+       expect `Demonstration` to dominate, because a stakeholder need is
+       confirmed in an operational context rather than quantified over an
+       input domain. That is correct, not a quality failure, and downstream
+       property-test extraction should not treat it as one.
      - OPTIONAL (level 2): Stakeholders, Context and Assumptions, Stakeholder
        Constraints (Contextual), Dependencies, Priority and Risk
        (Informative), Notes (Informative), Traceability.
@@ -41,10 +53,10 @@ contains the blast radius and preserves confidence in the catalog.
 
 ## Validation Criteria
 
-This need is considered satisfied when an artifact whose declared digest does not
-match its bytes is rejected at import and never persisted, and when an artifact
-whose digest matches is accepted. Satisfaction is judged by demonstrating both
-outcomes against the import boundary with known-good and known-bad artifacts.
+| ID | Criteria | Validation |
+|----|----------|------------|
+| StR-001-VC-1 | An artifact whose declared digest does not match its bytes is rejected at import and never persisted. | Demonstration |
+| StR-001-VC-2 | An artifact whose declared digest matches its bytes is accepted and persisted. | Demonstration |
 
 ## Stakeholders
 

@@ -21,6 +21,11 @@ relationships:
        IS the NFR's acceptance-criteria equivalent; use the optional
        Acceptance Criteria section only for policy NFRs whose
        compliance checks don't reduce to metrics.
+     - When the optional Acceptance Criteria section IS present, its table
+       headers MUST be exactly ID | Criteria | Verification with >=1 data
+       row and ids `NFR-NNN-AC-N` — the same shape as FR, checked by the
+       same `ac-verification-method` lint advisory. Either omit the section
+       or author the table; unstructured prose is no longer accepted.
      - The Statement SHOULD follow EARS (advisory grammar `iso-spec-core`,
        FR-042): one `shall`, a named subject, a concrete response. NFRs are
        typically ubiquitous or state-driven (`The system shall sustain …
@@ -59,9 +64,17 @@ the measured throughput and p95 latency stay within threshold.
 
 ## Acceptance Criteria
 
-Optional — the Measurement table above is the acceptance-criteria equivalent for
-measurable NFRs. Use this section for policy NFRs whose compliance checks don't
-reduce to metrics (e.g. "evidence artifacts live under the owning packet").
+<!-- Optional. The Measurement table above IS the acceptance-criteria
+     equivalent for a *measurable* NFR — such an NFR omits this section
+     entirely. Use it only for a *policy* NFR whose compliance checks don't
+     reduce to a number (e.g. "evidence artifacts live under the owning
+     packet"). When present it takes the FR table shape below, so the section
+     is either absent or well-formed. Delete this section and the table if the
+     Measurement table already carries the criteria. -->
+
+| ID | Criteria | Verification |
+|----|----------|--------------|
+| NFR-001-AC-1 | Every benchmark evidence artifact is stored under the packet directory that owns the measurement it supports. | Inspection |
 
 ## Dependencies
 
