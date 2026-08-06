@@ -689,6 +689,20 @@ lint_rules:
 # `Demonstration`, since a stakeholder need is usually confirmed in an
 # operational context; `Test` stays legitimate (operational test and
 # evaluation) and is not excluded.
+# US drift. A user story carries `## Acceptance Examples (Illustrative)` and its
+# skeleton says outright that nothing in it is binding or verification criteria.
+# Repos that authored `## Acceptance Criteria` on a US invented a heading no
+# template offers, and downstream tooling read those cells as though they were
+# binding — which is how 69 improvised US cells reached the ecosystem
+# acceptance-criteria census. Advisory: the fix is either to move the content to
+# the illustrative section or, if it really is binding, to promote it to an FR.
+# Requires an engine with the `forbidden_section` rule type (quire-rs CR-020).
+- type: forbidden_section
+  id: us-acceptance-criteria-drift
+  archetypes: [US]
+  section: Acceptance Criteria
+  message: "a US carries `## Acceptance Examples (Illustrative)` — nothing on a user story is binding or verification criteria. Move this content there, or promote it to an FR if it is genuinely binding."
+  severity: warning
 - type: table_column_values
   id: vc-validation-method
   archetypes: [StR]
