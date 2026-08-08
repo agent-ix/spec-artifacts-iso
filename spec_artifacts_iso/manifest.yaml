@@ -33,6 +33,74 @@ grammars:
 grammar_severity:
   ac:vacuous-outcome: error
   ac:non-singular: error
+
+# FR-052 property-idiom registry (quire-rs FR-052, umbrella agent-ix/quire-rs#20).
+# phrase -> {definition, shape}. Merged first-wins OVER the engine built-in idioms
+# and applied AFTER the closed structural signals, so a declaration can only
+# sharpen a label to a higher-precedence shape. `extractable` is derived from the
+# structural shape alone (FR-052-CON-4), so nothing declared here can make a
+# criterion extractable, or remove one from extraction — the registry is a
+# booster, never a prerequisite.
+#
+# Deliberately small. quire-rs CR-014 retired `no-observable-outcome` because an
+# open verb set whose membership was *required* to earn a label reached ~13%
+# sampled precision; an aspirational phrase list here would recreate that shape.
+# Two rules were applied to every candidate:
+#
+#   1. attested — the phrase occurs in the authored corpus (`/home/peter/dev/*/spec`,
+#      counted by distinct file and repo, not by raw grep hit);
+#   2. sufficient alone — the phrase, on its own, is evidence of the shape. The
+#      matcher sees only the phrase, so a phrase that also names a subsystem is a
+#      mislabel generator. `encode/decode` (30 files / 8 repos) was DECLINED on
+#      this rule: nearly every occurrence is an API or seam name ("the encode/decode
+#      seam", "the complete encode/decode/score API"), not a property claim. So were
+#      `encoding/decoding`, `serialization/deserialization`, `read`/`write`,
+#      `save/load`, `monotonic` (usually "monotonic clock") and bare `deterministic`
+#      (excluded by FR-052 itself). `marshal`/`unmarshal` and `compress`/`inflate`
+#      are unattested in the corpus and are therefore not declared.
+#
+# What is NOT declared because the engine built-ins already close it: `round-trip`
+# / `round-trips` / `roundtrip` (both a composition signal and an identity
+# back-reference), `byte-identical`, `losslessly`.
+property_idioms:
+  # RoundTrip. `losslessly` is a built-in back-reference; the adjective is not, so
+  # "Pack then unpack of MSE indices is lossless for all bit widths 1-7" composes
+  # but carries no back-reference and falls through to Universal without this.
+  # 33 files / 10 repos.
+  lossless:
+    definition: "An operation asserted to preserve its input exactly, so composing it with its inverse recovers the original."
+    shape: round-trip
+  # 3 files / 1 repo (quire-rs FR-051). Names the composition outright; `then`
+  # supplies the built-in composition signal but no identity back-reference follows.
+  parse-then-serialize:
+    definition: "The composition of a parse with the serialization of its result, asserted against the original text."
+    shape: round-trip
+
+  # Idempotence. Four inflections of one lemma that names a shape in the closed
+  # enum outright. The built-in signal needs a repetition adverb (`twice`,
+  # `again`, `re-run`, ...) in the same clause as an equality verb; a criterion
+  # that simply says "re-activation is idempotent" carries neither.
+  # `idempotent` 253 files / 81 repos, `idempotency` 149 / 54,
+  # `idempotently` 49 / 31, `idempotence` 20 / 11.
+  idempotent:
+    definition: "Applying the operation a second time yields the result of the first."
+    shape: idempotence
+  idempotently:
+    definition: "Adverbial form of `idempotent`: the operation is performed such that a repeat application changes nothing."
+    shape: idempotence
+  idempotence:
+    definition: "The property that a repeat application of an operation yields the first result."
+    shape: idempotence
+  idempotency:
+    definition: "Nominal form of `idempotence`, the spelling used in service and API criteria."
+    shape: idempotence
+
+  # Ordering. The built-in ordering lexicon is a closed set that does not carry
+  # the term of art. 8 files / 6 repos, e.g. "Ranking is a total order - results
+  # with absent `stars`/`updatedAt` sort last".
+  total order:
+    definition: "Every pair of elements is comparable, so the ordering is complete and not merely partial."
+    shape: ordering
 artifact_types:
 - name: FR
   grammar_ref: iso-spec-core

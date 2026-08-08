@@ -10,6 +10,26 @@ relationships:
 
 ## Description
 
+> **CR-001 (property-idiom registry — 2026-08-07):** the manifest additionally
+> declares a **`property_idioms:`** registry (quire-rs
+> [FR-052](ix://agent-ix/quire-rs/spec/functional/FR-052), umbrella
+> agent-ix/quire-rs#20): phrase → `{definition, shape}`, merged first-wins over
+> the engine's built-in idioms. It is a **booster, never a prerequisite** —
+> quire-rs FR-052-CON-4 derives `extractable` from the closed structural signals
+> alone, so a declared phrase can only sharpen a criterion's *label* to a
+> higher-precedence shape and can never make a criterion extractable, nor remove
+> one from extraction. Nothing on that path emits a finding, so this declaration
+> cannot change any validation verdict. The registry is deliberately small and
+> every phrase is attested in the authored corpus; quire-rs CR-014 retired
+> `no-observable-outcome` because an open set whose membership was *required* to
+> earn a label reached ~13% sampled precision, and a speculative phrase list here
+> would recreate that shape. This is the first numbered CR in this repo; the two
+> earlier notes (FR-002, StR-001, "render removal") predate the sequence.
+> AC-1 already covers the addition: the bundled FR-035 schema fixture is
+> `additionalProperties: false`, so the new key is gated by that criterion and
+> the fixture gains a `property_idioms` property with a `PropertyIdiomEntry`
+> definition, exactly as `grammar_severity` and `lexicon` did before it.
+
 The system **SHALL** publish a Filament Module manifest (`spec_artifacts_iso/manifest.yaml`) that conforms to filament-core-service [FR-035](ix://agent-ix/filament-core-service/FR-035) v1.0.0 and activates idempotently against `POST /api/v1/modules/activate`.
 
 

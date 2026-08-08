@@ -138,6 +138,13 @@
         "pattern": "^[a-z0-9-]+:[a-z0-9-]+$"
       },
       "description": "FR-048: per-check grammar severity, `<grammar>:<check>` -> off|warning|error. Merged first-wins across modules and layered under a surface's --severity override. Promoting an `ac` check to `error` is gated by quire-rs FR-047-CON-1 (corpus baseline sweep + explicit user sign-off); the engine default remains `warning`."
+    },
+    "property_idioms": {
+      "type": "object",
+      "additionalProperties": {
+        "$ref": "#/$defs/PropertyIdiomEntry"
+      },
+      "description": "FR-052: mergeable property-idiom registry — phrase -> {definition, shape, optional category}. Merged first-wins across modules and layered over the engine's built-in idioms. The property classifier applies it after the closed structural signals, as a label booster only: no finding is emitted on that path and `extractable` never depends on a declaration (quire-rs FR-052-CON-4)."
     }
   },
   "$defs": {
@@ -578,6 +585,40 @@
         "definition": {
           "type": "string",
           "minLength": 1
+        },
+        "category": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    },
+    "PropertyIdiomEntry": {
+      "type": "object",
+      "description": "FR-052: one property-idiom registry entry. `shape` is the closed FR-052 property-shape enum in its kebab-case serialization.",
+      "required": [
+        "definition",
+        "shape"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "definition": {
+          "type": "string",
+          "minLength": 1
+        },
+        "shape": {
+          "type": "string",
+          "enum": [
+            "round-trip",
+            "idempotence",
+            "ordering",
+            "invariant",
+            "error-case",
+            "lifecycle",
+            "concurrency",
+            "universal",
+            "example",
+            "unclassified"
+          ]
         },
         "category": {
           "type": "string",
