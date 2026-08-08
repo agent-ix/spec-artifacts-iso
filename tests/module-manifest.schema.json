@@ -123,6 +123,21 @@
         "$ref": "#/$defs/LexiconTermEntry"
       },
       "description": "FR-043: mergeable concrete-term lexicon \u2014 term -> {definition, optional category}. The EARS object-aware vague-response check (FR-042) consumes the merged keys as accepted concrete objects; the engine carries no hardcoded noun list."
+    },
+    "grammar_severity": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "string",
+        "enum": [
+          "off",
+          "warning",
+          "error"
+        ]
+      },
+      "propertyNames": {
+        "pattern": "^[a-z0-9-]+:[a-z0-9-]+$"
+      },
+      "description": "FR-048: per-check grammar severity, `<grammar>:<check>` -> off|warning|error. Merged first-wins across modules and layered under a surface's --severity override. Promoting an `ac` check to `error` is gated by quire-rs FR-047-CON-1 (corpus baseline sweep + explicit user sign-off); the engine default remains `warning`."
     }
   },
   "$defs": {

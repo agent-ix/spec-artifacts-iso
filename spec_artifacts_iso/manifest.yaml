@@ -22,6 +22,17 @@ grammars:
   description: ISO-style requirements spec grammar
   doc_kinds:
   - spec
+
+# FR-048 per-check severity. Promotion of an `ac` check is gated by
+# quire-rs FR-047-CON-1: a corpus baseline sweep plus explicit user sign-off.
+# Both were done on 2026-08-07 — 4,448 docs / 192 repos / 11,045 cells, both
+# checks measured at 0 after the CR-024/025/026 checker fixes and the corpus
+# sweep that followed. The engine default stays `warning`
+# (quire-rs DEFAULT_SEVERITY, unchanged); this module declares the promotion,
+# which is the lever CON-2 sanctions.
+grammar_severity:
+  ac:vacuous-outcome: error
+  ac:non-singular: error
 artifact_types:
 - name: FR
   grammar_ref: iso-spec-core
