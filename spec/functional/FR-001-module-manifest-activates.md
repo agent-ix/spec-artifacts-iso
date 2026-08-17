@@ -10,6 +10,26 @@ relationships:
 
 ## Description
 
+> **CR-004 (obligation sources — 2026-08-17):** the fixture gains
+> `traceability.obligations[]` and its `ObligationSource` definition (quire-rs
+> FR-053). agent-ix/quoin#79.
+>
+> One shape decision is worth recording, because the schema deliberately says
+> *less* than the engine enforces. An obligation source resolves its minting
+> documents **exactly one of two ways** — `target:` inherits from a declared
+> trace target, or `archetype:` + `section:` + `id_format:` covers rows that
+> mint no id of their own — and declaring both, or neither, is a load-time
+> error. JSON Schema cannot express that exclusivity without `oneOf` branches
+> that would report a confusing union of failures on any malformed source, so
+> the definition permits both keys and quire-rs rejects the combination at
+> manifest parse, naming the offending source. The schema gates the *shape*; the
+> engine gates the *coherence*, which is the split FR-050's `validate` already
+> uses.
+>
+> Caught the same way CR-003 was: `spec-artifacts-process` declared the sources
+> and its suite failed on `Additional properties are not allowed ('obligations'
+> was unexpected)`.
+
 > **CR-003 (quire-rs v0.29.0 manifest keys — 2026-08-17):** the fixture gains
 > **`verification_catalog`** (quire-rs FR-054) and **`ambiguity_terms`**
 > (FR-056), with a `VerificationMethodEntry` definition beside the existing

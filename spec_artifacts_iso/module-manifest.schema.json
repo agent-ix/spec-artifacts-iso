@@ -831,6 +831,77 @@
         },
         "vocabularies": {
           "$ref": "#/$defs/ColumnVocabularies"
+        },
+        "obligations": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/ObligationSource"
+          },
+          "description": "FR-001 CR-004 (quire-rs FR-053): which rows state obligations — the quire↔quoin contract. An obligation is derived, never authored: choosing an acceptance criterion's verification method IS minting it. Empty means the module declares none, and every obligation surface is then empty rather than absent."
+        }
+      }
+    },
+    "ObligationSource": {
+      "type": "object",
+      "description": "FR-001 CR-004 (quire-rs FR-053): one kind of row that states an obligation. Minting documents resolve exactly one of two ways and declaring BOTH or NEITHER is a load-time error: `target` inherits archetype/section/id from a declared trace target, so an acceptance criterion is not declared twice; `archetype` + `section` + `id_format` covers a table whose rows mint no id of their own (the NFR Measurement and Evaluation table). The engine cannot express that exclusivity in JSON Schema, so it is enforced at manifest parse — this definition permits both keys and quire-rs rejects the combination.",
+      "required": [
+        "name",
+        "statement_column"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "type": "string",
+          "minLength": 1
+        },
+        "target": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Names a declared trace_target to inherit archetype, section and id column from. Mutually exclusive with `archetype`."
+        },
+        "archetype": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Archetype whose documents carry these rows. Mutually exclusive with `target`; requires `section` and `id_format`."
+        },
+        "section": {
+          "type": "string",
+          "minLength": 1
+        },
+        "id_format": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Template rendering an id for a row that has none: `{document}` is the owning document's id, `{row}` the 1-based ordinal. A template naming neither renders one id for every row, which quire-rs rejects."
+        },
+        "exclude": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "statement_column": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Column carrying the normative statement — the text that is hashed."
+        },
+        "method_column": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Column carrying the declared verification method. A trailing parenthetical annotation is dropped, so `Test (TC-707)` yields `Test` while FR-049 still reads the reference from the same cell."
+        },
+        "criticality_column": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Genuinely optional: the ISO acceptance-criteria contract is ID | Criteria | Verification and carries no priority column."
+        },
+        "parameters": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "string",
+            "minLength": 1
+          },
+          "description": "Result key -> source column. Carries a metric's target and threshold, a t-way strength, a mutation-score floor — travelling with the obligation instead of being re-parsed downstream."
         }
       }
     },

@@ -7,6 +7,12 @@ description: "Chronological log of structural changes to this bundle."
 
 ## History
 
+* **2026-08-17** — FR-001 CR-004: the fixture gains `traceability.obligations[]`
+  and its `ObligationSource` definition (quire-rs FR-053). The schema permits
+  both `target:` and `archetype:` and quire-rs rejects the combination at parse:
+  JSON Schema cannot express that exclusivity without `oneOf` branches that
+  report a confusing union of failures, so the schema gates the shape and the
+  engine gates the coherence. agent-ix/quoin#79.
 * **2026-08-17** — FR-001 CR-003: the fixture gains `verification_catalog`
   (quire-rs FR-054) and `ambiguity_terms` (FR-056), the two manifest keys
   v0.29.0 introduced. Found by CR-002 doing its job — `spec-artifacts-process`
