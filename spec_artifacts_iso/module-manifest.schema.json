@@ -145,6 +145,57 @@
         "$ref": "#/$defs/PropertyIdiomEntry"
       },
       "description": "FR-052: mergeable property-idiom registry — phrase -> {definition, shape, optional category}. Merged first-wins across modules and layered over the engine's built-in idioms. The property classifier applies it after the closed structural signals, as a label booster only: no finding is emitted on that path and `extractable` never depends on a declaration (quire-rs FR-052-CON-4)."
+    },
+    "observable_verbs": {
+      "type": "object",
+      "additionalProperties": {
+        "$ref": "#/$defs/VocabTermEntry"
+      },
+      "description": "FR-001 CR-002 (quire-rs FR-047, CR-014): mergeable observable-result verb registry — verb -> {definition, optional category}. Merged first-wins across modules and layered OVER the engine's built-in defaults, which stay at lowest precedence. The `ac` grammar's `unclassifiable` and `vacuous-outcome` checks consume the merged keys, so the vocabulary is module data (quire-rs ADR 0009)."
+    },
+    "vacuous_predicates": {
+      "type": "object",
+      "additionalProperties": {
+        "$ref": "#/$defs/VocabTermEntry"
+      },
+      "description": "FR-001 CR-002 (quire-rs FR-047, CR-014): mergeable vacuous-predicate registry — predicate -> {definition, optional category}. The closed half of the same judgement `observable_verbs` opens: a predicate declared here is one the `ac` grammar's `vacuous-outcome` check treats as asserting nothing checkable."
+    },
+    "nav": {
+      "type": "object",
+      "description": "FR-001 CR-002 (filament-core FR-039): optional navigation metadata driving the global menu's object-category entry for this module. Declared by five spec-objects-* modules and rejected by this fixture until now — copied verbatim from filament-core's own `module-manifest.schema.json` so the two do not re-drift.",
+      "additionalProperties": false,
+      "properties": {
+        "category": {
+          "type": "object",
+          "description": "Declares this module as an object category in the global menu. Its members are the manifest's object_types[].",
+          "required": [
+            "slug",
+            "label"
+          ],
+          "additionalProperties": false,
+          "properties": {
+            "slug": {
+              "type": "string",
+              "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$",
+              "description": "Kebab-case URL segment and category identifier (unique across active modules, enforced at activation)."
+            },
+            "label": {
+              "type": "string",
+              "minLength": 1
+            },
+            "icon": {
+              "type": "string"
+            },
+            "order": {
+              "type": "integer"
+            }
+          }
+        }
+      }
+    },
+    "traceability": {
+      "$ref": "#/$defs/TraceabilityModel",
+      "description": "FR-001 CR-002 (quire-rs FR-050/FR-051): the declarative traceability model — which archetypes mint trace ids, which columns reference them, the status vocabulary, the trace-tag grammar, and the column vocabularies a matrix contract and its coverage rollup must agree on. Absent means undeclared; malformed fails module load like any other manifest shape error."
     }
   },
   "$defs": {
@@ -318,6 +369,14 @@
             "minLength": 1
           }
         },
+        "optional_columns": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "description": "FR-001 CR-002 (quire-rs CR-023): the subset of `columns` a document MAY omit. Without it `columns` is an exact match, so a contract cannot ask for a column much of an existing corpus never authored without either failing every such document or forcing an invented value into it. The declared order still holds — the headers must be an ordered subsequence of `columns` containing every non-optional one."
+        },
         "min_rows": {
           "type": "integer",
           "minimum": 0
@@ -337,6 +396,31 @@
         "matches": {
           "type": "string",
           "minLength": 1
+        },
+        "choices": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "FR-001 CR-002 (quire-rs CR-010, FR-033-AC-11): allowed values the located SCALAR content must be one of. Legal on `section_body`/`heading`/`list_item`/`frontmatter_field`, illegal on `table_row`/`code_block` — the per-locator-kind rule is enforced by quire-rs load-time validation, not by this schema."
+        },
+        "column_choices": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "description": "FR-001 CR-002 (quire-rs CR-010, FR-033-AC-12): per-column allowed value sets for a table (header -> values); every data cell in that column must be one of them. `table_row` only."
+        },
+        "column_patterns": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "string",
+            "minLength": 1
+          },
+          "description": "FR-001 CR-002 (quire-rs CR-010, FR-033-AC-13): per-column regex for a table (header -> pattern, `{field}`-interpolated); every data cell in that column must match. `table_row` only."
         }
       }
     },
@@ -623,6 +707,314 @@
         "category": {
           "type": "string",
           "minLength": 1
+        }
+      }
+    },
+    "VocabTermEntry": {
+      "type": "object",
+      "description": "FR-001 CR-002: one `observable_verbs` / `vacuous_predicates` registry entry. The engine uses the map KEY (and its inflections); `definition` is documentation. Structurally identical to LexiconTermEntry, named separately because the three registries are merged and consumed independently.",
+      "required": [
+        "definition"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "definition": {
+          "type": "string",
+          "minLength": 1
+        },
+        "category": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    },
+    "SourceLanguage": {
+      "type": "string",
+      "description": "FR-001 CR-002 (quire-rs FR-051): the closed set of languages whose source symbols the extractor reads. `ts` is an accepted alias for `typescript`.",
+      "enum": [
+        "rust",
+        "python",
+        "typescript",
+        "ts"
+      ]
+    },
+    "TraceabilityModel": {
+      "type": "object",
+      "description": "FR-001 CR-002 (quire-rs FR-050/FR-051): the declared traceability model. Every field is optional at the YAML layer so a module can declare only the parts it needs (reference integrity without a status vocabulary, say), but what it does declare must be coherent — quire-rs `TraceabilityModel::validate` enforces the cross-field rules this schema cannot express.",
+      "additionalProperties": false,
+      "properties": {
+        "exclude": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "description": "quire-rs CR-060: model-level path globs holding NO traceable data. A document under one mints no trace ids, contributes no reference rows, and is not classified for criteria — so it scopes every declaration AND the CR-028 criteria walk, which has no declaration of its own to hang an exclusion on. It scopes traceability only: an excluded document is still schema- and grammar-checked. More load-bearing since CR-062, because archetype binding is what lets a fixture matrix mint phantom ids."
+        },
+        "trace_targets": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/TraceTarget"
+          }
+        },
+        "document_references": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/DocumentReference"
+          }
+        },
+        "status": {
+          "$ref": "#/$defs/StatusVocabulary"
+        },
+        "trace_tags": {
+          "$ref": "#/$defs/TraceTagGrammar"
+        },
+        "vocabularies": {
+          "$ref": "#/$defs/ColumnVocabularies"
+        }
+      }
+    },
+    "TraceTarget": {
+      "type": "object",
+      "description": "FR-001 CR-002 (quire-rs FR-050): one kind of trace id and the archetype whose documents mint it. Binding is by ARCHETYPE ONLY since quire-rs CR-062 — the `document:` path form is retired and a manifest still declaring it fails to load.",
+      "required": [
+        "name",
+        "archetype",
+        "section",
+        "id_column"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "type": "string",
+          "minLength": 1
+        },
+        "archetype": {
+          "type": "string",
+          "minLength": 1
+        },
+        "exclude": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "description": "quire-rs CR-038: scope-relative globs whose matching documents mint nothing for THIS target — a narrower statement than the model-level `exclude`."
+        },
+        "section": {
+          "type": "string",
+          "minLength": 1
+        },
+        "id_column": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    },
+    "DocumentReference": {
+      "type": "object",
+      "description": "FR-001 CR-002 (quire-rs FR-050): one kind of reference from a document cell to minted trace ids. `pattern` is a regex whose FIRST capture group is the referenced id, so both `Test (TC-707)` and a bare `TC-707` are module-declared shapes rather than engine knowledge. Archetype-bound only (CR-062).",
+      "required": [
+        "name",
+        "archetype",
+        "section",
+        "column",
+        "pattern",
+        "targets"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "type": "string",
+          "minLength": 1
+        },
+        "archetype": {
+          "type": "string",
+          "minLength": 1
+        },
+        "exclude": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "section": {
+          "type": "string",
+          "minLength": 1
+        },
+        "column": {
+          "type": "string",
+          "minLength": 1
+        },
+        "row_id_column": {
+          "type": "string",
+          "minLength": 1
+        },
+        "pattern": {
+          "type": "string",
+          "minLength": 1
+        },
+        "targets": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "expand_ranges": {
+          "type": "boolean",
+          "description": "quire-rs CR-015: expand a same-prefix range (`FR-001..FR-006`) into its concrete ids before extraction. Off unless declared — the engine gains no behaviour a module has not asked for."
+        },
+        "strip_annotations": {
+          "type": "boolean",
+          "description": "quire-rs CR-015: drop parenthetical spans before extraction, so `FR-022-AC-5 (superseded by FR-030)` contributes one reference rather than two. Off unless declared."
+        }
+      }
+    },
+    "StatusVocabulary": {
+      "type": "object",
+      "description": "FR-001 CR-002 (quire-rs FR-050): the status column and how its values class. A value in none of the four lists classes as Unknown.",
+      "required": [
+        "column"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "column": {
+          "type": "string",
+          "minLength": 1
+        },
+        "complete": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "pending": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "failed": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "retired": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "quire-rs CR-015: values marking a row withdrawn rather than outstanding."
+        }
+      }
+    },
+    "TraceTagGrammar": {
+      "type": "object",
+      "description": "FR-001 CR-002 (quire-rs FR-051): how source symbols carry trace ids.",
+      "additionalProperties": false,
+      "properties": {
+        "markers": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/TraceMarkerForm"
+          }
+        },
+        "legacy": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/TraceLegacyForm"
+          }
+        }
+      }
+    },
+    "TraceMarkerForm": {
+      "type": "object",
+      "description": "FR-001 CR-002 (quire-rs FR-051): one canonical marker form — a statically parseable construct attached to a test symbol (a pytest marker, a Rust attribute, a TS helper call). `pattern` matches the construct; capture group 1 is the id-bearing argument list.",
+      "required": [
+        "name",
+        "language",
+        "pattern"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "type": "string",
+          "minLength": 1
+        },
+        "language": {
+          "$ref": "#/$defs/SourceLanguage"
+        },
+        "pattern": {
+          "type": "string",
+          "minLength": 1
+        },
+        "template": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Authoring template, e.g. `#[trace(\"{ids}\")]`. Present only when the module wants mechanical rewrite suggestions from legacy forms — FR-051 emits one 'where the equivalent marker is derivable', and this is what makes it derivable."
+        }
+      }
+    },
+    "TraceLegacyForm": {
+      "type": "object",
+      "description": "FR-001 CR-002 (quire-rs FR-051): one legacy textual form — a bare id in a docstring, a `Trace:` line, a line-comment id, a trace-embedding test name.",
+      "required": [
+        "name",
+        "pattern"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "type": "string",
+          "minLength": 1
+        },
+        "language": {
+          "$ref": "#/$defs/SourceLanguage"
+        },
+        "pattern": {
+          "type": "string",
+          "minLength": 1
+        },
+        "id_format": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Template rebuilding the trace id from the captures, e.g. `TC-{1}` for a test name like `tc741_extracts`. Absent means capture group 1 already IS the id."
+        },
+        "rewrite_to": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Names the marker form a mechanical rewrite suggestion should target, when derivable."
+        }
+      }
+    },
+    "ColumnVocabularies": {
+      "type": "object",
+      "description": "FR-001 CR-002 (quire-rs CR-015): column vocabularies the module's matrix contract and the coverage rollup must agree on. Declaring them in the model makes it the single source, so a contract and its coverage computation cannot drift.",
+      "additionalProperties": false,
+      "properties": {
+        "test_type": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "description": "Values the test-type column admits. The module declares the WHOLE list; a consumer wanting the ecosystem core plus local additions declares both, exactly as `observable_verbs` layers over engine defaults."
+        },
+        "test_type_column": {
+          "type": "string",
+          "minLength": 1,
+          "description": "quire-rs CR-041: column carrying the test type on a reference row. Needed only when `no_source_symbol` is declared — the one rule that reads a row's type rather than its status."
+        },
+        "no_source_symbol": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "description": "quire-rs CR-041: test-type values whose verification method mints NO source symbol — an agent-behaviour eval, an inspection, a demonstration. A row verified that way can never carry a trace tag, so reporting it as a status lie asserts something its own declared method makes impossible."
         }
       }
     }

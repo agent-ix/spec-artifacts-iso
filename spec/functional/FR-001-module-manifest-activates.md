@@ -10,6 +10,50 @@ relationships:
 
 ## Description
 
+> **CR-002 (schema fixture refresh + single-source packaging — 2026-08-17):**
+> the bundled FR-035 fixture is refreshed to the shipped engine surface, and it
+> moves from `tests/` to **package data** at
+> `spec_artifacts_iso/module-manifest.schema.json`, reachable as
+> `spec_artifacts_iso.module_manifest_schema()`. agent-ix/spec-artifacts-iso#15.
+>
+> **Why it drifted.** AC-1 gates *this* manifest, and CR-001 established the
+> procedure — each new engine key gains a property + definition, "exactly as
+> `grammar_severity` and `lexicon` did". Three keys shipped without it:
+> `observable_verbs` and `vacuous_predicates` (quire-rs FR-047 / CR-014) and the
+> whole `traceability:` model (quire-rs FR-050 / FR-051), plus four
+> `LocatorAssert` keys — `optional_columns` (CR-023), `choices`,
+> `column_choices`, `column_patterns` (CR-010) — and `nav` (filament-core
+> FR-039), which five `spec-objects-*` modules declare and this fixture rejected.
+> A module using any of them failed the FR-035 schema while the engine accepted
+> it happily.
+>
+> **Why package data, not a copy per repo.** The contract is not this
+> repository's private fixture: every module repository's manifest is gated by
+> the same one. `spec-artifacts-process` shipped **no** copy, so its
+> `test_manifest_validates_against_fr035_schema` **skipped in silence** — the
+> process manifest's entire `traceability:` block and its CR-010/CR-023 assert
+> keys were validated by nothing but the Rust engine at load time. A copied
+> fixture plus a drift check would have added a second thing to keep in sync;
+> one importable source removes the failure mode instead of detecting it.
+>
+> **A skipped gate now fails.** Both escape hatches are deleted: `jsonschema` is
+> a hard dev dependency rather than an `ImportError` skip, and a missing schema
+> raises `FileNotFoundError` naming the packaging bug rather than returning
+> `None`. A gate that reports "passed" because it could not run is the defect
+> this CR exists to close.
+>
+> **[RAN]** the refreshed fixture over all eight ecosystem module manifests. Five
+> that previously failed on `nav` now pass. The remaining **13 findings in three
+> modules are real data corruption**, not fixture staleness:
+> `lexicon: {definition: a confidential value (key, password) kept out of code}`
+> is a YAML flow mapping whose unquoted scalar contains a comma, so it parses as
+> a truncated `definition` plus a garbage second key. `LexiconTermDef` is not
+> `deny_unknown_fields`, so the engine stored the truncation without complaint.
+> Filed as agent-ix/spec-objects-architecture#7 (8 terms),
+> agent-ix/spec-objects-operational#5 (3) and agent-ix/spec-objects-security#6
+> (2) rather than corrected here — lexicon vocabulary changes are
+> sweep-and-report.
+
 > **CR-001 (property-idiom registry — 2026-08-07):** the manifest additionally
 > declares a **`property_idioms:`** registry (quire-rs
 > [FR-052](ix://agent-ix/quire-rs/spec/functional/FR-052), umbrella

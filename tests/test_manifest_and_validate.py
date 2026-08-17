@@ -24,6 +24,9 @@ import re
 
 import pytest
 import yaml
+from jsonschema import Draft202012Validator
+
+from spec_artifacts_iso import module_manifest_schema
 
 PKG_ROOT = pathlib.Path(__file__).resolve().parent.parent / "spec_artifacts_iso"
 MANIFEST_PATH = PKG_ROOT / "manifest.yaml"
@@ -50,17 +53,15 @@ def test_manifest_loads() -> None:
 
 
 def test_manifest_validates_against_fr035_schema() -> None:
-    """Skip when jsonschema lacks draft 2020-12 support (CI uses check-jsonschema)."""
-    try:
-        from jsonschema import Draft202012Validator
-    except ImportError:
-        pytest.skip("jsonschema lib missing draft 2020-12 support")
-    schema_path = (
-        pathlib.Path(__file__).resolve().parent / "module-manifest.schema.json"
-    )
-    if not schema_path.exists():
-        pytest.skip("FR-035 schema not bundled with tests")
-    schema = json.loads(schema_path.read_text())
+    """FR-001-AC-1: the manifest validates against the FR-035 schema.
+
+    FR-001 CR-002: neither the missing-library nor the missing-schema branch
+    skips any more. A gate that reports "passed" because it could not run is
+    the failure mode this whole ticket exists to close — ``jsonschema`` is a
+    hard dev dependency and the schema is package data, so both absences are
+    now errors that say which one happened.
+    """
+    schema = module_manifest_schema()
     manifest = yaml.safe_load(MANIFEST_PATH.read_text())
     errors = list(Draft202012Validator(schema).iter_errors(manifest))
     assert not errors, [
@@ -71,16 +72,7 @@ def test_manifest_validates_against_fr035_schema() -> None:
 def test_fr002_schema_rejects_template_ref_on_artifact_type() -> None:
     """FR-002: the bundled FR-035 schema must REJECT ``template_ref`` on an
     ArtifactTypeEntry (render is gone; additionalProperties:false → error)."""
-    try:
-        from jsonschema import Draft202012Validator
-    except ImportError:
-        pytest.skip("jsonschema lib missing draft 2020-12 support")
-    schema_path = (
-        pathlib.Path(__file__).resolve().parent / "module-manifest.schema.json"
-    )
-    if not schema_path.exists():
-        pytest.skip("FR-035 schema not bundled with tests")
-    schema = json.loads(schema_path.read_text())
+    schema = module_manifest_schema()
     manifest = yaml.safe_load(MANIFEST_PATH.read_text())
     artifact_types = manifest.get("artifact_types") or []
     assert artifact_types, "manifest declares no artifact_types to mutate"

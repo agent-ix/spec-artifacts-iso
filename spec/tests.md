@@ -23,6 +23,7 @@ artifact archetypes plus `master-requirements`). Tests are 🚧 pending implemen
 
 | AC | Criteria | Method | Covering Test | Status |
 |----|----------|--------|---------------|--------|
+| FR-001-AC-1 | The manifest validates against the FR-035 JSON Schema | Schema | TC-SCHEMA-008 (`test_manifest_validates_against_fr035_schema`, over the packaged schema — FR-001 CR-002) | ✅ |
 | FR-002-AC-1 | Every registered artifact_type (the eight ISO + `master-requirements`) declares `body_extraction` with `assert`; none declare `template_ref`, `required_sections`, or `variants` | Schema | TC-SCHEMA-001 (manifest-shape sweep over all archetypes; template_ref absent) | 🚧 |
 | FR-002-AC-2 | Conformant authored `FR` passes `validate_document`; missing-section / wrong-AC-columns / non-contiguous-AC-id copies each fail with a line-numbered diagnostic | Integration | IT-002 (IT-002-AC-1, IT-002-AC-2) | 🚧 |
 | FR-002-AC-3 | Acceptance-Criteria id asserts use `{id}`; a row prefixed with a different artifact's id fails | Integration | IT-002 (IT-002-AC-2, AC-id mutation) | 🚧 |
@@ -56,13 +57,18 @@ artifact archetypes plus `master-requirements`). Tests are 🚧 pending implemen
 
 Every AC defined in `spec/functional/` and `spec/integration/` appears above.
 
+- FR-001: AC-1 covered and **passing** (FR-001 CR-002 added the row — the test
+  existed and the matrix did not list it). AC-2..4 are activation criteria
+  against a running filament-core and are verified by IT-001, not by this suite.
 - FR-002: AC-1..8 — all covered (AC-6/7/8 are the render-removal assert↔skeleton parity ACs, I1/I2/I3).
 - FR-003: AC-1..8 — all covered (master-requirements archetype: AC-1/AC-8 via the parametrized manifest+parity sweeps now including the `master-requirements` row; AC-2 via the frontmatter-schema-shape test; AC-3..7 via IT-003).
 - IT-002: AC-1..3 — all covered.
 - IT-003: AC-1..4 — all covered.
 
-**Coverage: 23 / 23 in-scope ACs covered (FR-002 AC-1..8 + FR-003 AC-1..8 + IT-002 AC-1..3 + IT-003 AC-1..4).**
-FR-001 / IT-001 are the pre-existing rows. New tests are 🚧 pending implementation.
+**Coverage: 24 / 24 in-scope ACs covered (FR-001 AC-1 + FR-002 AC-1..8 + FR-003 AC-1..8 + IT-002 AC-1..3 + IT-003 AC-1..4).**
+FR-001-AC-1 is ✅ — it is the one row here backed by a test that runs today. The
+rest are 🚧 pending implementation. IT-001 is the activation-against-filament-core
+row and is unchanged.
 
 > **Render removal (2026-06-04):** templates removed; **skeletons are the
 > authoring source of truth** (FR-002 CR; parity with quire-rs commit 500a3d3 +
