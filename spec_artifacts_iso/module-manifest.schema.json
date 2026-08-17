@@ -160,6 +160,20 @@
       },
       "description": "FR-001 CR-002 (quire-rs FR-047, CR-014): mergeable vacuous-predicate registry — predicate -> {definition, optional category}. The closed half of the same judgement `observable_verbs` opens: a predicate declared here is one the `ac` grammar's `vacuous-outcome` check treats as asserting nothing checkable."
     },
+    "verification_catalog": {
+      "type": "object",
+      "additionalProperties": {
+        "$ref": "#/$defs/VerificationMethodEntry"
+      },
+      "description": "FR-001 CR-003 (quire-rs FR-054): mergeable verification-method catalog — method id -> {name, class, definition, evidence kind, applicability, tooling}. Merged first-wins across modules; unlike the other vocabularies a re-declared id IS reported, because two modules disagreeing about what a method means is a collision an operator must see."
+    },
+    "ambiguity_terms": {
+      "type": "object",
+      "additionalProperties": {
+        "$ref": "#/$defs/VocabTermEntry"
+      },
+      "description": "FR-001 CR-003 (quire-rs FR-056): mergeable ambiguity lexicon for the requirement-quality lint pack — term -> {definition, optional category}. Merged first-wins and layered OVER the engine's built-in terms, so a module extends the lexicon rather than replacing it."
+    },
     "nav": {
       "type": "object",
       "description": "FR-001 CR-002 (filament-core FR-039): optional navigation metadata driving the global menu's object-category entry for this module. Declared by five spec-objects-* modules and rejected by this fixture until now — copied verbatim from filament-core's own `module-manifest.schema.json` so the two do not re-drift.",
@@ -707,6 +721,52 @@
         "category": {
           "type": "string",
           "minLength": 1
+        }
+      }
+    },
+    "VerificationMethodEntry": {
+      "type": "object",
+      "description": "FR-001 CR-003 (quire-rs FR-054): one verification-method catalog entry. `class` is a FREE STRING, not a closed IADT enum — this ecosystem classifies by ISO 29148, and an external user classifying by 29119-4 technique family or assurance level must be able to. `applicability` is opaque to the engine: it stores and surfaces the rules and interprets none of them, because deciding which requirement a rule matches is the advisor's judgement.",
+      "required": [
+        "name",
+        "class",
+        "definition"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "type": "string",
+          "minLength": 1
+        },
+        "class": {
+          "type": "string",
+          "minLength": 1
+        },
+        "definition": {
+          "type": "string",
+          "minLength": 1
+        },
+        "evidence_kind": {
+          "type": "string",
+          "minLength": 1,
+          "description": "The kind of artifact discharging this method produces. Method-class-shaped, never per-tool: the suite registry's own `tool` column carries the tool."
+        },
+        "applicability": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "description": "Rule name -> values that trigger advising this method. Rule names are the declaring module's own axes; the engine never interprets them."
+        },
+        "tooling": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Example tooling, as documentation. The engine names no tool."
         }
       }
     },

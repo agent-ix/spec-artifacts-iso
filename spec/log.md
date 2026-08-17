@@ -7,6 +7,12 @@ description: "Chronological log of structural changes to this bundle."
 
 ## History
 
+* **2026-08-17** — FR-001 CR-003: the fixture gains `verification_catalog`
+  (quire-rs FR-054) and `ambiguity_terms` (FR-056), the two manifest keys
+  v0.29.0 introduced. Found by CR-002 doing its job — `spec-artifacts-process`
+  declared the catalog and its suite failed on an unexpected top-level property,
+  where before CR-002 the check skipped in silence.
+  agent-ix/spec-artifacts-process#35.
 * **2026-06-15** — Adopted OKF-compatible bundle structure with directory indexes.
 * **2026-08-17** — FR-001 CR-002: the FR-035 schema fixture is refreshed to the
   shipped surface (`observable_verbs`, `vacuous_predicates`, `traceability`,
