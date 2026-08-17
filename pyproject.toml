@@ -9,6 +9,12 @@ version = "0.1.0"  # Placeholder, dynamically replaced
 description = "Filament Module: ISO-style spec artifacts (FR/NFR/StR/US/IT/TC/AC/CON) — unified-shape archetypes + authoring skeletons + frontmatter JSON Schemas + iso-spec-core grammar, validated by quire-rs (no render templates)"
 authors = ["Agent IX <agents@agent-ix.dev>"]
 packages = [{ include = "spec_artifacts_iso" }]
+include = [
+    { path = "spec_artifacts_iso/manifest.yaml", format = ["sdist", "wheel"] },
+    { path = "spec_artifacts_iso/module-manifest.schema.json", format = ["sdist", "wheel"] },
+    { path = "spec_artifacts_iso/schemas/**/*.json", format = ["sdist", "wheel"] },
+    { path = "spec_artifacts_iso/skeletons/**/*.md", format = ["sdist", "wheel"] },
+]
 
 [tool.poetry.dependencies]
 python = ">=3.13,<3.14"
@@ -16,6 +22,7 @@ python = ">=3.13,<3.14"
 
 [tool.poetry.group.dev.dependencies]
 black = "^26.1.0"
+jsonschema = "^4.25.0"
 poetry-dynamic-versioning = "^1.9.1"
 poethepoet = "^0.34.0"
 py-deps = "*"
