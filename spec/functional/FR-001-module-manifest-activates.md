@@ -10,6 +10,26 @@ relationships:
 
 ## Description
 
+> **CR-003 (quire-rs v0.29.0 manifest keys — 2026-08-17):** the fixture gains
+> **`verification_catalog`** (quire-rs FR-054) and **`ambiguity_terms`**
+> (FR-056), with a `VerificationMethodEntry` definition beside the existing
+> ones. agent-ix/spec-artifacts-process#35.
+>
+> **CR-002 caught this, which is the point.** `spec-artifacts-process` declared
+> the catalog and its own suite (`make test`) failed on
+> `Additional properties are not allowed ('verification_catalog' was
+> unexpected)` — a module key that the engine accepts and the FR-035 contract
+> had never heard of. Before CR-002 that check skipped in silence and the key
+> would have shipped ungated, exactly as `traceability` did.
+>
+> Two shape decisions are carried from the engine rather than invented here.
+> `class` is a **free string**, not a closed IADT enum: this ecosystem
+> classifies by ISO 29148, and an external user classifying by 29119-4
+> technique family must be able to (FR-054-CON-1). And `applicability` is an
+> open map of rule name to values, because the engine stores and surfaces the
+> rules and interprets none of them (FR-054-CON-2) — a schema that enumerated
+> the axes would close a set the engine deliberately left open.
+
 > **CR-002 (schema fixture refresh + single-source packaging — 2026-08-17):**
 > the bundled FR-035 fixture is refreshed to the shipped engine surface, and it
 > moves from `tests/` to **package data** at
