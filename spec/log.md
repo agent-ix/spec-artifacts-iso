@@ -7,6 +7,8 @@ description: "Chronological log of structural changes to this bundle."
 
 ## History
 
+* **2026-08-18** — FR-001 CR-005: the fixture gains `traceability.required_relations[]`, `traceability.acyclic_edges[]` and a `RequiredRelation` definition (quire-rs FR-058) — the upward half of traceability, where a hazard with no mitigating requirement is a risk nobody addressed. Stricter than its neighbours on purpose: an empty `edges` list reports every document of a kind, so the schema rejects it rather than letting a quiet declaration read as a corpus-wide defect. agent-ix/spec-objects-security#5.
+
 * **2026-08-17** — FR-001 CR-004: the fixture gains `traceability.obligations[]`
   and its `ObligationSource` definition (quire-rs FR-053). The schema permits
   both `target:` and `archetype:` and quire-rs rejects the combination at parse:
