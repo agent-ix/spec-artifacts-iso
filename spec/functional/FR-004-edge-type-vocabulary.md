@@ -98,10 +98,9 @@ same **kind** of fact. Before adding one:
 4. **Do not add a verb to make an existing document validate.** That is fitting the vocabulary to
    the corpus rather than describing the relationships the ecosystem means to have.
 
-## Known defect: four verbs compete for requirement lineage
+## Decided: `satisfied_by` owns stakeholder-requirement lineage
 
-Documented here rather than fixed, because this FR's scope is to describe the vocabulary and not to
-change it. **[RAN]** over 237 `~/dev` spec bundles, counting authored `relationships` entries:
+**[RAN]** over 237 `~/dev` spec bundles, counting authored `relationships` entries:
 
 | Verb | Edges | Declared category | Declared meaning |
 |---|---|---|---|
@@ -113,20 +112,27 @@ change it. **[RAN]** over 237 `~/dev` spec bundles, counting authored `relations
 | `exercises` | 25 | traceability | "User story exercises a functional requirement" |
 | `refines` | 2 | **undeclared** | — |
 
-Two problems, both of which a consumer of this vocabulary has to resolve before it can ask "does
-this requirement trace to a parent":
+**The decision (2026-08-18, kreneskyp):** `implements` keeps its declared meaning — an interface
+or contract being fulfilled — and is **not** overloaded for requirement lineage.
+**`satisfied_by` is the generic stakeholder-requirement-to-artifact relationship**, authorable
+from either end via its `satisfies` inverse.
 
-- **`implements` is the corpus's dominant upward verb and is not a traceability verb.** Its
-  declared category is `dependency` and its declared meaning is fulfilling an interface or
-  contract. 956 edges use it for requirement parentage, which the vocabulary spells `satisfies`
-  (38 edges). Either the corpus is wrong or the declared meaning is too narrow; this FR does not
-  decide which.
-- **`refines` is not in the vocabulary** and is used twice, so those two edges are
-  `UnknownEdgeType` findings.
+The two descriptions are tightened to say so, which is a clarification of existing entries rather
+than a change to the vocabulary: `implements` now states the exclusion explicitly, and
+`satisfied_by` states that it is the generic StR-to-artifact link rather than a narrow one.
 
-Resolving this is a prerequisite for quire-rs FR-058's declared upward-trace relations, which
-today accept `implements` and `refines` — one verb outside its documented meaning and one that
-does not exist.
+Two consequences, both **corpus debt** rather than vocabulary gaps:
+
+- **956 edges spell requirement lineage `implements`.** They are wrong under the decision above
+  and should be `satisfies` (or the stakeholder requirement's own `satisfied_by`). This is the
+  largest single migration the vocabulary implies and it is tracked separately — it is not fixed
+  here, and it is not a reason to soften either verb's meaning.
+- **`refines` is not in the vocabulary** and is authored twice, so those two edges are
+  `UnknownEdgeType` findings and should become `satisfies` or `derives_from` depending on what
+  their authors meant.
+
+quire-rs FR-058's upward-trace relations follow this decision: they accept `satisfies` and
+`satisfied_by`, not `implements`.
 
 ## Acceptance Criteria
 
@@ -142,10 +148,10 @@ does not exist.
 
 | ID | Constraint | Verification |
 |----|-----------|--------------|
-| FR-004-CON-1 | This requirement describes the vocabulary; it does not change it. Additions belong to the module that needs them (`spec-objects-security#5` owns the safety-chain verbs) and follow the criteria above. | Inspection |
+| FR-004-CON-1 | This requirement describes the vocabulary and may **clarify** an existing entry's description; it adds and removes no verb. Additions belong to the module that needs them (`spec-objects-security#5` owns the safety-chain verbs) and follow the criteria above. | Inspection |
 | FR-004-CON-2 | An unrecognised verb SHALL stay advisory. Making `UnknownEdgeType` fatal would make the vocabulary unmigratable — every rename would break every document using the old verb before any could be updated. | Inspection |
 
 ## Dependencies
 
 - **Upstream**: [StR-001](../stakeholder/StR-001-module-activation.md)
-- **Downstream**: quire-rs FR-040 (`allowed_links` normalization and `UnknownEdgeType`), quire-rs FR-041 (authorable inverse edges), quire-rs FR-058 (upward-trace relations, which cannot pick its verbs until the defect above is resolved), `spec-objects-*` link declarations
+- **Downstream**: quire-rs FR-040 (`allowed_links` normalization and `UnknownEdgeType`), quire-rs FR-041 (authorable inverse edges), quire-rs FR-058 (upward-trace relations, which take their verbs from the decision above), `spec-objects-*` link declarations
