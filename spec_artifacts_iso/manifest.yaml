@@ -853,7 +853,7 @@ edge_types:
   # dependency
   depends_on: { description: "Requires the target to exist/function.", category: dependency }
   requires: { description: "Security/configuration precondition.", category: dependency, inverse: required_by }
-  implements: { description: "Fulfils an interface/contract.", category: dependency, inverse: implemented_by }
+  implements: { description: "Fulfils an interface/contract. NOT requirement lineage: an artifact answering a stakeholder requirement uses `satisfies` (inverse `satisfied_by`).", category: dependency, inverse: implemented_by }
   extends: { description: "Extends an interface/extension point.", category: dependency }
   conforms_to: { description: "Conforms to an external contract.", category: dependency }
   persists: { description: "Repository persists an aggregate/entity.", category: dependency }
@@ -890,7 +890,7 @@ edge_types:
   constrains: { description: "Imposes a constraint on the target.", category: traceability, inverse: constrained_by }
   supersedes: { description: "Replaces a prior artifact.", category: traceability, inverse: superseded_by }
   specifies: { description: "Object FR specifies a behavioral FR.", category: traceability }
-  satisfied_by: { description: "Stakeholder requirement satisfied by the target.", category: traceability, inverse: satisfies }
+  satisfied_by: { description: "The generic stakeholder-requirement-to-artifact relationship: this StR is answered by the target. Authorable from either end — the artifact may declare `satisfies` instead.", category: traceability, inverse: satisfies }
   traces_to: { description: "Traceability link (matrix/coverage).", category: traceability }
   verifies: { description: "Test/integration artifact verifies a requirement.", category: traceability }
   exercises: { description: "User story exercises a functional requirement.", category: traceability }

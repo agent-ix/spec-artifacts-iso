@@ -38,6 +38,11 @@ artifact archetypes plus `master-requirements`). Tests are 🚧 pending implemen
 | FR-003-AC-4 | A master spec missing `component_type` (or empty) fails frontmatter validation naming the field | Integration | IT-003 (IT-003-AC-2) | 🚧 |
 | FR-003-AC-5 | A master spec whose `component_type` carries a space/inline comment fails the kebab pattern | Integration | IT-003 (IT-003-AC-2) | 🚧 |
 | FR-003-AC-6 | A master spec missing the H1 title or any required canonical section fails with a line-numbered diagnostic | Integration | IT-003 (IT-003-AC-3) | 🚧 |
+| FR-004-AC-1 | Every `edge_types` entry carries a non-empty `description` and a `category` from the seven declared categories | Schema | TC-SCHEMA-009 (`test_fr004_ac1_every_edge_type_has_a_description_and_known_category`, 76 verbs) | ✅ |
+| FR-004-AC-2 | Every `inverse` is a non-empty label, and the set of labels declared by more than one verb is exactly `{part_of: [aggregates, contains]}` — a new collision would silently change which forward verb it normalizes onto (FR-041-AC-3, first-wins) | Schema | TC-SCHEMA-010 (`test_fr004_ac2_shared_inverse_labels_are_the_recorded_set`) | ✅ |
+| FR-004-AC-3 | An inverse label is **not** required to be a declared verb — FR-041-AC-2 type-allows it regardless. 25 of the 26 distinct labels are derived-only; `contains` is the sole label that is also a forward verb | Schema | TC-SCHEMA-011 (`test_fr004_ac3_inverse_labels_need_not_be_declared_verbs`) | ✅ |
+| FR-004-AC-4 | Every `roles` entry carries a non-empty `description` | Schema | TC-SCHEMA-012 (`test_fr004_ac4_every_role_has_a_description`, 9 roles) | ✅ |
+| FR-004-AC-5 | The manifest validates under the module-manifest schema **with the vocabulary present**, so an edit dropping `edge_types` cannot pass a green schema run | Schema | TC-SCHEMA-013 (`test_fr004_ac5_vocabulary_validates_under_the_module_manifest_schema`) | ✅ |
 | FR-003-AC-7 | A master spec carrying optional sections (Domain Model, Security Model) and extra H2s still passes | Integration | IT-003 (IT-003-AC-4) | 🚧 |
 | FR-003-AC-8 | The `master-requirements` skeleton itself passes `validate_document` and satisfies the assert↔skeleton parity (FR-002-AC-6/7/8) | Schema + Integration | TC-SCHEMA-003/004/005 (parity sweeps, master-requirements row) + IT-003 (IT-003-AC-1) | 🚧 |
 

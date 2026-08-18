@@ -617,6 +617,129 @@ def test_it002_ac3_extract_yields_record(name: str) -> None:
     assert out["extraction"], out
 
 
+# ── FR-004: the edge-type and role vocabulary ────────────────────────────────
+#
+# The vocabulary is load-bearing module data — quire-rs FR-040 reads it to
+# normalize `allowed_links`, FR-041 reads its inverses, and every
+# `spec-objects-*` module writes its declarations in it — and until FR-004 no
+# document in this repo described it. These tests are the contract.
+
+_EDGE_CATEGORIES = {
+    "structural",
+    "behavioral",
+    "dataflow",
+    "dependency",
+    "realization",
+    "governance",
+    "traceability",
+}
+
+
+def _edge_types() -> dict:
+    manifest = yaml.safe_load(MANIFEST_PATH.read_text())
+    return manifest.get("edge_types") or {}
+
+
+def _roles() -> dict:
+    manifest = yaml.safe_load(MANIFEST_PATH.read_text())
+    return manifest.get("roles") or {}
+
+
+def test_fr004_ac1_every_edge_type_has_a_description_and_known_category() -> None:
+    """TC-SCHEMA-009 (FR-004-AC-1).
+
+    A verb with no description is a verb nobody can use correctly, and a
+    category outside the declared seven is a typo that would silently create an
+    eighth.
+    """
+    edges = _edge_types()
+    assert edges, "the module declares an edge vocabulary"
+    for verb, entry in edges.items():
+        assert isinstance(entry, dict), f"{verb}: entry is a mapping"
+        description = entry.get("description", "")
+        assert description.strip(), f"{verb}: has a non-empty description"
+        category = entry.get("category")
+        assert category in _EDGE_CATEGORIES, (
+            f"{verb}: category {category!r} is not one of the seven declared "
+            f"categories {sorted(_EDGE_CATEGORIES)}"
+        )
+
+
+def test_fr004_ac2_shared_inverse_labels_are_the_recorded_set() -> None:
+    """TC-SCHEMA-010 (FR-004-AC-2).
+
+    An inverse label declared by two forward verbs resolves first-wins with a
+    diagnostic (quire-rs FR-041-AC-3), so which verb it normalizes onto depends
+    on declaration order. That is designed. What is *not* designed is a new
+    collision appearing silently and changing an existing normalization, so the
+    current set is pinned here.
+    """
+    edges = _edge_types()
+    by_label: dict[str, list[str]] = {}
+    for verb, entry in edges.items():
+        inverse = entry.get("inverse")
+        if inverse is None:
+            continue
+        assert (
+            isinstance(inverse, str) and inverse.strip()
+        ), f"{verb}: inverse is a non-empty label"
+        by_label.setdefault(inverse, []).append(verb)
+
+    shared = {label: sorted(v) for label, v in by_label.items() if len(v) > 1}
+    assert shared == {"part_of": ["aggregates", "contains"]}, (
+        "a new shared inverse label changes which forward verb it normalizes "
+        f"onto, first-wins and silently: {shared}"
+    )
+
+
+def test_fr004_ac3_inverse_labels_need_not_be_declared_verbs() -> None:
+    """TC-SCHEMA-011 (FR-004-AC-3).
+
+    Deliberately the opposite of the invariant it is tempting to assert.
+    quire-rs FR-041-AC-2 type-allows an edge whose verb is a declared inverse
+    label "even when the label is absent from ``edge_types``" — so requiring
+    every inverse to be independently declared would double the vocabulary with
+    entries no author ever writes.
+
+    The ratio is pinned rather than the rule inverted: a drift toward declaring
+    inverses as verbs is a real change of approach and should be deliberate.
+    """
+    edges = _edge_types()
+    inverses = {e["inverse"] for e in edges.values() if e.get("inverse")}
+    also_forward = sorted(inverses & set(edges))
+    derived_only = sorted(inverses - set(edges))
+
+    assert also_forward == ["contains"], (
+        "labels that are also forward verbs (forward registration governs, "
+        f"FR-041-AC-3): {also_forward}"
+    )
+    assert (
+        len(derived_only) == 25
+    ), f"derived-only inverse labels: {len(derived_only)} — {derived_only}"
+
+
+def test_fr004_ac4_every_role_has_a_description() -> None:
+    """TC-SCHEMA-012 (FR-004-AC-4)."""
+    roles = _roles()
+    assert roles, "the module declares a role registry"
+    for role, entry in roles.items():
+        assert isinstance(entry, dict), f"{role}: entry is a mapping"
+        assert entry.get("description", "").strip(), f"{role}: has a description"
+
+
+def test_fr004_ac5_vocabulary_validates_under_the_module_manifest_schema() -> None:
+    """TC-SCHEMA-013 (FR-004-AC-5).
+
+    The FR-035 gate covers the whole manifest; this asserts the vocabulary is
+    *present* when it passes, so a future edit that drops `edge_types` entirely
+    cannot slip through a green schema run.
+    """
+    manifest = yaml.safe_load(MANIFEST_PATH.read_text())
+    Draft202012Validator(module_manifest_schema()).validate(manifest)
+    assert manifest.get("edge_types"), "edge_types survives schema validation"
+    assert manifest.get("roles"), "roles survives schema validation"
+
+
 def _relation(**over: object) -> dict:
     """A well-formed RequiredRelation, overridable field by field."""
     base = {
