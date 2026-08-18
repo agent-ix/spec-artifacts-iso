@@ -108,21 +108,21 @@
       "additionalProperties": {
         "$ref": "#/$defs/EdgeTypeEntry"
       },
-      "description": "CR-003 (FR-040): mergeable edge-type registry \u2014 verb -> {description, category, inverse?}."
+      "description": "CR-003 (FR-040): mergeable edge-type registry — verb -> {description, category, inverse?}."
     },
     "roles": {
       "type": "object",
       "additionalProperties": {
         "$ref": "#/$defs/RoleEntry"
       },
-      "description": "CR-003 (FR-040): mergeable role registry \u2014 capability tag -> {description}."
+      "description": "CR-003 (FR-040): mergeable role registry — capability tag -> {description}."
     },
     "lexicon": {
       "type": "object",
       "additionalProperties": {
         "$ref": "#/$defs/LexiconTermEntry"
       },
-      "description": "FR-043: mergeable concrete-term lexicon \u2014 term -> {definition, optional category}. The EARS object-aware vague-response check (FR-042) consumes the merged keys as accepted concrete objects; the engine carries no hardcoded noun list."
+      "description": "FR-043: mergeable concrete-term lexicon — term -> {definition, optional category}. The EARS object-aware vague-response check (FR-042) consumes the merged keys as accepted concrete objects; the engine carries no hardcoded noun list."
     },
     "grammar_severity": {
       "type": "object",
@@ -259,7 +259,7 @@
     },
     "ArtifactTypeEntry": {
       "type": "object",
-      "description": "Unified archetype contract (FR-035 CR-002). template_ref, required_sections, and variants are REMOVED and REJECTED (additionalProperties:false \u2192 422) \u2014 render is gone. Structural completeness is expressed via body_extraction asserts.",
+      "description": "Unified archetype contract (FR-035 CR-002). template_ref, required_sections, and variants are REMOVED and REJECTED (additionalProperties:false → 422) — render is gone. Structural completeness is expressed via body_extraction asserts.",
       "required": [
         "name",
         "grammar_ref",
@@ -838,6 +838,21 @@
             "$ref": "#/$defs/ObligationSource"
           },
           "description": "FR-001 CR-004 (quire-rs FR-053): which rows state obligations — the quire↔quoin contract. An obligation is derived, never authored: choosing an acceptance criterion's verification method IS minting it. Empty means the module declares none, and every obligation surface is then empty rather than absent."
+        },
+        "required_relations": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/RequiredRelation"
+          },
+          "description": "FR-001 CR-005 (quire-rs FR-058): edges every document of a kind MUST have — the upward half of traceability. Downward coverage answers 'is what we wrote verified'; this answers 'is anything missing', which nothing operating over existing spec text can, because a requirement nobody wrote leaves no trace to follow. Empty means the module declares none and the check is a no-op."
+        },
+        "acyclic_edges": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "description": "FR-001 CR-005 (quire-rs FR-058): edge verbs that MUST NOT form a cycle. A requirement that transitively refines itself states nothing, and no per-document check can see it because the defect is a property of the graph. A blank verb would match no edge and cover nothing while reading as declared, so the empty string is rejected here rather than at runtime."
         }
       }
     },
@@ -1146,6 +1161,70 @@
             "minLength": 1
           },
           "description": "quire-rs CR-041: test-type values whose verification method mints NO source symbol — an agent-behaviour eval, an inspection, a demonstration. A row verified that way can never carry a trace tag, so reporting it as a status lie asserts something its own declared method makes impossible."
+        }
+      }
+    },
+    "RequiredRelation": {
+      "type": "object",
+      "description": "FR-001 CR-005 (quire-rs FR-058): one required relation. `direction: incoming` and `direction: outgoing` are the same declaration read in opposite directions, so this is one definition with a direction rather than two. As with ObligationSource, the schema gates the SHAPE and quire-rs gates the COHERENCE — but note this definition is deliberately stricter than the others, because a required relation's failure modes are quiet rather than loud: an empty `edges` accepts no verb, so nothing satisfies the relation and EVERY `from` document is reported, which reads as a corpus-wide defect rather than as the empty declaration it is. `minItems: 1` catches that in the manifest, and quire-rs `TraceabilityModel::validate` catches it again at load (FR-058-AC-10).",
+      "required": [
+        "name",
+        "from",
+        "edges",
+        "direction",
+        "check"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Declaration name, reported in the finding. Must be unique within the model — two entries sharing a name make a finding that cannot be traced back to the declaration that produced it."
+        },
+        "from": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Archetype whose documents carry the obligation to have this edge."
+        },
+        "edges": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "description": "Accepted edge verbs; ANY one satisfies the relation, so a module accepting either of two spellings says so here rather than declaring the relation twice. At least one is required: none would mean no link could ever satisfy it."
+        },
+        "to": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "description": "Accepted archetypes at the other end. ABSENT OR EMPTY MEANS ANY document in the bundle — the honest reading of a module that constrains the verb but not the target — so this is one of the few places where empty and unset carry meaning rather than being a defect."
+        },
+        "direction": {
+          "type": "string",
+          "enum": [
+            "outgoing",
+            "incoming",
+            "either"
+          ],
+          "description": "Which way the edge must point from the `from` document. `either` exists because a link between two documents is authored from whichever end the author was writing, and two one-way relations would not express it: they are two independent obligations, so a document satisfying one would still be reported by the other."
+        },
+        "check": {
+          "type": "string",
+          "minLength": 1,
+          "pattern": "^[^\\s:]+$",
+          "description": "The `<check>` half of the `trace:<check>` severity key (quire-rs FR-057), so each relation is tuned independently. A colon would make the key ambiguous and whitespace breaks the `--severity <grammar>:<check>=<level>` entry, so a token containing either is rejected: the relation would run at a severity no flag and no module override could ever name."
+        },
+        "exclude": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "description": "Scope-relative globs whose matching documents are exempt from this relation — the same opt-out TraceTarget has (quire-rs CR-038)."
         }
       }
     }

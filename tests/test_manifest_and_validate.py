@@ -24,7 +24,7 @@ import re
 
 import pytest
 import yaml
-from jsonschema import Draft202012Validator
+from jsonschema import Draft202012Validator, ValidationError
 
 from spec_artifacts_iso import module_manifest_schema
 
@@ -615,3 +615,112 @@ def test_it002_ac3_extract_yields_record(name: str) -> None:
     text = _skeleton_text(name)
     out = quire.extract(name, str(PKG_ROOT), text)
     assert out["extraction"], out
+
+
+def _relation(**over: object) -> dict:
+    """A well-formed RequiredRelation, overridable field by field."""
+    base = {
+        "name": "hazard-has-mitigation",
+        "from": "hazard",
+        "edges": ["mitigates"],
+        "to": ["FR"],
+        "direction": "incoming",
+        "check": "unmitigated-hazard",
+    }
+    base.update(over)
+    return base
+
+
+def _with_traceability(model: dict) -> dict:
+    """The smallest manifest this schema accepts, carrying `model`."""
+    return {
+        "manifest_version": "1.0.0",
+        "name": "probe",
+        "version": "0.1.0",
+        "traceability": model,
+    }
+
+
+def test_tc_schema_014_required_relations_is_accepted() -> None:
+    """FR-001 CR-005 (TC-SCHEMA-014): a well-formed `required_relations` and
+    `acyclic_edges` declaration validates.
+
+    Assumptions: the shipped schema is the one quire-rs FR-058 reads against.
+    Criteria: the exact shape `spec-objects-security#5` needs to declare —
+    an incoming `mitigates` obligation on `hazard` — is accepted. Before
+    CR-005 this failed with ``Additional properties are not allowed
+    ('required_relations' was unexpected)``, which is what blocked the module
+    from declaring bidirectional hazard coverage at all.
+    """
+    Draft202012Validator(module_manifest_schema()).validate(
+        _with_traceability(
+            {"required_relations": [_relation()], "acyclic_edges": ["arises_from"]}
+        )
+    )
+
+
+@pytest.mark.parametrize(
+    ("label", "relation"),
+    [
+        ("no accepted verb", _relation(edges=[])),
+        ("colon in check token", _relation(check="trace:orphan")),
+        ("whitespace in check token", _relation(check="orphan fr")),
+        ("empty check token", _relation(check="")),
+        ("unknown direction", _relation(direction="sideways")),
+        ("empty from", _relation(**{"from": ""})),
+        ("unknown key", {**_relation(), "severity": "error"}),
+        ("missing check", {k: v for k, v in _relation().items() if k != "check"}),
+    ],
+    ids=lambda v: v if isinstance(v, str) else "",
+)
+def test_tc_schema_015_unexecutable_relations_are_rejected(
+    label: str, relation: dict
+) -> None:
+    """FR-001 CR-005 (TC-SCHEMA-015): a declaration that cannot be executed is
+    rejected by the schema, not discovered as a corpus-wide false alarm.
+
+    Assumptions: `check` becomes the `<check>` half of a `trace:<check>`
+    severity key (quire-rs FR-057).
+    Criteria: each shape above fails validation. The first is the one that
+    motivates the strictness — `edges: []` accepts no verb, so nothing can
+    satisfy the relation and EVERY `hazard` document is reported. That is not
+    a silent no-op, it is a loud wrong answer, and it looks exactly like a
+    corpus-wide defect.
+    """
+    validator = Draft202012Validator(module_manifest_schema())
+    with pytest.raises(ValidationError):
+        validator.validate(_with_traceability({"required_relations": [relation]}))
+
+
+def test_tc_schema_016_empty_to_means_any_target() -> None:
+    """FR-001 CR-005 (TC-SCHEMA-016): `to` is the one field where empty carries
+    meaning rather than being a defect.
+
+    Assumptions: quire-rs reads an empty/absent `to` as "any document in the
+    bundle".
+    Criteria: both the empty list and the absent key validate, so a module
+    constraining the verb but not the target can say so. A blank *entry*
+    inside the list is still rejected — that is a typo, not a position.
+    """
+    validator = Draft202012Validator(module_manifest_schema())
+    validator.validate(_with_traceability({"required_relations": [_relation(to=[])]}))
+    without = {k: v for k, v in _relation().items() if k != "to"}
+    validator.validate(_with_traceability({"required_relations": [without]}))
+    with pytest.raises(ValidationError):
+        validator.validate(
+            _with_traceability({"required_relations": [_relation(to=[""])]})
+        )
+
+
+def test_tc_schema_017_blank_acyclic_verb_is_rejected() -> None:
+    """FR-001 CR-005 (TC-SCHEMA-017): a blank verb in `acyclic_edges` is rejected.
+
+    Assumptions: the cycle check walks the graph of edges matching each verb.
+    Criteria: the empty string fails. It would match no edge, so the check
+    would cover nothing while the declaration read as present — the same
+    quiet-wrong-answer failure mode `edges: []` has.
+    """
+    validator = Draft202012Validator(module_manifest_schema())
+    validator.validate(_with_traceability({"acyclic_edges": ["derives_from"]}))
+    with pytest.raises(ValidationError):
+        validator.validate(_with_traceability({"acyclic_edges": [""]}))

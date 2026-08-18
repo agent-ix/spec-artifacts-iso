@@ -10,6 +10,38 @@ relationships:
 
 ## Description
 
+> **CR-005 (required relations — 2026-08-18):** the fixture gains
+> `traceability.required_relations[]`, `traceability.acyclic_edges[]` and a
+> `RequiredRelation` definition (quire-rs FR-058). agent-ix/spec-objects-security#5.
+>
+> This is the **upward** half of traceability. Downward coverage answers *is what we
+> wrote verified*; nothing answered *is anything missing*, and nothing operating over
+> the existing spec text can, because a requirement nobody wrote leaves no trace to
+> follow. Reading the edge set in the other direction does: a hazard with no mitigating
+> requirement is a risk nobody addressed.
+>
+> **This definition is deliberately stricter than its neighbours,** which is a departure
+> from the CR-004 split (schema gates the shape, engine gates the coherence) and worth
+> the words. A required relation's failure modes are *quiet*: `edges: []` accepts no
+> verb, so nothing satisfies the relation and **every** `from` document is reported —
+> on a real repository, hundreds of findings against correctly-linked documents, which
+> reads as a corpus-wide defect rather than as the empty declaration it is. So the
+> schema carries `minItems: 1` on `edges`, an `enum` on `direction`, and
+> `^[^\s:]+$` on `check` (a colon makes the `trace:<check>` severity key ambiguous;
+> whitespace breaks the `--severity <grammar>:<check>=<level>` entry, either way leaving
+> a relation whose severity nothing can name). quire-rs enforces the same rules again at
+> load (FR-058-AC-10, CR-074) — the manifest is not the only way a model is built, so
+> both gates are needed rather than one.
+>
+> `to: []` is the one field where empty carries meaning rather than being a defect: it
+> reads as "any document in the bundle", the honest position of a module constraining
+> the verb but not the target.
+>
+> Found the same way CR-003 and CR-004 were — by a module trying to declare the key and
+> failing: `Additional properties are not allowed ('required_relations' was unexpected)`.
+> Four pre-existing `\u2014` escapes were normalised to literal em-dashes to match the
+> other 24 in the file.
+
 > **CR-004 (obligation sources — 2026-08-17):** the fixture gains
 > `traceability.obligations[]` and its `ObligationSource` definition (quire-rs
 > FR-053). agent-ix/quoin#79.
