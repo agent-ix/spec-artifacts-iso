@@ -7,7 +7,8 @@ description: "Chronological log of structural changes to this bundle."
 
 ## History
 
-* **2026-08-18** — **CR-005**: new **FR-004** documents the `edge_types` and `roles` vocabulary (agent-ix/spec-artifacts-iso#16). 76 edge verbs across 7 categories, 27 inverse declarations and 9 capability roles were load-bearing module data that no document in this repository described — quire-rs FR-040 normalizes `allowed_links` against it, FR-041 reads its inverses, and every `spec-objects-*` module writes its link declarations in it. `spec-objects-security#5` is about to extend it with safety-chain verbs, and extending an unspecified vocabulary is how drift starts.
+* **2026-08-18** — FR-001 CR-005: the fixture gains `traceability.required_relations[]`, `traceability.acyclic_edges[]` and a `RequiredRelation` definition (quire-rs FR-058) — the upward half of traceability, where a hazard with no mitigating requirement is a risk nobody addressed. Stricter than its neighbours on purpose: an empty `edges` list reports every document of a kind, so the schema rejects it rather than letting a quiet declaration read as a corpus-wide defect. agent-ix/spec-objects-security#5.
+* **2026-08-18** — **CR-006**: new **FR-004** documents the `edge_types` and `roles` vocabulary (agent-ix/spec-artifacts-iso#16). 76 edge verbs across 7 categories, 27 inverse declarations and 9 capability roles were load-bearing module data that no document in this repository described — quire-rs FR-040 normalizes `allowed_links` against it, FR-041 reads its inverses, and every `spec-objects-*` module writes its link declarations in it. `spec-objects-security#5` is about to extend it with safety-chain verbs, and extending an unspecified vocabulary is how drift starts.
 
   The FR states what a category means, what an inverse is, how vocabularies merge across modules (first-wins by verb name), why an unrecognised verb stays **advisory** — a corpus that refuses to load on an unknown verb cannot be migrated onto a new one — and the criteria for adding a verb, of which the load-bearing one is: **do not add a verb to make an existing document validate.**
 
@@ -18,6 +19,8 @@ description: "Chronological log of structural changes to this bundle."
   **[RAN]** the finding the FR records rather than fixes, over 237 `~/dev` spec bundles: **four verbs compete for requirement lineage.** `implements` carries 956 authored edges and is categorised `dependency` with the declared meaning "fulfils an interface/contract" — it is not a traceability verb, yet it is the corpus's dominant spelling of requirement parentage. The vocabulary spells that `satisfies` (38 edges), which is itself only an inverse label rather than a forward verb. `traces_to` (368) is declared for matrix/coverage, `derives_from` (131) for decomposition lineage, `exercises` (25) for US→FR. And **`refines` is not in the vocabulary at all**, yet is authored twice — two `UnknownEdgeType` findings.
 
   Either the corpus is wrong or `implements`'s declared meaning is too narrow. FR-004 does not decide it, because deciding it changes the vocabulary and this FR's scope is to describe it. But it blocks quire-rs FR-058, whose upward-trace relations today accept `implements` and `refines` — one verb used outside its documented meaning, and one that does not exist. Matrix: TC-SCHEMA-009..013.
+
+  Renumbered from CR-005 to CR-006 on merge: `FR-001 CR-005` (the `required_relations` schema keys) landed on `main` first and a published change id is not reused.
 
 * **2026-08-17** — FR-001 CR-004: the fixture gains `traceability.obligations[]`
   and its `ObligationSource` definition (quire-rs FR-053). The schema permits
