@@ -853,6 +853,13 @@
             "minLength": 1
           },
           "description": "FR-001 CR-005 (quire-rs FR-058): edge verbs that MUST NOT form a cycle. A requirement that transitively refines itself states nothing, and no per-document check can see it because the defect is a property of the graph. A blank verb would match no edge and cover nothing while reading as declared, so the empty string is rejected here rather than at runtime."
+        },
+        "vocabulary_coverage": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/VocabularyCoverage"
+          },
+          "description": "FR-001 CR-007 (quire-rs FR-059): declared vocabularies whose values documents are expected to claim. A bundle can be 100% acceptance-criterion covered and still carry no requirement anywhere for reliability or security — every document individually fine, the SET wrong. Empty means the module declares none and the check is a no-op."
         }
       }
     },
@@ -1225,6 +1232,53 @@
             "minLength": 1
           },
           "description": "Scope-relative globs whose matching documents are exempt from this relation — the same opt-out TraceTarget has (quire-rs CR-038)."
+        }
+      }
+    },
+    "VocabularyCoverage": {
+      "type": "object",
+      "description": "FR-001 CR-007 (quire-rs FR-059): one vocabulary and the projection onto it. NOTE WHAT IS ABSENT: there is no `values` key. The vocabulary is READ from the frontmatter schema of the archetype named by `from`, at the `enum` declared for `field`. Restating the values here would mint a second list free to drift from the first, which is the defect quire-rs CR-015 closed — and quire-rs#162 was filed against a scope that proposed exactly that.",
+      "required": [
+        "name",
+        "from",
+        "field",
+        "check"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Declaration name, reported in the finding. Unique within the model."
+        },
+        "from": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Archetype whose documents claim values, and whose frontmatter schema declares the vocabulary."
+        },
+        "field": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Frontmatter field carrying the claim. Its `enum` in `from`'s frontmatter schema IS the vocabulary. A field the schema gives no enum makes the check unable to report anything, which quire-rs reports against the declaration rather than passing silently (FR-059-AC-7)."
+        },
+        "check": {
+          "type": "string",
+          "minLength": 1,
+          "pattern": "^[^\\s:]+$",
+          "description": "The `<check>` half of the `trace:<check>` severity key (quire-rs FR-057). A colon makes the key ambiguous and whitespace breaks the `--severity` entry, either way leaving a check whose severity nothing can name."
+        },
+        "justified_absence_field": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Frontmatter field on ANY document in the bundle listing values deliberately not applicable. A value named there is COVERED, not unowned: 'this is a CLI that controls no physical process, so it has no safety characteristic' is an answer, and a check that cannot accept one forces either a permanent false finding or a fabricated requirement written to silence it. Deliberately not restricted to `from`'s archetype — the statement is about the product, so requiring it on an NFR would mean authoring an NFR to say an NFR is unnecessary."
+        },
+        "exclude": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "description": "Scope-relative globs whose matching documents neither claim nor justify."
         }
       }
     }

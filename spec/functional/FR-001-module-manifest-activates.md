@@ -10,6 +10,33 @@ relationships:
 
 ## Description
 
+> **CR-007 (vocabulary coverage — 2026-08-18):** the fixture gains
+> `traceability.vocabulary_coverage[]` and a `VocabularyCoverage` definition
+> (quire-rs FR-059). agent-ix/quire-rs#162.
+>
+> **What is absent from the definition is the point: there is no `values` key.**
+> The vocabulary is read from the frontmatter schema of the archetype named by
+> `from`, at the `enum` declared for `field`. The 25010 quality-characteristic
+> list already lives in this repository's own
+> `schemas/nfr-frontmatter.schema.json` and has twelve values; #162 was filed
+> against a scope that proposed walking a hardcoded nine-item list. A second
+> list in a manifest would be free to drift from the schema that already
+> declares it, which is the defect quire-rs CR-015 closed.
+>
+> `additionalProperties: false` makes that enforceable rather than advisory: a
+> module that writes `values:` is **rejected**, not quietly ignored. A schema
+> that merely ignored the key would let an author believe they had declared
+> something.
+>
+> `justified_absence_field` is the other decision worth recording. A value a
+> bundle deliberately does not address is **covered**, not unowned — "this is a
+> CLI that controls no physical process, so it has no safety characteristic" is
+> an answer, and a check that cannot accept one forces either a permanent false
+> finding or a fabricated requirement written to silence it. The field is read
+> on **any** document in the bundle rather than only on the projected archetype,
+> because the statement is about the product: requiring it on an NFR would mean
+> authoring an NFR to say an NFR is unnecessary.
+
 > **CR-005 (required relations — 2026-08-18):** the fixture gains
 > `traceability.required_relations[]`, `traceability.acyclic_edges[]` and a
 > `RequiredRelation` definition (quire-rs FR-058). agent-ix/spec-objects-security#5.

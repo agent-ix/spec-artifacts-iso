@@ -847,3 +847,91 @@ def test_tc_schema_017_blank_acyclic_verb_is_rejected() -> None:
     validator.validate(_with_traceability({"acyclic_edges": ["derives_from"]}))
     with pytest.raises(ValidationError):
         validator.validate(_with_traceability({"acyclic_edges": [""]}))
+
+
+def _coverage(**over: object) -> dict:
+    """A well-formed VocabularyCoverage, overridable field by field."""
+    base = {
+        "name": "quality-characteristics",
+        "from": "NFR",
+        "field": "quality_attribute",
+        "check": "unowned-quality-characteristic",
+    }
+    base.update(over)
+    return base
+
+
+def test_tc_schema_018_vocabulary_coverage_is_accepted() -> None:
+    """FR-001 CR-007 (TC-SCHEMA-018): a well-formed declaration validates.
+
+    Assumptions: quire-rs FR-059 reads this shape.
+    Criteria: the exact declaration the 25010 characteristic check needs is
+    accepted, including the optional justified-absence field.
+    """
+    validator = Draft202012Validator(module_manifest_schema())
+    validator.validate(_with_traceability({"vocabulary_coverage": [_coverage()]}))
+    validator.validate(
+        _with_traceability(
+            {
+                "vocabulary_coverage": [
+                    _coverage(
+                        justified_absence_field="quality_attributes_not_applicable"
+                    )
+                ]
+            }
+        )
+    )
+
+
+def test_tc_schema_019_the_schema_declares_no_values_key() -> None:
+    """FR-001 CR-007 (TC-SCHEMA-019): the vocabulary cannot be restated here.
+
+    Assumptions: the vocabulary is read from the projected archetype's own
+    frontmatter-schema ``enum`` (quire-rs FR-059-AC-2).
+    Criteria: ``VocabularyCoverage`` has no ``values`` property and rejects
+    one. This is the whole point of the design — quire-rs#162 was filed
+    against a scope proposing a hardcoded list, and a second list in the
+    manifest would be free to drift from the schema that already declares it
+    (the defect quire-rs CR-015 closed). A schema that merely *ignored*
+    ``values`` would let a module write one and silently have it mean nothing.
+    """
+    schema = module_manifest_schema()
+    definition = schema["$defs"]["VocabularyCoverage"]
+    assert "values" not in definition["properties"]
+    assert definition["additionalProperties"] is False
+
+    with pytest.raises(ValidationError):
+        Draft202012Validator(schema).validate(
+            _with_traceability(
+                {"vocabulary_coverage": [_coverage(values=["reliability", "security"])]}
+            )
+        )
+
+
+@pytest.mark.parametrize(
+    ("label", "coverage"),
+    [
+        ("colon in check token", _coverage(check="trace:unowned")),
+        ("whitespace in check token", _coverage(check="unowned characteristic")),
+        ("empty field", _coverage(field="")),
+        ("empty from", _coverage(**{"from": ""})),
+        ("missing check", {k: v for k, v in _coverage().items() if k != "check"}),
+        ("missing field", {k: v for k, v in _coverage().items() if k != "field"}),
+    ],
+    ids=lambda v: v if isinstance(v, str) else "",
+)
+def test_tc_schema_020_malformed_coverage_is_rejected(
+    label: str, coverage: dict
+) -> None:
+    """FR-001 CR-007 (TC-SCHEMA-020): a declaration that cannot run is rejected.
+
+    Assumptions: ``check`` becomes the ``<check>`` half of a ``trace:<check>``
+    severity key.
+    Criteria: each shape fails. A check token carrying a colon or whitespace
+    leaves a check whose severity no ``--severity`` flag and no module override
+    can ever name.
+    """
+    with pytest.raises(ValidationError):
+        Draft202012Validator(module_manifest_schema()).validate(
+            _with_traceability({"vocabulary_coverage": [coverage]})
+        )
