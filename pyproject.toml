@@ -21,6 +21,19 @@ python = ">=3.13,<3.14"
 
 
 [tool.poetry.group.dev.dependencies]
+# The engine these tests validate against, declared rather than ambient.
+#
+# A 0.14.0 wheel was sitting in the venv that NO file in this repo mentioned:
+# absent from pyproject, absent from poetry.lock, invisible to `poetry show`,
+# and therefore never updated. The IT-002 checks stand down on a stale wheel by
+# design, so the whole suite reported green while 21 assertions quietly did
+# nothing — and on a fresh clone it would have behaved differently again.
+#
+# Dev-only on purpose. This module is DATA; quire reads it. A runtime
+# dependency would invert that and couple every module release to an engine
+# release. As a test dependency it states which engine the assertions were
+# actually made against, which is the thing that was missing.
+quire = {version = "^0.33.0", source = "internal-pypi"}
 black = "^26.1.0"
 jsonschema = "^4.25.0"
 poetry-dynamic-versioning = "^1.9.1"

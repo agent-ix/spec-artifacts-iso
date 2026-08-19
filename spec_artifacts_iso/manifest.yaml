@@ -933,3 +933,27 @@ roles:
   configurable: { description: "A target driven by configuration." }
   business-intent: { description: "An enterprise capability/function/value-stream the system realizes." }
   sensitive: { description: "Carries secret or otherwise sensitive material." }
+
+# FR-059 (quire-rs v0.33.0): which declared vocabulary values does no document
+# claim. Declared HERE because this module owns both halves — the `NFR`
+# archetype and the `quality_attribute` enum in its frontmatter schema — so the
+# vocabulary is read from the schema beside it and nothing is restated.
+#
+# A bundle can be 100% acceptance-criterion covered and still carry no
+# requirement anywhere for reliability, security or maintainability. Every
+# document is individually well-formed; what is wrong is the SET, and no
+# per-document check can see that.
+traceability:
+  vocabulary_coverage:
+  - name: quality-characteristics
+    from: NFR
+    field: quality_attribute
+    # A value a bundle deliberately does not address is COVERED, not unowned.
+    # "This is a CLI that controls no physical process, so it has no safety
+    # characteristic" is an answer, and a check that cannot accept one forces
+    # either a permanent false finding or a fabricated requirement written to
+    # silence it. Read on ANY document, because the statement is about the
+    # product: requiring it on an NFR would mean authoring an NFR to say an NFR
+    # is unnecessary.
+    justified_absence_field: quality_attributes_not_applicable
+    check: unowned-quality-characteristic
