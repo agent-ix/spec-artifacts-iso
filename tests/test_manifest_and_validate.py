@@ -1032,3 +1032,81 @@ def test_tc_schema_023_malformed_combinatorial_is_rejected(
                 {"obligations": [_obligation_source(combinatorial=combinatorial)]}
             )
         )
+
+
+def _marker(**over: object) -> dict:
+    base: dict = {
+        "name": "rust-implements-attr",
+        "language": "rust",
+        "pattern": r'#\[implements\("([^"]+)"\)\]',
+    }
+    base.update(over)
+    return base
+
+
+def test_tc_schema_024_implements_marker_forms_are_accepted() -> None:
+    """FR-001 CR-009 (TC-SCHEMA-024): a well-formed declaration validates.
+
+    Assumptions: quire-rs FR-062 reads this shape.
+    Criteria: `trace_tags.implements` takes the same `TraceMarkerForm` shape as
+    `markers`, with and without the optional `template`.
+    """
+    validator = Draft202012Validator(module_manifest_schema())
+    validator.validate(_with_traceability({"trace_tags": {"implements": [_marker()]}}))
+    validator.validate(
+        _with_traceability(
+            {
+                "trace_tags": {
+                    "markers": [_marker(name="rust-trace-attr")],
+                    "implements": [_marker(template='#[implements("{ids}")]')],
+                }
+            }
+        )
+    )
+
+
+def test_tc_schema_025_implements_is_a_separate_list() -> None:
+    """FR-001 CR-009 (TC-SCHEMA-025): scope and evidence cannot be one list.
+
+    Assumptions: quire-rs CR-061 stopped `verifies` binding production symbols
+    because a doc comment citing a criterion would otherwise count as evidence.
+    Criteria: `implements` is its own key, not a flag on a `markers` entry. A
+    module cannot express the relation by decorating a `markers` entry —
+    `TraceMarkerForm` is `additionalProperties: false`, so the discriminator
+    that would put one typo between scope and evidence is rejected outright.
+    """
+    schema = module_manifest_schema()
+    grammar = schema["$defs"]["TraceTagGrammar"]
+    assert "implements" in grammar["properties"]
+    assert grammar["additionalProperties"] is False
+
+    with pytest.raises(ValidationError):
+        Draft202012Validator(schema).validate(
+            _with_traceability({"trace_tags": {"markers": [_marker(implements=True)]}})
+        )
+
+
+@pytest.mark.parametrize(
+    ("label", "marker"),
+    [
+        ("missing name", {k: v for k, v in _marker().items() if k != "name"}),
+        ("missing pattern", {k: v for k, v in _marker().items() if k != "pattern"}),
+        ("missing language", {k: v for k, v in _marker().items() if k != "language"}),
+        ("unknown language", _marker(language="cobol")),
+        ("unknown key", _marker(kind="production")),
+    ],
+    ids=lambda v: v if isinstance(v, str) else "",
+)
+def test_tc_schema_026_malformed_implements_marker_is_rejected(
+    label: str, marker: dict
+) -> None:
+    """FR-001 CR-009 (TC-SCHEMA-026): a malformed form fails at load.
+
+    Criteria: the same rejections `markers` gets, because it is the same
+    definition. An unknown key matters most — a marker that reads correctly and
+    binds nothing is the shape this program keeps finding.
+    """
+    with pytest.raises(ValidationError):
+        Draft202012Validator(module_manifest_schema()).validate(
+            _with_traceability({"trace_tags": {"implements": [marker]}})
+        )
