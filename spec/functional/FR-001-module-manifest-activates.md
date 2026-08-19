@@ -10,6 +10,31 @@ relationships:
 
 ## Description
 
+> **CR-008 (combinatorial obligations — 2026-08-19):** the fixture gains
+> `ObligationSource.combinatorial` and a `CombinatorialColumns` definition
+> (quire-rs FR-061). agent-ix/quire-rs#163.
+>
+> **This is a new source *kind*, not a new mechanism.** The statement hash, the
+> suspect link and the `parameters` carriage are the ones FR-053 already
+> defines; what differs is **arity**. A t-way obligation is a statement about
+> the interaction of every row in a configuration-dimensions table, so no
+> single row can carry it and the source mints one obligation for the table.
+>
+> `strength` is rejected at `0` here rather than at runtime: a 0-way obligation
+> demands nothing, and accepting it would let a module declare a check that
+> reads as present and covers nothing.
+>
+> `excludes_column` is optional because a configuration space may genuinely
+> have none — but a module omitting it on a space that *has* them mints
+> obligations over combinations that cannot exist, and the coverage target
+> becomes permanently unreachable. That is the fastest way to get a coverage
+> number ignored, so the field's description says so.
+>
+> Filed because the engine half shipped in Wave D with **no module able to
+> declare it**: `additionalProperties: false` on `ObligationSource` rejected the
+> key, so quire-rs FR-061 and quoin FR-035 could never fire. Third instance of
+> the engine-before-module ordering gap in this program.
+>
 > **CR-007 (vocabulary coverage — 2026-08-18):** the fixture gains
 > `traceability.vocabulary_coverage[]` and a `VocabularyCoverage` definition
 > (quire-rs FR-059). agent-ix/quire-rs#162.

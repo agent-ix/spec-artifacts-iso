@@ -935,3 +935,100 @@ def test_tc_schema_020_malformed_coverage_is_rejected(
         Draft202012Validator(module_manifest_schema()).validate(
             _with_traceability({"vocabulary_coverage": [coverage]})
         )
+
+
+def _obligation_source(**over: object) -> dict:
+    """The smallest `ObligationSource` this schema accepts."""
+    base: dict = {"name": "configuration-matrix", "statement_column": "Dimension"}
+    base.update(over)
+    return base
+
+
+def _combinatorial(**over: object) -> dict:
+    base: dict = {
+        "dimension_column": "Dimension",
+        "values_column": "Values",
+        "strength": 2,
+    }
+    base.update(over)
+    return base
+
+
+def test_tc_schema_021_combinatorial_source_is_accepted() -> None:
+    """FR-001 CR-008 (TC-SCHEMA-021): a well-formed declaration validates.
+
+    Assumptions: quire-rs FR-061 reads this shape and mints ONE obligation for
+    the whole table rather than one per row.
+    Criteria: the declaration a configuration-dimensions table needs is
+    accepted, with and without the optional exclusions column.
+    """
+    validator = Draft202012Validator(module_manifest_schema())
+    validator.validate(
+        _with_traceability(
+            {"obligations": [_obligation_source(combinatorial=_combinatorial())]}
+        )
+    )
+    validator.validate(
+        _with_traceability(
+            {
+                "obligations": [
+                    _obligation_source(
+                        combinatorial=_combinatorial(excludes_column="Excludes")
+                    )
+                ]
+            }
+        )
+    )
+
+
+def test_tc_schema_022_zero_strength_is_rejected() -> None:
+    """FR-001 CR-008 (TC-SCHEMA-022): `strength: 0` cannot be declared.
+
+    Assumptions: quire-rs `ConfigurationSpace::tuples` returns 0 for a strength
+    of 0.
+    Criteria: a 0-way obligation demands nothing. Accepting it here would let a
+    module declare a check that reads as present and covers nothing, which is
+    the shape this whole program exists to catch — so it is rejected at the
+    schema rather than left to produce an empty target at runtime.
+    """
+    with pytest.raises(ValidationError):
+        Draft202012Validator(module_manifest_schema()).validate(
+            _with_traceability(
+                {
+                    "obligations": [
+                        _obligation_source(combinatorial=_combinatorial(strength=0))
+                    ]
+                }
+            )
+        )
+
+
+@pytest.mark.parametrize(
+    ("label", "combinatorial"),
+    [
+        ("missing dimension_column", {"values_column": "Values", "strength": 2}),
+        ("missing values_column", {"dimension_column": "Dimension", "strength": 2}),
+        ("missing strength", {"dimension_column": "D", "values_column": "V"}),
+        ("empty dimension_column", _combinatorial(dimension_column="")),
+        ("empty values_column", _combinatorial(values_column="")),
+        ("unknown key", _combinatorial(dimensions_column="D")),
+    ],
+    ids=lambda v: v if isinstance(v, str) else "",
+)
+def test_tc_schema_023_malformed_combinatorial_is_rejected(
+    label: str, combinatorial: dict
+) -> None:
+    """FR-001 CR-008 (TC-SCHEMA-023): a malformed declaration fails at load.
+
+    Assumptions: `CombinatorialColumns` is `additionalProperties: false`, and
+    quire-rs `deny_unknown_fields` would reject the same input.
+    Criteria: every way of getting the declaration wrong is a load error, not a
+    silently ignored line. `dimensions_column` is included because a plural
+    typo reads correctly and would mint nothing.
+    """
+    with pytest.raises(ValidationError):
+        Draft202012Validator(module_manifest_schema()).validate(
+            _with_traceability(
+                {"obligations": [_obligation_source(combinatorial=combinatorial)]}
+            )
+        )
