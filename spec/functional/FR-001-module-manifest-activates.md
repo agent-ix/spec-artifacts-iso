@@ -10,6 +10,27 @@ relationships:
 
 ## Description
 
+> **CR-009 (implements marker forms — 2026-08-19):** the fixture gains
+> `trace_tags.implements[]`, taking the same `TraceMarkerForm` shape as
+> `markers` (quire-rs FR-062). agent-ix/quire-rs#171.
+>
+> **A separate list, and that is the design.** `markers` mint `verifies` —
+> *"this test would fail if the behaviour broke"*, which may back an acceptance
+> criterion. These mint `implements` — *"this code is what the requirement is
+> about"*, which never may. quire-rs CR-061 stopped `verifies` binding
+> production symbols precisely because a doc comment citing a criterion would
+> otherwise count as evidence for it.
+>
+> A shared list with a discriminator field would put **one typo between scope
+> and evidence**. Two lists cannot be confused, and `TraceMarkerForm` stays
+> `additionalProperties: false` so a module cannot invent the discriminator
+> either — TC-SCHEMA-025 asserts that rejection rather than trusting it.
+>
+> The engine reinforces the separation by symbol kind: `markers` bind only
+> test, benchmark and fuzz symbols; `implements` only functions and containers.
+> A mis-declared pattern therefore binds **nothing** rather than the wrong
+> relation.
+>
 > **CR-008 (combinatorial obligations — 2026-08-19):** the fixture gains
 > `ObligationSource.combinatorial` and a `CombinatorialColumns` definition
 > (quire-rs FR-061). agent-ix/quire-rs#163.

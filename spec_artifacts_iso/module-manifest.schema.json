@@ -1116,6 +1116,13 @@
           "items": {
             "$ref": "#/$defs/TraceLegacyForm"
           }
+        },
+        "implements": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/TraceMarkerForm"
+          },
+          "description": "FR-001 CR-009 (quire-rs FR-062): marker forms binding a PRODUCTION symbol to the requirement it implements. A separate list from `markers`, and that is the design: `markers` mint `verifies` — 'this test would fail if the behaviour broke', which may back an acceptance criterion — while these mint `implements` — 'this code is what the requirement is about', which never may. quire-rs CR-061 stopped `verifies` binding production symbols precisely because a doc comment citing a criterion would otherwise count as evidence for it. A shared list with a discriminator would put one typo between scope and evidence; two lists cannot be confused. The engine reinforces it by symbol kind: `markers` bind only test/benchmark/fuzz symbols, `implements` only functions and containers, so a mis-declared pattern binds NOTHING rather than the wrong relation."
         }
       }
     },
