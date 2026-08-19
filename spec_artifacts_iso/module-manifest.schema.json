@@ -924,6 +924,42 @@
             "minLength": 1
           },
           "description": "Result key -> source column. Carries a metric's target and threshold, a t-way strength, a mutation-score floor — travelling with the obligation instead of being re-parsed downstream."
+        },
+        "combinatorial": {
+          "$ref": "#/$defs/CombinatorialColumns",
+          "description": "FR-001 CR-008 (quire-rs FR-061): read this source's table as a CONFIGURATION SPACE and mint ONE obligation for the whole table rather than one per row. A new source KIND, not a new mechanism — the statement hash, the suspect link and the `parameters` carriage are the ones FR-053 already defines. What differs is arity: a t-way obligation is a statement about the interaction of every row, so no single row can carry it."
+        }
+      }
+    },
+    "CombinatorialColumns": {
+      "type": "object",
+      "description": "FR-001 CR-008 (quire-rs FR-061): which columns of a configuration-dimensions table mean what. The engine knows no dimension, no value and no strength — a module says which column holds each, exactly as `statement_column` and `method_column` do for criteria rows.",
+      "required": [
+        "dimension_column",
+        "values_column",
+        "strength"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "dimension_column": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Column naming each configuration dimension."
+        },
+        "values_column": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Column listing that dimension's values, comma-separated."
+        },
+        "excludes_column": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Column listing forbidden combinations (`dim=value & dim=value`). Optional because a space may genuinely have none — but omitting it on a space that HAS them mints obligations over combinations that cannot exist, and the coverage target becomes permanently unreachable, which is the fastest way to get a number ignored."
+        },
+        "strength": {
+          "type": "integer",
+          "minimum": 1,
+          "description": "Interaction strength t. Rejected at 0 here rather than at runtime: a 0-way obligation demands nothing and would read as declared while covering nothing."
         }
       }
     },
