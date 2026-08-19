@@ -8,6 +8,16 @@ description: "Chronological log of structural changes to this bundle."
 ## History
 
 * **2026-08-18** — FR-001 CR-005: the fixture gains `traceability.required_relations[]`, `traceability.acyclic_edges[]` and a `RequiredRelation` definition (quire-rs FR-058) — the upward half of traceability, where a hazard with no mitigating requirement is a risk nobody addressed. Stricter than its neighbours on purpose: an empty `edges` list reports every document of a kind, so the schema rejects it rather than letting a quiet declaration read as a corpus-wide defect. agent-ix/spec-objects-security#5.
+* **2026-08-18** — **CR-008**: this module now DECLARES `traceability.vocabulary_coverage` for the ISO 25010 quality characteristics (quire-rs FR-059), and declares **`quire` as a dev dependency**. Two fixes to one problem: the engine capability shipped in quire-rs v0.33.0 and no module declared it, so the check fired nowhere.
+
+  Declared here because this module owns both halves — the `NFR` archetype and the `quality_attribute` enum in its own frontmatter schema — so the vocabulary is read from the schema beside it and nothing is restated.
+
+  **The dev dependency is the load-bearing half.** A `quire` 0.14.0 wheel was sitting in the venv that no file in this repo mentioned: absent from `pyproject.toml`, absent from `poetry.lock`, invisible to `poetry show`, and therefore never updated. The IT-002 checks stand down on a stale wheel by design, so adding the declaration turned **108 passed into 87 passed / 21 skipped** and the suite still reported green. Declaring the engine makes the version a stated fact; with 0.33.0 installed the suite is 108 passed, 0 skipped, with the declaration in place.
+
+  Dev-only on purpose: this module is DATA and quire reads it, so a runtime dependency would invert that relationship and couple every module release to an engine release.
+
+  Verified end to end rather than by inspection — the module loads under the v0.33.0 engine and reports 7 unowned characteristics against `quoin/spec`. agent-ix/spec-artifacts-iso#23.
+
 * **2026-08-18** — FR-001 CR-007: the fixture gains `traceability.vocabulary_coverage[]` and a `VocabularyCoverage` definition (quire-rs FR-059) — which declared vocabulary values no document claims. **The definition has no `values` key on purpose**: the vocabulary is read from the projected archetype's own frontmatter-schema `enum`, and `additionalProperties: false` makes a module writing one an error rather than a silently ignored line. The 25010 list already lives in this repo's `schemas/nfr-frontmatter.schema.json` with twelve values; quire-rs#162 was filed against a scope proposing a hardcoded nine-item copy. TC-SCHEMA-018..020.
 
 * **2026-08-18** — **CR-006**: new **FR-004** documents the `edge_types` and `roles` vocabulary (agent-ix/spec-artifacts-iso#16). 76 edge verbs across 7 categories, 27 inverse declarations and 9 capability roles were load-bearing module data that no document in this repository described — quire-rs FR-040 normalizes `allowed_links` against it, FR-041 reads its inverses, and every `spec-objects-*` module writes its link declarations in it. `spec-objects-security#5` is about to extend it with safety-chain verbs, and extending an unspecified vocabulary is how drift starts.
