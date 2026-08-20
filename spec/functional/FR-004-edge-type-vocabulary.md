@@ -138,18 +138,18 @@ quire-rs FR-058's upward-trace relations follow this decision: they accept `sati
 
 | ID | Criteria | Verification |
 |----|----------|--------------|
-| FR-004-AC-1 | Every entry in `edge_types` carries a non-empty `description` and a `category` drawn from the seven declared categories. | Test (TC-SCHEMA-009) |
-| FR-004-AC-2 | Every `inverse` label is a non-empty identifier, and the set of labels declared by more than one verb is exactly the recorded set — so a **new** collision, which FR-041-AC-3 resolves first-wins and would silently change which forward verb the label normalizes onto, fails rather than passing quietly. | Test (TC-SCHEMA-010) |
-| FR-004-AC-3 | An inverse label is **not** required to be a declared `edge_types` key: FR-041-AC-2 type-allows it regardless, and requiring it would double the vocabulary with entries no author writes. The recorded count of labels that are not forward verbs is asserted, so a change in that ratio is visible. | Test (TC-SCHEMA-011) |
-| FR-004-AC-4 | Every entry in `roles` carries a non-empty `description`. | Test (TC-SCHEMA-012) |
-| FR-004-AC-5 | The manifest loads under the module-manifest schema with the vocabulary present, and a malformed entry (missing `category`, unknown key) fails module load rather than loading partially. | Test (TC-SCHEMA-013) |
+| FR-004-AC-1 | Every entry in `edge_types` carries a non-empty `description` and a `category` drawn from the seven declared categories. | Test (TC-017) |
+| FR-004-AC-2 | Every `inverse` label is a non-empty identifier, and the set of labels declared by more than one verb is exactly the recorded set — so a **new** collision, which FR-041-AC-3 resolves first-wins and would silently change which forward verb the label normalizes onto, fails rather than passing quietly. | Test (TC-018) |
+| FR-004-AC-3 | An inverse label is **not** required to be a declared `edge_types` key: FR-041-AC-2 type-allows it regardless, and requiring it would double the vocabulary with entries no author writes. The recorded count of labels that are not forward verbs is asserted, so a change in that ratio is visible. | Test (TC-019) |
+| FR-004-AC-4 | Every entry in `roles` carries a non-empty `description`. | Test (TC-020) |
+| FR-004-AC-5 | The manifest loads under the module-manifest schema with the vocabulary present, and a malformed entry (missing `category`, unknown key) fails module load rather than loading partially. | Test (TC-021) |
 
 ## Constraints
 
-| ID | Constraint | Verification |
-|----|-----------|--------------|
-| FR-004-CON-1 | This requirement describes the vocabulary and may **clarify** an existing entry's description; it adds and removes no verb. Additions belong to the module that needs them (`spec-objects-security#5` owns the safety-chain verbs) and follow the criteria above. | Inspection |
-| FR-004-CON-2 | An unrecognised verb SHALL stay advisory. Making `UnknownEdgeType` fatal would make the vocabulary unmigratable — every rename would break every document using the old verb before any could be updated. | Inspection |
+| ID | Constraint | Type | Validation |
+|----|-----------|------|------------|
+| FR-004-CON-1 | This requirement describes the vocabulary and may **clarify** an existing entry's description; it adds and removes no verb. Additions belong to the module that needs them (`spec-objects-security#5` owns the safety-chain verbs) and follow the criteria above. | Process | Inspection |
+| FR-004-CON-2 | An unrecognised verb SHALL stay advisory. Making `UnknownEdgeType` fatal would make the vocabulary unmigratable — every rename would break every document using the old verb before any could be updated. | Design | Inspection |
 
 ## Dependencies
 

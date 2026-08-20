@@ -5,80 +5,93 @@ title: "Test Matrix"
 ---
 # Test Matrix
 
-| FR | IT | Status |
-|----|----|--------|
-| FR-001 | IT-001 | Specified |
-| FR-002 | IT-002 | Specified |
-| FR-003 | IT-003 | Specified |
+## Overview
 
-## AC → Test Coverage
+Maps every acceptance criterion to the test that backs it.
 
-This section maps every Acceptance Criterion to the test(s) that verify it.
-Integration coverage runs through the `IT-002` markdown validate/extract
-roundtrip and the `IT-003` master-requirements validate; schema-shape criteria
-are verified by a schema test over the shipped archetype manifests (the eight ISO
-artifact archetypes plus `master-requirements`). Tests are 🚧 pending implementation.
+This document was **non-canonical until 2026-08-19**, and that had a measurable
+cost. It carried no `## Test Case Summary`, so the module minted **zero
+`test-case` targets** and every `TC-…` id written in a test bound to nothing —
+the defect agent-ix/quire-rs#72 counts across the ecosystem. The ids were also
+spelled `TC-SCHEMA-nnn`, a second shape nothing else in the ecosystem uses; they
+are **renumbered rather than admitted**, because a rule accepting every spelling
+enforces nothing.
 
-### Functional Requirements
+**[RAN]** `quire coverage --scope .` in this repository, before and after:
+**17 written trace tags bound to nothing → 0**.
 
-| AC | Criteria | Method | Covering Test | Status |
-|----|----------|--------|---------------|--------|
-| FR-001-AC-1 | The manifest validates against the FR-035 JSON Schema | Schema | TC-SCHEMA-008 (`test_manifest_validates_against_fr035_schema`, over the packaged schema — FR-001 CR-002) | ✅ |
-| FR-002-AC-1 | Every registered artifact_type (the eight ISO + `master-requirements`) declares `body_extraction` with `assert`; none declare `template_ref`, `required_sections`, or `variants` | Schema | TC-SCHEMA-001 (manifest-shape sweep over all archetypes; template_ref absent) | 🚧 |
-| FR-002-AC-2 | Conformant authored `FR` passes `validate_document`; missing-section / wrong-AC-columns / non-contiguous-AC-id copies each fail with a line-numbered diagnostic | Integration | IT-002 (IT-002-AC-1, IT-002-AC-2) | 🚧 |
-| FR-002-AC-3 | Acceptance-Criteria id asserts use `{id}`; a row prefixed with a different artifact's id fails | Integration | IT-002 (IT-002-AC-2, AC-id mutation) | 🚧 |
-| FR-002-AC-4 | Every archetype's declared headings are unique per level across its skeleton | Schema | TC-SCHEMA-002 (per-level heading-uniqueness sweep) | 🚧 |
-| FR-002-AC-5 | Each archetype's authoring skeleton itself passes `validate_document` once filled with substantive content | Integration | IT-002 (IT-002-AC-1, skeleton over 8 archetypes) | 🚧 |
-| FR-002-AC-6 | **(I1)** Manifest `body_extraction` asserts (headings+levels, table `columns`, `id_pattern`s) are consistent with / derived from each archetype's skeleton — a parity requirement | Schema | TC-SCHEMA-003 (assert↔skeleton parity sweep over 8 archetypes) | 🚧 |
-| FR-002-AC-7 | **(I2)** Each skeleton's heading set + literal table header rows match its archetype's asserts exactly (text, order, level) | Schema | TC-SCHEMA-004 (literal-consistency sweep) | 🚧 |
-| FR-002-AC-8 | **(I3)** Asserts distinguish heading-presence locators from `section_body` (non-empty/non-placeholder) locators; the skeleton supplies substantive body for every `section_body`-asserted section | Schema + Integration | TC-SCHEMA-005 (locator-kind classification) + IT-002 (IT-002-AC-1 substantive skeleton) | 🚧 |
-| FR-003-AC-1 | The manifest declares a `master-requirements` artifact_type with a `frontmatter_schema_ref` and a `body_extraction` carrying `assert` facets | Schema | TC-SCHEMA-001 (manifest-shape sweep, master-requirements row) | 🚧 |
-| FR-003-AC-2 | The frontmatter schema requires `artifact_type`/`name`/`org`/`component_type`, does not require `id`/`title`, and constrains `component_type` to `^[a-z][a-z0-9-]*$` | Schema | TC-SCHEMA-006 (master-requirements frontmatter-schema shape) | 🚧 |
-| FR-003-AC-3 | A conformant master `spec.md` passes `validate_document` | Integration | IT-003 (IT-003-AC-1); TC-SCHEMA-007 (skeleton validates, master-requirements row) | 🚧 |
-| FR-003-AC-4 | A master spec missing `component_type` (or empty) fails frontmatter validation naming the field | Integration | IT-003 (IT-003-AC-2) | 🚧 |
-| FR-003-AC-5 | A master spec whose `component_type` carries a space/inline comment fails the kebab pattern | Integration | IT-003 (IT-003-AC-2) | 🚧 |
-| FR-003-AC-6 | A master spec missing the H1 title or any required canonical section fails with a line-numbered diagnostic | Integration | IT-003 (IT-003-AC-3) | 🚧 |
-| FR-004-AC-1 | Every `edge_types` entry carries a non-empty `description` and a `category` from the seven declared categories | Schema | TC-SCHEMA-009 (`test_fr004_ac1_every_edge_type_has_a_description_and_known_category`, 76 verbs) | ✅ |
-| FR-004-AC-2 | Every `inverse` is a non-empty label, and the set of labels declared by more than one verb is exactly `{part_of: [aggregates, contains]}` — a new collision would silently change which forward verb it normalizes onto (FR-041-AC-3, first-wins) | Schema | TC-SCHEMA-010 (`test_fr004_ac2_shared_inverse_labels_are_the_recorded_set`) | ✅ |
-| FR-004-AC-3 | An inverse label is **not** required to be a declared verb — FR-041-AC-2 type-allows it regardless. 25 of the 26 distinct labels are derived-only; `contains` is the sole label that is also a forward verb | Schema | TC-SCHEMA-011 (`test_fr004_ac3_inverse_labels_need_not_be_declared_verbs`) | ✅ |
-| FR-004-AC-4 | Every `roles` entry carries a non-empty `description` | Schema | TC-SCHEMA-012 (`test_fr004_ac4_every_role_has_a_description`, 9 roles) | ✅ |
-| FR-004-AC-5 | The manifest validates under the module-manifest schema **with the vocabulary present**, so an edit dropping `edge_types` cannot pass a green schema run | Schema | TC-SCHEMA-013 (`test_fr004_ac5_vocabulary_validates_under_the_module_manifest_schema`) | ✅ |
-| FR-003-AC-7 | A master spec carrying optional sections (Domain Model, Security Model) and extra H2s still passes | Integration | IT-003 (IT-003-AC-4) | 🚧 |
-| FR-003-AC-8 | The `master-requirements` skeleton itself passes `validate_document` and satisfies the assert↔skeleton parity (FR-002-AC-6/7/8) | Schema + Integration | TC-SCHEMA-003/004/005 (parity sweeps, master-requirements row) + IT-003 (IT-003-AC-1) | 🚧 |
+The 10 criteria still pending are the ones whose verification is an
+**activation or authoring integration test** against a running filament-core, or
+a document-mutation test — none of which this package's suite runs. They are
+listed as pending rather than quietly dropped.
 
-### Integration Tests
+## Requirements Traceability
 
-| AC | Criteria | Method | Covering Test | Status |
-|----|----------|--------|---------------|--------|
-| IT-002-AC-1 | Step 3 passes for all eight archetypes | Integration | IT-002 step 3 (validate skeleton × 8 archetypes) | 🚧 |
-| IT-002-AC-2 | Each mutation in steps 4-5 fails with the expected reason and a line number | Integration | IT-002 steps 4-5 (missing-section / assert-column / AC-id mutations) | 🚧 |
-| IT-002-AC-3 | Step 6 extraction yields the expected record for each archetype (validate and extract use the same `body_extraction`) | Integration | IT-002 step 6 (extract × 8 archetypes) | 🚧 |
-| IT-003-AC-1 | Step 3 passes: the conformant master spec validates | Integration | IT-003 step 3 (validate master-requirements skeleton) | 🚧 |
-| IT-003-AC-2 | Both frontmatter mutations in step 4 fail (missing field; kebab-pattern violation) | Integration | IT-003 step 4 (component_type mutations) | 🚧 |
-| IT-003-AC-3 | Each body mutation in step 5 fails with the expected reason and a line number | Integration | IT-003 step 5 (missing section / blank Purpose / missing H1) | 🚧 |
-| IT-003-AC-4 | Step 6 passes: optional/extra sections do not break validation | Integration | IT-003 step 6 (Domain Model + Security Model added) | 🚧 |
+### Functional Requirement Coverage
 
-## Coverage Audit
+| Functional Req | Acceptance Criteria | Test Cases | Coverage Status |
+|----------------|---------------------|------------|-----------------|
+| FR-001 | FR-001-AC-1 | TC-001, TC-022, TC-023, TC-024, TC-025, TC-026, TC-027, TC-028, TC-029, TC-030, TC-031, TC-032, TC-033, TC-034 | ✅ Complete |
+| FR-001 | FR-001-AC-2 | — | 🚧 Pending |
+| FR-001 | FR-001-AC-3 | — | 🚧 Pending |
+| FR-001 | FR-001-AC-4 | — | 🚧 Pending |
+| FR-002 | FR-002-AC-1 | TC-002, TC-005, TC-006, TC-014, TC-015, TC-016 | ✅ Complete |
+| FR-002 | FR-002-AC-2 | TC-013 | ✅ Complete |
+| FR-002 | FR-002-AC-3 | — | 🚧 Pending |
+| FR-002 | FR-002-AC-4 | TC-007 | ✅ Complete |
+| FR-002 | FR-002-AC-5 | TC-008, TC-012 | ✅ Complete |
+| FR-002 | FR-002-AC-6 | TC-009 | ✅ Complete |
+| FR-002 | FR-002-AC-7 | TC-010 | ✅ Complete |
+| FR-002 | FR-002-AC-8 | TC-011 | ✅ Complete |
+| FR-003 | FR-003-AC-1 | TC-003 | ✅ Complete |
+| FR-003 | FR-003-AC-2 | TC-004 | ✅ Complete |
+| FR-003 | FR-003-AC-3 | — | 🚧 Pending |
+| FR-003 | FR-003-AC-4 | — | 🚧 Pending |
+| FR-003 | FR-003-AC-5 | — | 🚧 Pending |
+| FR-003 | FR-003-AC-6 | — | 🚧 Pending |
+| FR-003 | FR-003-AC-7 | — | 🚧 Pending |
+| FR-003 | FR-003-AC-8 | — | 🚧 Pending |
+| FR-004 | FR-004-AC-1 | TC-017 | ✅ Complete |
+| FR-004 | FR-004-AC-2 | TC-018 | ✅ Complete |
+| FR-004 | FR-004-AC-3 | TC-019 | ✅ Complete |
+| FR-004 | FR-004-AC-4 | TC-020 | ✅ Complete |
+| FR-004 | FR-004-AC-5 | TC-021 | ✅ Complete |
 
-Every AC defined in `spec/functional/` and `spec/integration/` appears above.
+## Test Case Summary
 
-- FR-001: AC-1 covered and **passing** (FR-001 CR-002 added the row — the test
-  existed and the matrix did not list it). AC-2..4 are activation criteria
-  against a running filament-core and are verified by IT-001, not by this suite.
-- FR-002: AC-1..8 — all covered (AC-6/7/8 are the render-removal assert↔skeleton parity ACs, I1/I2/I3).
-- FR-003: AC-1..8 — all covered (master-requirements archetype: AC-1/AC-8 via the parametrized manifest+parity sweeps now including the `master-requirements` row; AC-2 via the frontmatter-schema-shape test; AC-3..7 via IT-003).
-- IT-002: AC-1..3 — all covered.
-- IT-003: AC-1..4 — all covered.
-
-**Coverage: 24 / 24 in-scope ACs covered (FR-001 AC-1 + FR-002 AC-1..8 + FR-003 AC-1..8 + IT-002 AC-1..3 + IT-003 AC-1..4).**
-FR-001-AC-1 is ✅ — it is the one row here backed by a test that runs today. The
-rest are 🚧 pending implementation. IT-001 is the activation-against-filament-core
-row and is unchanged.
-
-> **Render removal (2026-06-04):** templates removed; **skeletons are the
-> authoring source of truth** (FR-002 CR; parity with quire-rs commit 500a3d3 +
-> filament-core FR-035 CR-002). `template_ref` is removed/rejected. New schema
-> TCs TC-SCHEMA-003..005 enforce assert↔skeleton parity (I1), literal consistency
-> (I2), and the heading-presence vs `section_body` locator distinction (I3). The
-> deletion of `templates/` and the `template_ref:` manifest lines is an
-> implementation task.
+| Test ID | Title | Type | Priority | Traces To | Status |
+|---------|-------|------|----------|-----------|--------|
+| TC-001 | the manifest validates against the FR-035 schema. FR-001 CR-002: neither the missing-library nor the missing-schema branch skips any more. A gate that reports "passed" because it could not run is the failure mode this whole ticket (`test_manifest_validates_against_fr035_schema`) | Unit | P0 | FR-001-AC-1 | ✅ |
+| TC-002 | the bundled FR-035 schema must REJECT ``template_ref`` on an ArtifactTypeEntry (render is gone; additionalProperties:false → error) (`test_fr002_schema_rejects_template_ref_on_artifact_type`) | Unit | P0 | FR-002-AC-1 | ✅ |
+| TC-003 | a ``master-requirements`` artifact_type is declared with a frontmatter_schema_ref and a body_extraction carrying assert facets (`test_fr003_ac1_master_requirements_archetype_registered`) | Unit | P0 | FR-003-AC-1 | ✅ |
+| TC-004 | TC-004): the master-requirements frontmatter schema requires type/name/org/component_type, does NOT require id/title, and constrains component_type to kebab-case ``^[a-z][a-z0-9-]*$`` (`test_fr003_ac2_master_requirements_frontmatter_schema_shape`) | Unit | P0 | FR-003-AC-2 | ✅ |
+| TC-005 | every archetype declares ``body_extraction`` with asserts and declares none of ``template_ref`` / ``required_sections`` / ``variants`` (`test_fr002_ac1_unified_shape_no_retired_fields`) | Unit | P0 | FR-002-AC-1 | ✅ |
+| TC-006 | templates/ is removed and no archetype references one (`test_fr002_ac1_no_template_dir_or_refs`) | Unit | P0 | FR-002-AC-1 | ✅ |
+| TC-007 | declared section headings are unique per level (`test_fr002_ac4_headings_unique_per_level`) | Unit | P0 | FR-002-AC-4 | ✅ |
+| TC-008 | Each archetype ships an authoring skeleton carrying its required headings (`test_fr002_skeleton_exists_and_has_required_headings`) | Unit | P0 | FR-002-AC-5 | ✅ |
+| TC-009 | I1): the manifest asserts are consistent with / derived from the skeleton — every asserted heading exists in the skeleton at the asserted level, every asserted table's header row is present in the skeleton, and every asserted id_p (`test_fr002_ac6_asserts_derived_from_skeleton`) | Unit | P0 | FR-002-AC-6 | ✅ |
+| TC-010 | I2): the skeleton's heading set and literal table header rows match the archetype's asserts exactly — a diff in either direction fails. Forward: skeleton ⊇ asserts (covered by AC-6). Reverse: every *asserted-level* skeleton headin (`test_fr002_ac7_literal_consistency_both_directions`) | Unit | P0 | FR-002-AC-7 | ✅ |
+| TC-011 | I3): heading-presence locators are distinguished from ``section_body`` locators; the skeleton supplies substantive (non-empty, non-placeholder) body for every ``section_body``-asserted section (`test_fr002_ac8_locator_kinds_and_substantive_bodies`) | Unit | P0 | FR-002-AC-8 | ✅ |
+| TC-012 | a filled skeleton passes validate_document. Skips when the installed quire wheel predates the markdown-default validator (FR-032); build/install a local quire-rs >=0.3.6 wheel to exercise it (`test_it002_ac1_skeleton_validates`) | Unit | P0 | FR-002-AC-5 | ✅ |
+| TC-013 | deleting a section, breaking AC columns, breaking an AC id, and duplicating a heading each fail validation with the expected reason (`test_it002_ac2_fr_mutations_fail`) | Unit | P0 | FR-002-AC-2 | ✅ |
+| TC-014 | StR binding criteria are addressable rows under `## Validation Criteria`. The heading and the `Validation` column are deliberately NOT renamed to the FR spelling: ISO/IEC/IEEE 29148 validates a stakeholder requirement against the  (`test_str_validation_criteria_table_is_binding`) | Unit | P0 | FR-002-AC-1 | ✅ |
+| TC-015 | NFR's AC section stays optional but takes the FR table shape when present. A *measurable* NFR's criteria are its `Metric \| Target \| Threshold \| Method` rows and it omits the section; a *policy* NFR authors the table. What is no (`test_nfr_acceptance_criteria_is_absent_or_well_formed`) | Unit | P0 | FR-002-AC-1 | ✅ |
+| TC-016 | extract over the conformant skeleton yields a record whose fields match the archetype's body_extraction (validate + extract share one declaration) (`test_it002_ac3_extract_yields_record`) | Unit | P0 | FR-002-AC-1 | ✅ |
+| TC-017 | . A verb with no description is a verb nobody can use correctly, and a category outside the declared seven is a typo that would silently create an eighth (`test_fr004_ac1_every_edge_type_has_a_description_and_known_category`) | Unit | P0 | FR-004-AC-1 | ✅ |
+| TC-018 | . An inverse label declared by two forward verbs resolves first-wins with a diagnostic (quire-rs FR-041-AC-3), so which verb it normalizes onto depends on declaration order. That is designed. What is *not* designed is a new collis (`test_fr004_ac2_shared_inverse_labels_are_the_recorded_set`) | Unit | P0 | FR-004-AC-2 | ✅ |
+| TC-019 | . Deliberately the opposite of the invariant it is tempting to assert. quire-rs FR-041-AC-2 type-allows an edge whose verb is a declared inverse label "even when the label is absent from ``edge_types``" — so requiring every invers (`test_fr004_ac3_inverse_labels_need_not_be_declared_verbs`) | Unit | P0 | FR-004-AC-3 | ✅ |
+| TC-020 |  (`test_fr004_ac4_every_role_has_a_description`) | Unit | P0 | FR-004-AC-4 | ✅ |
+| TC-021 | . The FR-035 gate covers the whole manifest; this asserts the vocabulary is *present* when it passes, so a future edit that drops `edge_types` entirely cannot slip through a green schema run (`test_fr004_ac5_vocabulary_validates_under_the_module_manifest_schema`) | Unit | P0 | FR-004-AC-5 | ✅ |
+| TC-022 | a well-formed `required_relations` and `acyclic_edges` declaration validates (`test_tc_schema_014_required_relations_is_accepted`) | Unit | P0 | FR-001-AC-1 | ✅ |
+| TC-023 | a declaration that cannot be executed is rejected by the schema, not discovered as a corpus-wide false alarm (`test_tc_schema_015_unexecutable_relations_are_rejected`) | Unit | P0 | FR-001-AC-1 | ✅ |
+| TC-024 | `to` is the one field where empty carries meaning rather than being a defect (`test_tc_schema_016_empty_to_means_any_target`) | Unit | P0 | FR-001-AC-1 | ✅ |
+| TC-025 | a blank verb in `acyclic_edges` is rejected (`test_tc_schema_017_blank_acyclic_verb_is_rejected`) | Unit | P0 | FR-001-AC-1 | ✅ |
+| TC-026 | a well-formed declaration validates (`test_tc_schema_018_vocabulary_coverage_is_accepted`) | Unit | P0 | FR-001-AC-1 | ✅ |
+| TC-027 | the vocabulary cannot be restated here (`test_tc_schema_019_the_schema_declares_no_values_key`) | Unit | P0 | FR-001-AC-1 | ✅ |
+| TC-028 | a declaration that cannot run is rejected (`test_tc_schema_020_malformed_coverage_is_rejected`) | Unit | P0 | FR-001-AC-1 | ✅ |
+| TC-029 | a well-formed declaration validates (`test_tc_schema_021_combinatorial_source_is_accepted`) | Unit | P0 | FR-001-AC-1 | ✅ |
+| TC-030 | `strength: 0` cannot be declared (`test_tc_schema_022_zero_strength_is_rejected`) | Unit | P0 | FR-001-AC-1 | ✅ |
+| TC-031 | a malformed declaration fails at load (`test_tc_schema_023_malformed_combinatorial_is_rejected`) | Unit | P0 | FR-001-AC-1 | ✅ |
+| TC-032 | a well-formed declaration validates (`test_tc_schema_024_implements_marker_forms_are_accepted`) | Unit | P0 | FR-001-AC-1 | ✅ |
+| TC-033 | scope and evidence cannot be one list (`test_tc_schema_025_implements_is_a_separate_list`) | Unit | P0 | FR-001-AC-1 | ✅ |
+| TC-034 | a malformed form fails at load (`test_tc_schema_026_malformed_implements_marker_is_rejected`) | Unit | P0 | FR-001-AC-1 | ✅ |

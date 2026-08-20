@@ -53,7 +53,7 @@ def test_manifest_loads() -> None:
 
 
 def test_manifest_validates_against_fr035_schema() -> None:
-    """FR-001-AC-1: the manifest validates against the FR-035 schema.
+    """TC-001: FR-001-AC-1: the manifest validates against the FR-035 schema.
 
     FR-001 CR-002: neither the missing-library nor the missing-schema branch
     skips any more. A gate that reports "passed" because it could not run is
@@ -70,7 +70,7 @@ def test_manifest_validates_against_fr035_schema() -> None:
 
 
 def test_fr002_schema_rejects_template_ref_on_artifact_type() -> None:
-    """FR-002: the bundled FR-035 schema must REJECT ``template_ref`` on an
+    """TC-002: FR-002: the bundled FR-035 schema must REJECT ``template_ref`` on an
     ArtifactTypeEntry (render is gone; additionalProperties:false → error)."""
     schema = module_manifest_schema()
     manifest = yaml.safe_load(MANIFEST_PATH.read_text())
@@ -93,7 +93,7 @@ def _artifact_types():
 
 
 def test_fr003_ac1_master_requirements_archetype_registered() -> None:
-    """FR-003-AC-1: a ``master-requirements`` artifact_type is declared with a
+    """TC-003: FR-003-AC-1: a ``master-requirements`` artifact_type is declared with a
     frontmatter_schema_ref and a body_extraction carrying assert facets."""
     at = next(
         (a for a in _artifact_types() if a["name"] == "master-requirements"), None
@@ -110,7 +110,7 @@ def test_fr003_ac1_master_requirements_archetype_registered() -> None:
 
 
 def test_fr003_ac2_master_requirements_frontmatter_schema_shape() -> None:
-    """FR-003-AC-2 (TC-SCHEMA-006): the master-requirements frontmatter schema
+    """TC-004: FR-003-AC-2: the master-requirements frontmatter schema
     requires type/name/org/component_type, does NOT require id/title, and
     constrains component_type to kebab-case ``^[a-z][a-z0-9-]*$``."""
     at = next(a for a in _artifact_types() if a["name"] == "master-requirements")
@@ -284,7 +284,9 @@ _PLACEHOLDER_TOKENS = ("TODO", "TBD", "{{", "}}", "placeholder", "none specified
 
 @pytest.mark.parametrize("at", _artifact_types(), ids=lambda at: at["name"])
 def test_fr002_ac1_unified_shape_no_retired_fields(at: dict) -> None:
-    """FR-002-AC-1: every archetype declares ``body_extraction`` with asserts and
+    """TC-005.
+
+    FR-002-AC-1: every archetype declares ``body_extraction`` with asserts and
     declares none of ``template_ref`` / ``required_sections`` / ``variants``."""
     assert "template_ref" not in at, f"{at['name']} still declares template_ref"
     assert "required_sections" not in at, f"{at['name']} declares required_sections"
@@ -298,7 +300,7 @@ def test_fr002_ac1_unified_shape_no_retired_fields(at: dict) -> None:
 
 
 def test_fr002_ac1_no_template_dir_or_refs() -> None:
-    """FR-002-AC-1: templates/ is removed and no archetype references one."""
+    """TC-006: FR-002-AC-1: templates/ is removed and no archetype references one."""
     assert not (PKG_ROOT / "templates").exists(), "templates/ directory still present"
     raw = MANIFEST_PATH.read_text()
     assert "template_ref" not in raw, "manifest still mentions template_ref"
@@ -307,7 +309,7 @@ def test_fr002_ac1_no_template_dir_or_refs() -> None:
 
 @pytest.mark.parametrize("at", _artifact_types(), ids=lambda at: at["name"])
 def test_fr002_ac4_headings_unique_per_level(at: dict) -> None:
-    """FR-002-AC-4: declared section headings are unique per level."""
+    """TC-007: FR-002-AC-4: declared section headings are unique per level."""
     seen: set[tuple[int, str]] = set()
     for sec in _required_sections(at):
         key = (sec["level"], sec["name"].lower())
@@ -320,7 +322,9 @@ def test_fr002_ac4_headings_unique_per_level(at: dict) -> None:
 
 @pytest.mark.parametrize("name", sorted(_SKELETON_FILE), ids=lambda n: n)
 def test_fr002_skeleton_exists_and_has_required_headings(name: str) -> None:
-    """Each archetype ships an authoring skeleton carrying its required headings."""
+    """TC-008.
+
+    Each archetype ships an authoring skeleton carrying its required headings."""
     path = SKELETONS_DIR / f"{_SKELETON_FILE[name]}.md"
     assert path.exists(), f"missing skeleton {path}"
     text = path.read_text()
@@ -335,7 +339,7 @@ def test_fr002_skeleton_exists_and_has_required_headings(name: str) -> None:
 
 @pytest.mark.parametrize("name", sorted(_SKELETON_FILE), ids=lambda n: n)
 def test_fr002_ac6_asserts_derived_from_skeleton(name: str) -> None:
-    """FR-002-AC-6 (I1): the manifest asserts are consistent with / derived from
+    """TC-009: FR-002-AC-6 (I1): the manifest asserts are consistent with / derived from
     the skeleton — every asserted heading exists in the skeleton at the asserted
     level, every asserted table's header row is present in the skeleton, and every
     asserted id_pattern matches the skeleton's seeded ids."""
@@ -382,7 +386,9 @@ def test_fr002_ac6_asserts_derived_from_skeleton(name: str) -> None:
 
 @pytest.mark.parametrize("name", sorted(_SKELETON_FILE), ids=lambda n: n)
 def test_fr002_ac7_literal_consistency_both_directions(name: str) -> None:
-    """FR-002-AC-7 (I2): the skeleton's heading set and literal table header rows
+    """TC-010.
+
+    FR-002-AC-7 (I2): the skeleton's heading set and literal table header rows
     match the archetype's asserts exactly — a diff in either direction fails.
 
     Forward: skeleton ⊇ asserts (covered by AC-6). Reverse: every *asserted-level*
@@ -414,7 +420,7 @@ def test_fr002_ac7_literal_consistency_both_directions(name: str) -> None:
 
 @pytest.mark.parametrize("name", sorted(_SKELETON_FILE), ids=lambda n: n)
 def test_fr002_ac8_locator_kinds_and_substantive_bodies(name: str) -> None:
-    """FR-002-AC-8 (I3): heading-presence locators are distinguished from
+    """TC-011: FR-002-AC-8 (I3): heading-presence locators are distinguished from
     ``section_body`` locators; the skeleton supplies substantive (non-empty,
     non-placeholder) body for every ``section_body``-asserted section."""
     at = next(a for a in _artifact_types() if a["name"] == name)
@@ -479,7 +485,7 @@ def _quire_doc_validator():
 
 @pytest.mark.parametrize("name", sorted(_SKELETON_FILE), ids=lambda n: n)
 def test_it002_ac1_skeleton_validates(name: str) -> None:
-    """IT-002-AC-1 / FR-002-AC-5: a filled skeleton passes validate_document.
+    """TC-012: IT-002-AC-1 / FR-002-AC-5: a filled skeleton passes validate_document.
 
     Skips when the installed quire wheel predates the markdown-default validator
     (FR-032); build/install a local quire-rs >=0.3.6 wheel to exercise it."""
@@ -492,7 +498,7 @@ def test_it002_ac1_skeleton_validates(name: str) -> None:
 
 
 def test_it002_ac2_fr_mutations_fail() -> None:
-    """IT-002-AC-2: deleting a section, breaking AC columns, breaking an AC id,
+    """TC-013: IT-002-AC-2: deleting a section, breaking AC columns, breaking an AC id,
     and duplicating a heading each fail validation with the expected reason."""
     quire = _quire_doc_validator()
     if quire is None:
@@ -531,7 +537,7 @@ def test_it002_ac2_fr_mutations_fail() -> None:
 
 
 def test_str_validation_criteria_table_is_binding() -> None:
-    """StR binding criteria are addressable rows under `## Validation Criteria`.
+    """TC-014: StR binding criteria are addressable rows under `## Validation Criteria`.
 
     The heading and the `Validation` column are deliberately NOT renamed to the
     FR spelling: ISO/IEC/IEEE 29148 validates a stakeholder requirement against
@@ -571,7 +577,9 @@ def test_str_validation_criteria_table_is_binding() -> None:
 
 
 def test_nfr_acceptance_criteria_is_absent_or_well_formed() -> None:
-    """NFR's AC section stays optional but takes the FR table shape when present.
+    """TC-015.
+
+    NFR's AC section stays optional but takes the FR table shape when present.
 
     A *measurable* NFR's criteria are its `Metric | Target | Threshold | Method`
     rows and it omits the section; a *policy* NFR authors the table. What is no
@@ -606,7 +614,7 @@ def test_nfr_acceptance_criteria_is_absent_or_well_formed() -> None:
 
 @pytest.mark.parametrize("name", sorted(_SKELETON_FILE), ids=lambda n: n)
 def test_it002_ac3_extract_yields_record(name: str) -> None:
-    """IT-002-AC-3: extract over the conformant skeleton yields a record whose
+    """TC-016: IT-002-AC-3: extract over the conformant skeleton yields a record whose
     fields match the archetype's body_extraction (validate + extract share one
     declaration)."""
     quire = _quire_doc_validator()
@@ -646,7 +654,7 @@ def _roles() -> dict:
 
 
 def test_fr004_ac1_every_edge_type_has_a_description_and_known_category() -> None:
-    """TC-SCHEMA-009 (FR-004-AC-1).
+    """TC-017: (FR-004-AC-1).
 
     A verb with no description is a verb nobody can use correctly, and a
     category outside the declared seven is a typo that would silently create an
@@ -666,7 +674,7 @@ def test_fr004_ac1_every_edge_type_has_a_description_and_known_category() -> Non
 
 
 def test_fr004_ac2_shared_inverse_labels_are_the_recorded_set() -> None:
-    """TC-SCHEMA-010 (FR-004-AC-2).
+    """TC-018: (FR-004-AC-2).
 
     An inverse label declared by two forward verbs resolves first-wins with a
     diagnostic (quire-rs FR-041-AC-3), so which verb it normalizes onto depends
@@ -693,7 +701,7 @@ def test_fr004_ac2_shared_inverse_labels_are_the_recorded_set() -> None:
 
 
 def test_fr004_ac3_inverse_labels_need_not_be_declared_verbs() -> None:
-    """TC-SCHEMA-011 (FR-004-AC-3).
+    """TC-019: (FR-004-AC-3).
 
     Deliberately the opposite of the invariant it is tempting to assert.
     quire-rs FR-041-AC-2 type-allows an edge whose verb is a declared inverse
@@ -719,7 +727,7 @@ def test_fr004_ac3_inverse_labels_need_not_be_declared_verbs() -> None:
 
 
 def test_fr004_ac4_every_role_has_a_description() -> None:
-    """TC-SCHEMA-012 (FR-004-AC-4)."""
+    """TC-020: (FR-004-AC-4)."""
     roles = _roles()
     assert roles, "the module declares a role registry"
     for role, entry in roles.items():
@@ -728,7 +736,7 @@ def test_fr004_ac4_every_role_has_a_description() -> None:
 
 
 def test_fr004_ac5_vocabulary_validates_under_the_module_manifest_schema() -> None:
-    """TC-SCHEMA-013 (FR-004-AC-5).
+    """TC-021: (FR-004-AC-5).
 
     The FR-035 gate covers the whole manifest; this asserts the vocabulary is
     *present* when it passes, so a future edit that drops `edge_types` entirely
@@ -765,7 +773,7 @@ def _with_traceability(model: dict) -> dict:
 
 
 def test_tc_schema_014_required_relations_is_accepted() -> None:
-    """FR-001 CR-005 (TC-SCHEMA-014): a well-formed `required_relations` and
+    """TC-022: FR-001 CR-005: a well-formed `required_relations` and
     `acyclic_edges` declaration validates.
 
     Assumptions: the shipped schema is the one quire-rs FR-058 reads against.
@@ -799,7 +807,7 @@ def test_tc_schema_014_required_relations_is_accepted() -> None:
 def test_tc_schema_015_unexecutable_relations_are_rejected(
     label: str, relation: dict
 ) -> None:
-    """FR-001 CR-005 (TC-SCHEMA-015): a declaration that cannot be executed is
+    """TC-023: FR-001 CR-005: a declaration that cannot be executed is
     rejected by the schema, not discovered as a corpus-wide false alarm.
 
     Assumptions: `check` becomes the `<check>` half of a `trace:<check>`
@@ -816,7 +824,7 @@ def test_tc_schema_015_unexecutable_relations_are_rejected(
 
 
 def test_tc_schema_016_empty_to_means_any_target() -> None:
-    """FR-001 CR-005 (TC-SCHEMA-016): `to` is the one field where empty carries
+    """TC-024: FR-001 CR-005: `to` is the one field where empty carries
     meaning rather than being a defect.
 
     Assumptions: quire-rs reads an empty/absent `to` as "any document in the
@@ -836,7 +844,7 @@ def test_tc_schema_016_empty_to_means_any_target() -> None:
 
 
 def test_tc_schema_017_blank_acyclic_verb_is_rejected() -> None:
-    """FR-001 CR-005 (TC-SCHEMA-017): a blank verb in `acyclic_edges` is rejected.
+    """TC-025: FR-001 CR-005: a blank verb in `acyclic_edges` is rejected.
 
     Assumptions: the cycle check walks the graph of edges matching each verb.
     Criteria: the empty string fails. It would match no edge, so the check
@@ -862,7 +870,7 @@ def _coverage(**over: object) -> dict:
 
 
 def test_tc_schema_018_vocabulary_coverage_is_accepted() -> None:
-    """FR-001 CR-007 (TC-SCHEMA-018): a well-formed declaration validates.
+    """TC-026: FR-001 CR-007: a well-formed declaration validates.
 
     Assumptions: quire-rs FR-059 reads this shape.
     Criteria: the exact declaration the 25010 characteristic check needs is
@@ -884,7 +892,7 @@ def test_tc_schema_018_vocabulary_coverage_is_accepted() -> None:
 
 
 def test_tc_schema_019_the_schema_declares_no_values_key() -> None:
-    """FR-001 CR-007 (TC-SCHEMA-019): the vocabulary cannot be restated here.
+    """TC-027: FR-001 CR-007: the vocabulary cannot be restated here.
 
     Assumptions: the vocabulary is read from the projected archetype's own
     frontmatter-schema ``enum`` (quire-rs FR-059-AC-2).
@@ -923,7 +931,7 @@ def test_tc_schema_019_the_schema_declares_no_values_key() -> None:
 def test_tc_schema_020_malformed_coverage_is_rejected(
     label: str, coverage: dict
 ) -> None:
-    """FR-001 CR-007 (TC-SCHEMA-020): a declaration that cannot run is rejected.
+    """TC-028: FR-001 CR-007: a declaration that cannot run is rejected.
 
     Assumptions: ``check`` becomes the ``<check>`` half of a ``trace:<check>``
     severity key.
@@ -955,7 +963,7 @@ def _combinatorial(**over: object) -> dict:
 
 
 def test_tc_schema_021_combinatorial_source_is_accepted() -> None:
-    """FR-001 CR-008 (TC-SCHEMA-021): a well-formed declaration validates.
+    """TC-029: FR-001 CR-008: a well-formed declaration validates.
 
     Assumptions: quire-rs FR-061 reads this shape and mints ONE obligation for
     the whole table rather than one per row.
@@ -982,7 +990,7 @@ def test_tc_schema_021_combinatorial_source_is_accepted() -> None:
 
 
 def test_tc_schema_022_zero_strength_is_rejected() -> None:
-    """FR-001 CR-008 (TC-SCHEMA-022): `strength: 0` cannot be declared.
+    """TC-030: FR-001 CR-008: `strength: 0` cannot be declared.
 
     Assumptions: quire-rs `ConfigurationSpace::tuples` returns 0 for a strength
     of 0.
@@ -1018,7 +1026,7 @@ def test_tc_schema_022_zero_strength_is_rejected() -> None:
 def test_tc_schema_023_malformed_combinatorial_is_rejected(
     label: str, combinatorial: dict
 ) -> None:
-    """FR-001 CR-008 (TC-SCHEMA-023): a malformed declaration fails at load.
+    """TC-031: FR-001 CR-008: a malformed declaration fails at load.
 
     Assumptions: `CombinatorialColumns` is `additionalProperties: false`, and
     quire-rs `deny_unknown_fields` would reject the same input.
@@ -1045,7 +1053,7 @@ def _marker(**over: object) -> dict:
 
 
 def test_tc_schema_024_implements_marker_forms_are_accepted() -> None:
-    """FR-001 CR-009 (TC-SCHEMA-024): a well-formed declaration validates.
+    """TC-032: FR-001 CR-009: a well-formed declaration validates.
 
     Assumptions: quire-rs FR-062 reads this shape.
     Criteria: `trace_tags.implements` takes the same `TraceMarkerForm` shape as
@@ -1066,7 +1074,7 @@ def test_tc_schema_024_implements_marker_forms_are_accepted() -> None:
 
 
 def test_tc_schema_025_implements_is_a_separate_list() -> None:
-    """FR-001 CR-009 (TC-SCHEMA-025): scope and evidence cannot be one list.
+    """TC-033: FR-001 CR-009: scope and evidence cannot be one list.
 
     Assumptions: quire-rs CR-061 stopped `verifies` binding production symbols
     because a doc comment citing a criterion would otherwise count as evidence.
@@ -1100,7 +1108,7 @@ def test_tc_schema_025_implements_is_a_separate_list() -> None:
 def test_tc_schema_026_malformed_implements_marker_is_rejected(
     label: str, marker: dict
 ) -> None:
-    """FR-001 CR-009 (TC-SCHEMA-026): a malformed form fails at load.
+    """TC-034: FR-001 CR-009: a malformed form fails at load.
 
     Criteria: the same rejections `markers` gets, because it is the same
     definition. An unknown key matters most — a marker that reads correctly and
