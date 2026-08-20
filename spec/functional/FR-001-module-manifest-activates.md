@@ -24,7 +24,7 @@ relationships:
 > A shared list with a discriminator field would put **one typo between scope
 > and evidence**. Two lists cannot be confused, and `TraceMarkerForm` stays
 > `additionalProperties: false` so a module cannot invent the discriminator
-> either — TC-SCHEMA-025 asserts that rejection rather than trusting it.
+> either — TC-033 asserts that rejection rather than trusting it.
 >
 > The engine reinforces the separation by symbol kind: `markers` bind only
 > test, benchmark and fuzz symbols; `implements` only functions and containers.
