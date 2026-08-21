@@ -1118,3 +1118,45 @@ def test_tc_schema_026_malformed_implements_marker_is_rejected(
         Draft202012Validator(module_manifest_schema()).validate(
             _with_traceability({"trace_tags": {"implements": [marker]}})
         )
+
+
+def test_tc_schema_027_source_exclude_is_accepted() -> None:
+    """TC-035: FR-001 CR-010: `traceability.source_exclude` validates.
+
+    Assumptions: quire-rs FR-050-AC-22 (CR-085) reads this key. Without it here,
+    `additionalProperties: false` rejects the manifest before the engine ever
+    sees it — the gate that has now caught four keys the engine accepts and this
+    contract had never heard of.
+    Criteria: a list of non-empty glob strings is accepted; an empty string and a
+    non-array are rejected.
+    """
+    validator = Draft202012Validator(module_manifest_schema())
+    validator.validate(
+        _with_traceability({"source_exclude": ["tests/fixtures/**", "fixtures/**"]})
+    )
+    # An empty list is a module that declares the key and excludes nothing.
+    validator.validate(_with_traceability({"source_exclude": []}))
+
+    with pytest.raises(ValidationError):
+        validator.validate(_with_traceability({"source_exclude": [""]}))
+    with pytest.raises(ValidationError):
+        validator.validate(_with_traceability({"source_exclude": "tests/fixtures/**"}))
+
+
+def test_tc_schema_027_source_exclude_is_not_exclude() -> None:
+    """TC-035: FR-001 CR-010: the two exclusion keys stay distinct.
+
+    Assumptions: `exclude` scopes documents, `source_exclude` scopes the source
+    walk, and quire-rs merges them separately.
+    Criteria: declaring both is legal and neither is an alias for the other — a
+    module can exclude a document tree without excluding a source tree.
+    """
+    validator = Draft202012Validator(module_manifest_schema())
+    validator.validate(
+        _with_traceability(
+            {
+                "exclude": ["spec/fixtures/**"],
+                "source_exclude": ["tests/fixtures/**"],
+            }
+        )
+    )

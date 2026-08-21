@@ -10,6 +10,34 @@ relationships:
 
 ## Description
 
+> **CR-010 (source exclusion — 2026-08-20):** the fixture gains
+> `traceability.source_exclude[]`, a list of path globs under the **code** root
+> (quire-rs FR-050-AC-22 / CR-085). agent-ix/quire-rs#199.
+>
+> **A separate key from `exclude`, and that is the design.** `exclude` scopes
+> **documents** and has never in its life been applied to a source file.
+> `source_exclude` scopes the **source-symbol walk**. Merging them is not a
+> simplification, it is a coverage catastrophe: `spec-artifacts-process`
+> FR-004-AC-9 *requires* every trace target to exclude `tests/**`, while the
+> large majority of any repository's trace markers live under `tests/` — 194 of
+> quire-rs's own ~458. A single key meaning both would delete the evidence tree
+> and read as an ecosystem-wide regression.
+>
+> So `tests/**` **must never appear** on this key. Declarations anchor at the
+> fixture directory (`tests/fixtures/**`); `globset` anchors a pattern at the
+> start unless it opens with `**/`, so that cannot reach `src/tests/fixtures/`.
+>
+> The key can only **subtract** within the code root. It does not relocate
+> either root — quire-rs CR-045 keeps `spec/` as convention rather than
+> configuration — so a `source_exclude` of `spec/**` neither un-excludes the
+> document root nor admits anything under it.
+>
+> Filed for the reason CR-005, CR-007, CR-008 and CR-009 were: without the key
+> here, `additionalProperties: false` rejects the manifest **before the engine
+> ever sees it**, so a module could not declare what quire-rs v0.41.0 already
+> reads. This gate has now caught four such keys, which is a good record for the
+> gate and a poor one for the sequencing.
+
 > **CR-009 (implements marker forms — 2026-08-19):** the fixture gains
 > `trace_tags.implements[]`, taking the same `TraceMarkerForm` shape as
 > `markers` (quire-rs FR-062). agent-ix/quire-rs#171.

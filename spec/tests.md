@@ -95,3 +95,4 @@ listed as pending rather than quietly dropped.
 | TC-032 | a well-formed declaration validates (`test_tc_schema_024_implements_marker_forms_are_accepted`) | Unit | P0 | FR-001-AC-1 | ✅ |
 | TC-033 | scope and evidence cannot be one list (`test_tc_schema_025_implements_is_a_separate_list`) | Unit | P0 | FR-001-AC-1 | ✅ |
 | TC-034 | a malformed form fails at load (`test_tc_schema_026_malformed_implements_marker_is_rejected`) | Unit | P0 | FR-001-AC-1 | ✅ |
+| TC-035 | `traceability.source_exclude` is accepted as a list of non-empty globs, rejects an empty string and a bare string, and coexists with `exclude` as a distinct key (`test_tc_schema_027_*`) | Unit | P0 | FR-001-AC-1 | ✅ |
