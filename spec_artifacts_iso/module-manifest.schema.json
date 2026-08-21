@@ -811,6 +811,14 @@
           },
           "description": "quire-rs CR-060: model-level path globs holding NO traceable data. A document under one mints no trace ids, contributes no reference rows, and is not classified for criteria — so it scopes every declaration AND the CR-028 criteria walk, which has no declaration of its own to hang an exclusion on. It scopes traceability only: an excluded document is still schema- and grammar-checked. More load-bearing since CR-062, because archetype binding is what lets a fixture matrix mint phantom ids."
         },
+        "source_exclude": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "description": "quire-rs CR-085 (FR-050-AC-22): model-level path globs under the CODE root holding no traceable source — fixture trees whose whole purpose is to contain a tag nothing declares. Deliberately a SEPARATE key from `exclude`, which is about documents and has never been applied to a source file. The two must not merge: FR-004-AC-9 requires every trace target to exclude `tests/**`, while the large majority of a repository's trace markers live under `tests/`, so a key meaning both would delete the evidence tree. `tests/**` MUST NEVER appear here — anchor at the fixture directory (`tests/fixtures/**`). It can only subtract: a `source_exclude` of `spec/**` neither relocates nor un-excludes the document root."
+        },
         "trace_targets": {
           "type": "array",
           "items": {
