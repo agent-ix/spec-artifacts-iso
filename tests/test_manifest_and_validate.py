@@ -1193,6 +1193,9 @@ def test_tc_schema_029_anchored_source_exclude_globs_stay_legal() -> None:
         ("bare **", "**"),
         ("tests/**", "tests/**"),
         ("leading wildcard", "*/fixtures/**"),
+        ("bare tests", "tests"),
+        ("bare tests slash", "tests/"),
+        ("wildcard tail", "tests/**/*.py"),
     ],
     ids=lambda v: v if isinstance(v, str) else "",
 )
@@ -1205,10 +1208,11 @@ def test_tc_schema_030_evidence_deleting_source_exclude_is_rejected(
     read as unbacked — indistinguishable from missing tests. globset compiles
     with ``literal_separator=false``, so an unanchored `*/fixtures/**` matches
     at ANY depth, not one level down.
-    Criteria: a bare `**` (excludes everything), a wildcard directly under
-    `tests/` (excludes the evidence tree), and a pattern opening with a
-    wildcard (unanchored) are each schema errors rather than prose violations.
-    Before CR-011 all three validated cleanly.
+    Criteria: a bare `**` (excludes everything), a pattern opening with a
+    wildcard (unanchored), and any form naming the `tests` tree with nothing
+    or only wildcards after it (the semantics the spec-artifacts-process
+    contract test pins) are each schema errors rather than prose violations.
+    Before CR-011 every case here validated cleanly.
     """
     with pytest.raises(ValidationError):
         Draft202012Validator(module_manifest_schema()).validate(
