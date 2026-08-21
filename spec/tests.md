@@ -31,7 +31,7 @@ listed as pending rather than quietly dropped.
 
 | Functional Req | Acceptance Criteria | Test Cases | Coverage Status |
 |----------------|---------------------|------------|-----------------|
-| FR-001 | FR-001-AC-1 | TC-001, TC-022, TC-023, TC-024, TC-025, TC-026, TC-027, TC-028, TC-029, TC-030, TC-031, TC-032, TC-033, TC-034 | ✅ Complete |
+| FR-001 | FR-001-AC-1 | TC-001, TC-022, TC-023, TC-024, TC-025, TC-026, TC-027, TC-028, TC-029, TC-030, TC-031, TC-032, TC-033, TC-034, TC-035, TC-036, TC-037, TC-038 | ✅ Complete |
 | FR-001 | FR-001-AC-2 | — | 🚧 Pending |
 | FR-001 | FR-001-AC-3 | — | 🚧 Pending |
 | FR-001 | FR-001-AC-4 | — | 🚧 Pending |
@@ -95,4 +95,7 @@ listed as pending rather than quietly dropped.
 | TC-032 | a well-formed declaration validates (`test_tc_schema_024_implements_marker_forms_are_accepted`) | Unit | P0 | FR-001-AC-1 | ✅ |
 | TC-033 | scope and evidence cannot be one list (`test_tc_schema_025_implements_is_a_separate_list`) | Unit | P0 | FR-001-AC-1 | ✅ |
 | TC-034 | a malformed form fails at load (`test_tc_schema_026_malformed_implements_marker_is_rejected`) | Unit | P0 | FR-001-AC-1 | ✅ |
-| TC-035 | `traceability.source_exclude` is accepted as a list of non-empty globs, rejects an empty string and a bare string, and coexists with `exclude` as a distinct key (`test_tc_schema_027_*`) | Unit | P0 | FR-001-AC-1 | ✅ |
+| TC-035 | `traceability.source_exclude` is accepted as a list of non-empty globs and rejects an empty string and a bare string (`test_tc_schema_027_source_exclude_is_accepted`) | Unit | P0 | FR-001-AC-1 | ✅ |
+| TC-036 | `source_exclude` coexists with `exclude` as a distinct key — declaring both is legal and neither aliases the other (`test_tc_schema_028_source_exclude_is_not_exclude`) | Unit | P0 | FR-001-AC-1 | ✅ |
+| TC-037 | the anchored globs modules actually declare stay legal under the CR-011 value constraints — `tests/fixtures/**`, `tests_integration/fixtures/**`, `fixtures/**`, the exact spec-artifacts-process list (`test_tc_schema_029_anchored_source_exclude_globs_stay_legal`) | Unit | P0 | FR-001-AC-1 | ✅ |
+| TC-038 | an evidence-deleting `source_exclude` glob is a schema error, not a prose violation — bare `**`, `tests/**`, and wildcard-leading `*/fixtures/**` are each rejected (`test_tc_schema_030_evidence_deleting_source_exclude_is_rejected`) | Unit | P0 | FR-001-AC-1 | ✅ |

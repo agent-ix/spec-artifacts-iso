@@ -10,6 +10,27 @@ relationships:
 
 ## Description
 
+> **CR-011 (source-exclusion value constraints — 2026-08-21):** the
+> `source_exclude` items gain value constraints; CR-010's "`tests/**` MUST
+> NEVER appear here" moves from the description string, which validates
+> nothing, into the schema. An item is rejected when it is a bare `**`
+> (subtracts the whole code root), opens with a wildcard character (`*` or
+> `?` — globset compiles with `literal_separator=false`, so an unanchored
+> `*/fixtures/**` matches at any depth), or puts a wildcard directly under
+> `tests/` (`tests/**`, `tests/*` — the evidence tree). Before this, a
+> manifest declaring `["tests/**"]` or `["**"]` passed the schema gate
+> cleanly and silently deleted evidence downstream: excluded files' trace
+> tags never bind, and their matrix rows read as unbacked, indistinguishable
+> from missing tests.
+>
+> **Deliberately narrower than a blanket `tests/` prefix ban.** The anchored
+> fixture-directory form CR-010 tells every module to write —
+> `tests/fixtures/**` — starts with `tests/` and must stay legal; it is the
+> first glob in `spec-artifacts-process`'s own manifest. So the mechanical
+> rule targets the wildcard, not the directory name. Companion contract test
+> pinning the concrete glob list: spec-artifacts-process#56.
+> agent-ix/spec-artifacts-iso#29.
+
 > **CR-010 (source exclusion — 2026-08-20):** the fixture gains
 > `traceability.source_exclude[]`, a list of path globs under the **code** root
 > (quire-rs FR-050-AC-22 / CR-085). agent-ix/quire-rs#199.

@@ -1143,8 +1143,8 @@ def test_tc_schema_027_source_exclude_is_accepted() -> None:
         validator.validate(_with_traceability({"source_exclude": "tests/fixtures/**"}))
 
 
-def test_tc_schema_027_source_exclude_is_not_exclude() -> None:
-    """TC-035: FR-001 CR-010: the two exclusion keys stay distinct.
+def test_tc_schema_028_source_exclude_is_not_exclude() -> None:
+    """TC-036: FR-001 CR-010: the two exclusion keys stay distinct.
 
     Assumptions: `exclude` scopes documents, `source_exclude` scopes the source
     walk, and quire-rs merges them separately.
@@ -1160,3 +1160,57 @@ def test_tc_schema_027_source_exclude_is_not_exclude() -> None:
             }
         )
     )
+
+
+def test_tc_schema_029_anchored_source_exclude_globs_stay_legal() -> None:
+    """TC-037: FR-001 CR-011: the globs modules actually declare stay legal.
+
+    Assumptions: `spec-artifacts-process` is the reference declarer — its
+    manifest ships exactly these three globs, and its companion contract test
+    (spec-artifacts-process#56) pins the same list.
+    Criteria: the value constraints reject evidence-deleting patterns without
+    touching the anchored fixture-directory form the CR-010 description tells
+    every module to write. `tests/fixtures/**` is the load-bearing case: it
+    starts with `tests/` yet is the RECOMMENDED spelling, so the mechanical
+    rule must be narrower than a blanket `tests/` prefix ban.
+    """
+    Draft202012Validator(module_manifest_schema()).validate(
+        _with_traceability(
+            {
+                "source_exclude": [
+                    "tests/fixtures/**",
+                    "tests_integration/fixtures/**",
+                    "fixtures/**",
+                ]
+            }
+        )
+    )
+
+
+@pytest.mark.parametrize(
+    ("label", "pattern"),
+    [
+        ("bare **", "**"),
+        ("tests/**", "tests/**"),
+        ("leading wildcard", "*/fixtures/**"),
+    ],
+    ids=lambda v: v if isinstance(v, str) else "",
+)
+def test_tc_schema_030_evidence_deleting_source_exclude_is_rejected(
+    label: str, pattern: str
+) -> None:
+    """TC-038: FR-001 CR-011: an evidence-deleting glob fails at load.
+
+    Assumptions: excluded files' trace tags never bind, so their matrix rows
+    read as unbacked — indistinguishable from missing tests. globset compiles
+    with ``literal_separator=false``, so an unanchored `*/fixtures/**` matches
+    at ANY depth, not one level down.
+    Criteria: a bare `**` (excludes everything), a wildcard directly under
+    `tests/` (excludes the evidence tree), and a pattern opening with a
+    wildcard (unanchored) are each schema errors rather than prose violations.
+    Before CR-011 all three validated cleanly.
+    """
+    with pytest.raises(ValidationError):
+        Draft202012Validator(module_manifest_schema()).validate(
+            _with_traceability({"source_exclude": [pattern]})
+        )

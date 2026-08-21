@@ -815,9 +815,26 @@
           "type": "array",
           "items": {
             "type": "string",
-            "minLength": 1
+            "minLength": 1,
+            "allOf": [
+              {
+                "not": {
+                  "pattern": "^\\*\\*$"
+                }
+              },
+              {
+                "not": {
+                  "pattern": "^tests/[*?]"
+                }
+              },
+              {
+                "not": {
+                  "pattern": "^[*?]"
+                }
+              }
+            ]
           },
-          "description": "quire-rs CR-085 (FR-050-AC-22): model-level path globs under the CODE root holding no traceable source — fixture trees whose whole purpose is to contain a tag nothing declares. Deliberately a SEPARATE key from `exclude`, which is about documents and has never been applied to a source file. The two must not merge: FR-004-AC-9 requires every trace target to exclude `tests/**`, while the large majority of a repository's trace markers live under `tests/`, so a key meaning both would delete the evidence tree. `tests/**` MUST NEVER appear here — anchor at the fixture directory (`tests/fixtures/**`). It can only subtract: a `source_exclude` of `spec/**` neither relocates nor un-excludes the document root."
+          "description": "quire-rs CR-085 (FR-050-AC-22): model-level path globs under the CODE root holding no traceable source — fixture trees whose whole purpose is to contain a tag nothing declares. Deliberately a SEPARATE key from `exclude`, which is about documents and has never been applied to a source file. The two must not merge: FR-004-AC-9 requires every trace target to exclude `tests/**`, while the large majority of a repository's trace markers live under `tests/`, so a key meaning both would delete the evidence tree. Since CR-011 that rule is MECHANICAL, not prose: each item is rejected when it is a bare `**`, opens with a wildcard character (`*` or `?` — globset compiles with `literal_separator=false`, so `*/fixtures/**` matches at any depth), or puts a wildcard directly under `tests/` (`tests/**`, `tests/*`). Anchor at the fixture directory instead (`tests/fixtures/**`), which stays legal. It can only subtract: a `source_exclude` of `spec/**` neither relocates nor un-excludes the document root."
         },
         "trace_targets": {
           "type": "array",
