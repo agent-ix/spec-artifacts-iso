@@ -1166,13 +1166,16 @@ def test_tc_schema_029_anchored_source_exclude_globs_stay_legal() -> None:
     """TC-037: FR-001 CR-011: the globs modules actually declare stay legal.
 
     Assumptions: `spec-artifacts-process` is the reference declarer — its
-    manifest ships exactly these three globs, and its companion contract test
-    (spec-artifacts-process#56) pins the same list.
+    manifest ships exactly the first three globs below, and its companion
+    contract test (spec-artifacts-process#56) pins the same list.
     Criteria: the value constraints reject evidence-deleting patterns without
     touching the anchored fixture-directory form the CR-010 description tells
     every module to write. `tests/fixtures/**` is the load-bearing case: it
     starts with `tests/` yet is the RECOMMENDED spelling, so the mechanical
-    rule must be narrower than a blanket `tests/` prefix ban.
+    rule must be narrower than a blanket `tests/` prefix ban. A literal
+    segment re-anchors at ANY depth: `tests/**/fixtures/**` subtracts only
+    fixture directories and stays legal too (SR-002 FND-001, the case the
+    pre-fix `^tests(/([*?].*)?)?$` regex over-rejected).
     """
     Draft202012Validator(module_manifest_schema()).validate(
         _with_traceability(
@@ -1181,6 +1184,7 @@ def test_tc_schema_029_anchored_source_exclude_globs_stay_legal() -> None:
                     "tests/fixtures/**",
                     "tests_integration/fixtures/**",
                     "fixtures/**",
+                    "tests/**/fixtures/**",
                 ]
             }
         )
@@ -1196,6 +1200,9 @@ def test_tc_schema_029_anchored_source_exclude_globs_stay_legal() -> None:
         ("bare tests", "tests"),
         ("bare tests slash", "tests/"),
         ("wildcard tail", "tests/**/*.py"),
+        ("mixed-wildcard segment", "tests/x*"),
+        ("wildcard in every segment", "tests/f*/**"),
+        ("empty segment", "tests//**"),
     ],
     ids=lambda v: v if isinstance(v, str) else "",
 )
@@ -1209,10 +1216,12 @@ def test_tc_schema_030_evidence_deleting_source_exclude_is_rejected(
     with ``literal_separator=false``, so an unanchored `*/fixtures/**` matches
     at ANY depth, not one level down.
     Criteria: a bare `**` (excludes everything), a pattern opening with a
-    wildcard (unanchored), and any form naming the `tests` tree with nothing
-    or only wildcards after it (the semantics the spec-artifacts-process
-    contract test pins) are each schema errors rather than prose violations.
-    Before CR-011 every case here validated cleanly.
+    wildcard (unanchored), and any form naming the `tests` tree with no
+    literal anchor after it — every later segment empty or wildcard-carrying,
+    the semantics the spec-artifacts-process contract test pins — are each
+    schema errors rather than prose violations. Before CR-011 every case here
+    validated cleanly; `tests/x*`, `tests/f*/**` and `tests//**` still did
+    until the SR-002 FND-001 regex fix.
     """
     with pytest.raises(ValidationError):
         Draft202012Validator(module_manifest_schema()).validate(

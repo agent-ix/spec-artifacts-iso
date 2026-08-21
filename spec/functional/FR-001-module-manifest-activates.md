@@ -16,10 +16,11 @@ relationships:
 > nothing, into the schema. An item is rejected when it is a bare `**`
 > (subtracts the whole code root), opens with a wildcard character (`*` or
 > `?` — globset compiles with `literal_separator=false`, so an unanchored
-> `*/fixtures/**` matches at any depth), or names the `tests` tree with
-> nothing or only wildcards after it (`tests`, `tests/`, `tests/**`,
-> `tests/**/*.py` — the evidence tree, matching the semantics the
-> spec-artifacts-process contract test pins). Before this, a
+> `*/fixtures/**` matches at any depth), or names the `tests` tree with no
+> literal anchor after it — every later segment empty or wildcard-carrying
+> (`tests`, `tests/`, `tests/**`, `tests/**/*.py`, `tests/x*` — the evidence
+> tree, matching the semantics the spec-artifacts-process contract test
+> pins). Before this, a
 > manifest declaring `["tests/**"]` or `["**"]` passed the schema gate
 > cleanly and silently deleted evidence downstream: excluded files' trace
 > tags never bind, and their matrix rows read as unbacked, indistinguishable
@@ -29,8 +30,9 @@ relationships:
 > fixture-directory form CR-010 tells every module to write —
 > `tests/fixtures/**` — starts with `tests/` and must stay legal; it is the
 > first glob in `spec-artifacts-process`'s own manifest. So the mechanical
-> rule targets `tests` followed by nothing or a wildcard — a later literal
-> segment (`fixtures`) re-anchors the glob and keeps it legal. Companion
+> rule targets `tests` with no literal segment after it — a later
+> wildcard-free segment (`fixtures`) re-anchors the glob at any depth and
+> keeps it legal, so `tests/**/fixtures/**` validates too. Companion
 > contract test
 > pinning the concrete glob list: spec-artifacts-process#56.
 > agent-ix/spec-artifacts-iso#29.
