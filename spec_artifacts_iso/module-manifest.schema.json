@@ -1022,6 +1022,15 @@
         "id_column": {
           "type": "string",
           "minLength": 1
+        },
+        "evidence": {
+          "type": "string",
+          "enum": [
+            "source",
+            "reference-only"
+          ],
+          "default": "source",
+          "description": "quire-rs FR-050-AC-40 (#363): whether target rows belong to source-evidence coverage. Omission/source preserves the historical denominator; reference-only registers ids for reference integrity without adding coverage obligations."
         }
       }
     },

@@ -10,6 +10,14 @@ relationships:
 
 ## Description
 
+> **CR-012 (trace-target evidence posture — 2026-08-26):** `TraceTarget`
+> admits the closed `evidence` vocabulary `source | reference-only`, defaulting
+> to the historical source posture (agent-ix/quire-rs#363). Reference-only ids
+> remain resolvable and participate in dangling-reference validation, but their
+> registry rows are not source-evidence obligations. The schema remains
+> `additionalProperties: false`, so a misspelled or invented posture fails at
+> the module boundary. TC-039.
+
 > **CR-011 (source-exclusion value constraints — 2026-08-21):** the
 > `source_exclude` items gain value constraints; CR-010's "`tests/**` MUST
 > NEVER appear here" moves from the description string, which validates

@@ -1227,3 +1227,25 @@ def test_tc_schema_030_evidence_deleting_source_exclude_is_rejected(
         Draft202012Validator(module_manifest_schema()).validate(
             _with_traceability({"source_exclude": [pattern]})
         )
+
+
+def test_tc_schema_031_trace_target_evidence_posture_is_closed() -> None:
+    """TC-039: FR-001 CR-012: modules can distinguish reference registries
+    from source-evidence obligations, but cannot invent a third posture."""
+    validator = Draft202012Validator(module_manifest_schema())
+    target = {
+        "name": "suite",
+        "archetype": "SuiteRegistry",
+        "section": "Suites",
+        "id_column": "ID",
+    }
+    validator.validate(_with_traceability({"trace_targets": [target]}))
+    validator.validate(
+        _with_traceability(
+            {"trace_targets": [target | {"evidence": "reference-only"}]}
+        )
+    )
+    with pytest.raises(ValidationError):
+        validator.validate(
+            _with_traceability({"trace_targets": [target | {"evidence": "guessed"}]})
+        )

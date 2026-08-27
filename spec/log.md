@@ -7,6 +7,12 @@ description: "Chronological log of structural changes to this bundle."
 
 ## History
 
+* **2026-08-26** — FR-001 CR-012: `TraceTarget.evidence` admits the closed
+  `source | reference-only` vocabulary (agent-ix/quire-rs#363). Omission keeps
+  the historical source-evidence denominator byte-shaped; `reference-only`
+  lets a module register ids for reference integrity without presenting their
+  rows as missing source tests. Unknown postures remain schema errors. TC-039.
+
 * **2026-08-18** — FR-001 CR-005: the fixture gains `traceability.required_relations[]`, `traceability.acyclic_edges[]` and a `RequiredRelation` definition (quire-rs FR-058) — the upward half of traceability, where a hazard with no mitigating requirement is a risk nobody addressed. Stricter than its neighbours on purpose: an empty `edges` list reports every document of a kind, so the schema rejects it rather than letting a quiet declaration read as a corpus-wide defect. agent-ix/spec-objects-security#5.
 * **2026-08-18** — **CR-008**: this module now DECLARES `traceability.vocabulary_coverage` for the ISO 25010 quality characteristics (quire-rs FR-059), and declares **`quire` as a dev dependency**. Two fixes to one problem: the engine capability shipped in quire-rs v0.33.0 and no module declared it, so the check fired nowhere.
 
