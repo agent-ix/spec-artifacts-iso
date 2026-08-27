@@ -988,6 +988,23 @@
         }
       }
     },
+    "SectionNames": {
+      "description": "quire-rs CR-118: one exact or `*`-pattern section name, or a non-empty ordered family of them.",
+      "oneOf": [
+        {
+          "type": "string",
+          "minLength": 1
+        },
+        {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        }
+      ]
+    },
     "TraceTarget": {
       "type": "object",
       "description": "FR-001 CR-002 (quire-rs FR-050): one kind of trace id and the archetype whose documents mint it. Binding is by ARCHETYPE ONLY since quire-rs CR-062 — the `document:` path form is retired and a manifest still declaring it fails to load.",
@@ -1016,8 +1033,7 @@
           "description": "quire-rs CR-038: scope-relative globs whose matching documents mint nothing for THIS target — a narrower statement than the model-level `exclude`."
         },
         "section": {
-          "type": "string",
-          "minLength": 1
+          "$ref": "#/$defs/SectionNames"
         },
         "id_column": {
           "type": "string",
@@ -1068,8 +1084,7 @@
           }
         },
         "section": {
-          "type": "string",
-          "minLength": 1
+          "$ref": "#/$defs/SectionNames"
         },
         "column": {
           "type": "string",

@@ -7,6 +7,12 @@ description: "Chronological log of structural changes to this bundle."
 
 ## History
 
+* **2026-08-26** — FR-001 CR-014: `TraceTarget.section` and
+  `DocumentReference.section` now share a `SectionNames` schema accepting one
+  non-empty string or a non-empty string sequence. This closes the contract
+  gap that let Quire CR-118 load section families while the packaged FR-035
+  schema rejected the same manifest (agent-ix/spec-artifacts-iso#31). TC-041.
+
 * **2026-08-26** — FR-001 CR-013: `TraceTarget.required` is a typed boolean
   defaulting to true (agent-ix/spec-artifacts-iso#30,
   agent-ix/quire-rs#327). Modules may declare an optional minting section

@@ -10,6 +10,12 @@ relationships:
 
 ## Description
 
+> **CR-014 (section families — 2026-08-26):** `TraceTarget.section` and
+> `DocumentReference.section` accept either one non-empty name or a non-empty
+> ordered list of non-empty names, matching Quire CR-118. The scalar form stays
+> compatible; empty selectors are rejected because they declare a scan that can
+> reach nothing (agent-ix/spec-artifacts-iso#31). TC-041.
+
 > **CR-013 (optional trace targets — 2026-08-26):** `TraceTarget.required`
 > is a boolean that defaults to the historical required posture. `false`
 > allows an archetype-selected document to omit an optional minting section;
@@ -303,7 +309,10 @@ The system **SHALL** publish a Filament Module manifest (`spec_artifacts_iso/man
 
 ## Behavior
 
-The manifest **SHALL** validate against `module-manifest.schema.json` v1.0.0. Re-activation **SHALL** be a no-op (idempotent by content hash per FR-026-AC-1).
+The manifest **SHALL** validate against `module-manifest.schema.json` v1.0.0.
+Trace-target and document-reference section selectors **SHALL** admit a
+non-empty scalar or non-empty sequence of non-empty names. Re-activation
+**SHALL** be a no-op (idempotent by content hash per FR-026-AC-1).
 
 ## Acceptance Criteria
 
@@ -313,6 +322,7 @@ The manifest **SHALL** validate against `module-manifest.schema.json` v1.0.0. Re
 | FR-001-AC-2 | Activation against clean filament-core succeeds with 200 | Integration Test |
 | FR-001-AC-3 | Re-activation returns no-op (same content hash) | Integration Test |
 | FR-001-AC-4 | Each declared archetype/object_type/artifact_type appears in the corresponding filament-core table after activation | Integration Test |
+| FR-001-AC-5 | `TraceTarget.section` and `DocumentReference.section` accept one non-empty string or a non-empty string sequence, while rejecting empty and non-string selectors | Schema Test (TC-041) |
 
 ## Dependencies
 

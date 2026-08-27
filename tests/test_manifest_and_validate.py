@@ -1267,3 +1267,48 @@ def test_tc_schema_032_optional_trace_target_posture_is_typed() -> None:
         validator.validate(
             _with_traceability({"trace_targets": [target | {"required": "sometimes"}]})
         )
+
+
+@pytest.mark.parametrize(
+    ("collection", "declaration"),
+    [
+        (
+            "trace_targets",
+            {
+                "name": "test-case",
+                "archetype": "TestMatrix",
+                "id_column": "Test ID",
+            },
+        ),
+        (
+            "document_references",
+            {
+                "name": "traces-to",
+                "archetype": "TestMatrix",
+                "column": "Traces To",
+                "pattern": r"\b(TC-\d+)\b",
+                "targets": ["test-case"],
+            },
+        ),
+    ],
+    ids=["trace-target", "document-reference"],
+)
+def test_tc_schema_033_section_names_are_scalar_or_nonempty_sequence(
+    collection: str, declaration: dict
+) -> None:
+    """TC-041: FR-001-AC-5 / CR-014: the schema matches Quire CR-118."""
+    validator = Draft202012Validator(module_manifest_schema())
+
+    for section in (
+        "Test Case Summary",
+        ["*Test Case Summary*", "Integration Test Matrix"],
+    ):
+        validator.validate(
+            _with_traceability({collection: [declaration | {"section": section}]})
+        )
+
+    for section in ("", [], [""], ["Test Case Summary", 1]):
+        with pytest.raises(ValidationError):
+            validator.validate(
+                _with_traceability({collection: [declaration | {"section": section}]})
+            )
