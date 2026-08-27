@@ -10,6 +10,12 @@ relationships:
 
 ## Description
 
+> **CR-013 (optional trace targets — 2026-08-26):** `TraceTarget.required`
+> is a boolean that defaults to the historical required posture. `false`
+> allows an archetype-selected document to omit an optional minting section;
+> when that section is present it still mints and validates normally
+> (agent-ix/spec-artifacts-iso#30, agent-ix/quire-rs#327). TC-040.
+
 > **CR-012 (trace-target evidence posture — 2026-08-26):** `TraceTarget`
 > admits the closed `evidence` vocabulary `source | reference-only`, defaulting
 > to the historical source posture (agent-ix/quire-rs#363). Reference-only ids

@@ -7,6 +7,11 @@ description: "Chronological log of structural changes to this bundle."
 
 ## History
 
+* **2026-08-26** — FR-001 CR-013: `TraceTarget.required` is a typed boolean
+  defaulting to true (agent-ix/spec-artifacts-iso#30,
+  agent-ix/quire-rs#327). Modules may declare an optional minting section
+  without weakening validation when that section is present. TC-040.
+
 * **2026-08-26** — FR-001 CR-012: `TraceTarget.evidence` admits the closed
   `source | reference-only` vocabulary (agent-ix/quire-rs#363). Omission keeps
   the historical source-evidence denominator byte-shaped; `reference-only`

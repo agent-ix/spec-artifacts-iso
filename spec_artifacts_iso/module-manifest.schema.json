@@ -1023,6 +1023,11 @@
           "type": "string",
           "minLength": 1
         },
+        "required": {
+          "type": "boolean",
+          "default": true,
+          "description": "quire-rs FR-050-AC-41 (#327): whether every selected document must carry the minting section. Omission/true preserves the historical required posture; false makes absence healthy while a present section still mints and validates."
+        },
         "evidence": {
           "type": "string",
           "enum": [

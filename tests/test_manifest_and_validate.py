@@ -1241,11 +1241,29 @@ def test_tc_schema_031_trace_target_evidence_posture_is_closed() -> None:
     }
     validator.validate(_with_traceability({"trace_targets": [target]}))
     validator.validate(
-        _with_traceability(
-            {"trace_targets": [target | {"evidence": "reference-only"}]}
-        )
+        _with_traceability({"trace_targets": [target | {"evidence": "reference-only"}]})
     )
     with pytest.raises(ValidationError):
         validator.validate(
             _with_traceability({"trace_targets": [target | {"evidence": "guessed"}]})
+        )
+
+
+def test_tc_schema_032_optional_trace_target_posture_is_typed() -> None:
+    """TC-040: FR-001 CR-013: an optional minting section is a boolean
+    declaration; omission keeps the historical required posture."""
+    validator = Draft202012Validator(module_manifest_schema())
+    target = {
+        "name": "constraint",
+        "archetype": "FR",
+        "section": "Constraints",
+        "id_column": "ID",
+    }
+    validator.validate(_with_traceability({"trace_targets": [target]}))
+    validator.validate(
+        _with_traceability({"trace_targets": [target | {"required": False}]})
+    )
+    with pytest.raises(ValidationError):
+        validator.validate(
+            _with_traceability({"trace_targets": [target | {"required": "sometimes"}]})
         )
