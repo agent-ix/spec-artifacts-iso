@@ -35,6 +35,7 @@ listed as pending rather than quietly dropped.
 | FR-001 | FR-001-AC-2 | — | 🚧 Pending |
 | FR-001 | FR-001-AC-3 | — | 🚧 Pending |
 | FR-001 | FR-001-AC-4 | — | 🚧 Pending |
+| FR-001 | FR-001-AC-5 | TC-041 | ✅ Complete |
 | FR-002 | FR-002-AC-1 | TC-002, TC-005, TC-006, TC-014, TC-015, TC-016 | ✅ Complete |
 | FR-002 | FR-002-AC-2 | TC-013 | ✅ Complete |
 | FR-002 | FR-002-AC-3 | — | 🚧 Pending |
@@ -99,3 +100,6 @@ listed as pending rather than quietly dropped.
 | TC-036 | `source_exclude` coexists with `exclude` as a distinct key — declaring both is legal and neither aliases the other (`test_tc_schema_028_source_exclude_is_not_exclude`) | Unit | P0 | FR-001-AC-1 | ✅ |
 | TC-037 | the anchored globs modules actually declare stay legal under the CR-011 value constraints — `tests/fixtures/**`, `tests_integration/fixtures/**`, `fixtures/**` (the exact spec-artifacts-process list) plus the depth-anchored `tests/**/fixtures/**`, which a literal later segment re-anchors (`test_tc_schema_029_anchored_source_exclude_globs_stay_legal`) | Unit | P0 | FR-001-AC-1 | ✅ |
 | TC-038 | an evidence-deleting `source_exclude` glob is a schema error, not a prose violation — bare `**`, wildcard-leading `*/fixtures/**`, and every `tests`-tree form with no literal anchor after it (`tests`, `tests/`, `tests/**`, `tests/**/*.py`, `tests/x*`, `tests/f*/**`, `tests//**`) are rejected (`test_tc_schema_030_evidence_deleting_source_exclude_is_rejected`) | Unit | P0 | FR-001-AC-1 | ✅ |
+| TC-039 | a trace target accepts omitted/source and `reference-only` evidence posture while rejecting an unknown posture (`test_tc_schema_031_trace_target_evidence_posture_is_closed`) | Unit | P0 | FR-001-AC-1 | ✅ |
+| TC-040 | a trace target accepts omitted/true and `required: false`, while rejecting a non-boolean optional-section posture (`test_tc_schema_032_optional_trace_target_posture_is_typed`) | Unit | P0 | FR-001-AC-1 | ✅ |
+| TC-041 | trace targets and document references accept a non-empty scalar or non-empty string sequence for `section`, while rejecting empty strings, empty sequences, and non-string members (`test_tc_schema_033_section_names_are_scalar_or_nonempty_sequence`) | Unit | P0 | FR-001-AC-5 | ✅ |

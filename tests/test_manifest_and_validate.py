@@ -1227,3 +1227,88 @@ def test_tc_schema_030_evidence_deleting_source_exclude_is_rejected(
         Draft202012Validator(module_manifest_schema()).validate(
             _with_traceability({"source_exclude": [pattern]})
         )
+
+
+def test_tc_schema_031_trace_target_evidence_posture_is_closed() -> None:
+    """TC-039: FR-001 CR-012: modules can distinguish reference registries
+    from source-evidence obligations, but cannot invent a third posture."""
+    validator = Draft202012Validator(module_manifest_schema())
+    target = {
+        "name": "suite",
+        "archetype": "SuiteRegistry",
+        "section": "Suites",
+        "id_column": "ID",
+    }
+    validator.validate(_with_traceability({"trace_targets": [target]}))
+    validator.validate(
+        _with_traceability({"trace_targets": [target | {"evidence": "reference-only"}]})
+    )
+    with pytest.raises(ValidationError):
+        validator.validate(
+            _with_traceability({"trace_targets": [target | {"evidence": "guessed"}]})
+        )
+
+
+def test_tc_schema_032_optional_trace_target_posture_is_typed() -> None:
+    """TC-040: FR-001 CR-013: an optional minting section is a boolean
+    declaration; omission keeps the historical required posture."""
+    validator = Draft202012Validator(module_manifest_schema())
+    target = {
+        "name": "constraint",
+        "archetype": "FR",
+        "section": "Constraints",
+        "id_column": "ID",
+    }
+    validator.validate(_with_traceability({"trace_targets": [target]}))
+    validator.validate(
+        _with_traceability({"trace_targets": [target | {"required": False}]})
+    )
+    with pytest.raises(ValidationError):
+        validator.validate(
+            _with_traceability({"trace_targets": [target | {"required": "sometimes"}]})
+        )
+
+
+@pytest.mark.parametrize(
+    ("collection", "declaration"),
+    [
+        (
+            "trace_targets",
+            {
+                "name": "test-case",
+                "archetype": "TestMatrix",
+                "id_column": "Test ID",
+            },
+        ),
+        (
+            "document_references",
+            {
+                "name": "traces-to",
+                "archetype": "TestMatrix",
+                "column": "Traces To",
+                "pattern": r"\b(TC-\d+)\b",
+                "targets": ["test-case"],
+            },
+        ),
+    ],
+    ids=["trace-target", "document-reference"],
+)
+def test_tc_schema_033_section_names_are_scalar_or_nonempty_sequence(
+    collection: str, declaration: dict
+) -> None:
+    """TC-041: FR-001-AC-5 / CR-014: the schema matches Quire CR-118."""
+    validator = Draft202012Validator(module_manifest_schema())
+
+    for section in (
+        "Test Case Summary",
+        ["*Test Case Summary*", "Integration Test Matrix"],
+    ):
+        validator.validate(
+            _with_traceability({collection: [declaration | {"section": section}]})
+        )
+
+    for section in ("", [], [""], ["Test Case Summary", 1]):
+        with pytest.raises(ValidationError):
+            validator.validate(
+                _with_traceability({collection: [declaration | {"section": section}]})
+            )
