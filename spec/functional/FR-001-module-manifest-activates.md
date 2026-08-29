@@ -323,6 +323,7 @@ non-empty scalar or non-empty sequence of non-empty names. Re-activation
 | FR-001-AC-3 | Re-activation returns no-op (same content hash) | Integration Test |
 | FR-001-AC-4 | Each declared archetype/object_type/artifact_type appears in the corresponding filament-core table after activation | Integration Test |
 | FR-001-AC-5 | `TraceTarget.section` and `DocumentReference.section` accept one non-empty string or a non-empty string sequence, while rejecting empty and non-string selectors | Schema Test (TC-041) |
+| FR-001-AC-6 | `DocumentReference.status_column` accepts a non-empty per-table override; omission inherits the model-wide status column, while an empty value or unknown near-miss key is rejected | Schema Test (TC-042) |
 
 ## Dependencies
 

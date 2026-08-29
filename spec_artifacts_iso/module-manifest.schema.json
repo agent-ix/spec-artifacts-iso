@@ -1094,6 +1094,11 @@
           "type": "string",
           "minLength": 1
         },
+        "status_column": {
+          "type": "string",
+          "minLength": 1,
+          "description": "quire-rs FR-050-AC-43: override the model-level status column for this document-reference table. Omit to inherit traceability.status.column."
+        },
         "pattern": {
           "type": "string",
           "minLength": 1

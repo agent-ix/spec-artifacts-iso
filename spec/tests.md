@@ -31,11 +31,12 @@ listed as pending rather than quietly dropped.
 
 | Functional Req | Acceptance Criteria | Test Cases | Coverage Status |
 |----------------|---------------------|------------|-----------------|
-| FR-001 | FR-001-AC-1 | TC-001, TC-022, TC-023, TC-024, TC-025, TC-026, TC-027, TC-028, TC-029, TC-030, TC-031, TC-032, TC-033, TC-034, TC-035, TC-036, TC-037, TC-038 | ✅ Complete |
+| FR-001 | FR-001-AC-1 | TC-001, TC-022, TC-023, TC-024, TC-025, TC-026, TC-027, TC-028, TC-029, TC-030, TC-031, TC-032, TC-033, TC-034, TC-035, TC-036, TC-037, TC-038, TC-039 | ✅ Complete |
 | FR-001 | FR-001-AC-2 | — | 🚧 Pending |
 | FR-001 | FR-001-AC-3 | — | 🚧 Pending |
 | FR-001 | FR-001-AC-4 | — | 🚧 Pending |
 | FR-001 | FR-001-AC-5 | TC-041 | ✅ Complete |
+| FR-001 | FR-001-AC-6 | TC-042 | ✅ Complete |
 | FR-002 | FR-002-AC-1 | TC-002, TC-005, TC-006, TC-014, TC-015, TC-016 | ✅ Complete |
 | FR-002 | FR-002-AC-2 | TC-013 | ✅ Complete |
 | FR-002 | FR-002-AC-3 | — | 🚧 Pending |
@@ -103,3 +104,4 @@ listed as pending rather than quietly dropped.
 | TC-039 | a trace target accepts omitted/source and `reference-only` evidence posture while rejecting an unknown posture (`test_tc_schema_031_trace_target_evidence_posture_is_closed`) | Unit | P0 | FR-001-AC-1 | ✅ |
 | TC-040 | a trace target accepts omitted/true and `required: false`, while rejecting a non-boolean optional-section posture (`test_tc_schema_032_optional_trace_target_posture_is_typed`) | Unit | P0 | FR-001-AC-1 | ✅ |
 | TC-041 | trace targets and document references accept a non-empty scalar or non-empty string sequence for `section`, while rejecting empty strings, empty sequences, and non-string members (`test_tc_schema_033_section_names_are_scalar_or_nonempty_sequence`) | Unit | P0 | FR-001-AC-5 | ✅ |
+| TC-042 | a document-reference table accepts a non-empty `status_column` override, while an empty value or a near-miss key is rejected (`test_tc_schema_034_document_reference_status_column_is_accepted`) | Unit | P0 | FR-001-AC-6 | ✅ |

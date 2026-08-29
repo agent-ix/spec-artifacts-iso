@@ -1312,3 +1312,31 @@ def test_tc_schema_033_section_names_are_scalar_or_nonempty_sequence(
             validator.validate(
                 _with_traceability({collection: [declaration | {"section": section}]})
             )
+
+
+def test_tc_schema_034_document_reference_status_column_is_accepted() -> None:
+    """TC-042: FR-001 CR-015: a table may override the status column.
+
+    Assumptions: quire-rs FR-050-AC-43 falls back to the model-level column
+    when this field is absent.
+    Criteria: a non-empty per-reference override is accepted, while an empty
+    value and an unknown near-miss key remain schema errors.
+    """
+    validator = Draft202012Validator(module_manifest_schema())
+    reference = {
+        "name": "functional-coverage",
+        "archetype": "TestMatrix",
+        "section": "Functional Requirement Coverage",
+        "column": "Acceptance Criteria",
+        "pattern": r"[A-Z]+-\d+-AC-\d+",
+        "targets": ["acceptance-criterion"],
+        "status_column": "Coverage Status",
+    }
+    validator.validate(_with_traceability({"document_references": [reference]}))
+
+    for malformed in (
+        {**reference, "status_column": ""},
+        {**reference, "status_column_name": "Coverage Status"},
+    ):
+        with pytest.raises(ValidationError):
+            validator.validate(_with_traceability({"document_references": [malformed]}))
