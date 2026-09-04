@@ -276,7 +276,7 @@ models:
     round_trip: derived
     # The StR frontmatter schema declares `object:`, and the sealed StR model
     # carries no `object` property, so the key is dropped.
-    dropped_frontmatter_keys: [object]
+    dropped_frontmatter_keys: []
     properties:
       id:
         kind: frontmatter
@@ -289,6 +289,10 @@ models:
       type:
         kind: frontmatter
         source: {key: type}
+        lossless: false
+      object:
+        kind: frontmatter
+        source: {key: object}
         lossless: false
       status:
         kind: frontmatter
@@ -370,7 +374,7 @@ models:
     round_trip: derived
     # The US frontmatter schema declares `object:`, and the sealed US model
     # carries no `object` property, so the key is dropped.
-    dropped_frontmatter_keys: [object]
+    dropped_frontmatter_keys: []
     properties:
       id:
         kind: frontmatter
@@ -383,6 +387,10 @@ models:
       type:
         kind: frontmatter
         source: {key: type}
+        lossless: false
+      object:
+        kind: frontmatter
+        source: {key: object}
         lossless: false
       status:
         kind: frontmatter
@@ -454,7 +462,7 @@ models:
     round_trip: derived
     # The IT frontmatter schema declares `object:`, and the sealed IT model
     # carries no `object` property, so the key is dropped.
-    dropped_frontmatter_keys: [object]
+    dropped_frontmatter_keys: []
     properties:
       id:
         kind: frontmatter
@@ -467,6 +475,10 @@ models:
       type:
         kind: frontmatter
         source: {key: type}
+        lossless: false
+      object:
+        kind: frontmatter
+        source: {key: object}
         lossless: false
       status:
         kind: frontmatter
@@ -549,7 +561,7 @@ models:
     round_trip: derived
     # The TC frontmatter schema declares `object:`, and the sealed TC model
     # carries no `object` property, so the key is dropped.
-    dropped_frontmatter_keys: [object]
+    dropped_frontmatter_keys: []
     properties:
       id:
         kind: frontmatter
@@ -562,6 +574,10 @@ models:
       type:
         kind: frontmatter
         source: {key: type}
+        lossless: false
+      object:
+        kind: frontmatter
+        source: {key: object}
         lossless: false
       status:
         kind: frontmatter

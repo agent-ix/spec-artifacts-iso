@@ -141,9 +141,14 @@ Identity, relationships, status, provenance:
   `id`, `title`, and `type` (a `const` equal to the archetype name).
 - The `MasterRequirements` model SHALL carry `type` (`master-requirements`),
   `name`, `org`, `componentType` (`^[a-z][a-z0-9-]*$`), and the optional
-  `title`, `implementationLanguage` (non-empty string or `null`), `tags`,
-  `dependsOn` (bare module names; census: 143 non-empty string lists, 66 empty),
+  `implementationLanguage` (non-empty string or `null`), `tags`, `dependsOn`
+  (bare module names; census: 143 non-empty string lists, 66 empty),
   `standardsAlignment`, and `securityCritical` the frontmatter schema declares.
+- The `MasterRequirements` model SHALL carry an optional `title` filled from the
+  document's H1, not from frontmatter. FR-003 requires a master-requirements
+  document to carry neither `id` nor `title` in frontmatter, and its
+  frontmatter schema declares no `title` key; the `title` heading locator is
+  the only source there is.
 - The `Index` model SHALL carry `type` (`index`) and the optional `title`,
   `description`, and `okfVersion`; the `Log` model SHALL carry `type` (`log`)
   and the optional `title` and `description`; the `Glossary` model SHALL carry

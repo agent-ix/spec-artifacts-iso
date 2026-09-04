@@ -341,6 +341,7 @@ model StR {
   id: StRId;
   title: NonEmptyText;
   type: "StR";
+  object?: ObjectTypeName;
   status?: ArtifactStatus;
   relationships: Relationship[];
   provenance: Provenance;
@@ -361,6 +362,7 @@ model US {
   id: USId;
   title: NonEmptyText;
   type: "US";
+  object?: ObjectTypeName;
   status?: ArtifactStatus;
   relationships: Relationship[];
   provenance: Provenance;
@@ -381,6 +383,7 @@ model IT {
   id: ITId;
   title: NonEmptyText;
   type: "IT";
+  object?: ObjectTypeName;
   status?: ArtifactStatus;
   relationships: Relationship[];
   provenance: Provenance;
@@ -407,6 +410,7 @@ model TC {
   id: TCId;
   title: NonEmptyText;
   type: "TC";
+  object?: ObjectTypeName;
   status?: ArtifactStatus;
   relationships: Relationship[];
   provenance: Provenance;

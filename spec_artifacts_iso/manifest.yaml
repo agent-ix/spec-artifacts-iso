@@ -334,7 +334,7 @@ artifact_types:
   frontmatter_schema_ref: schemas/str-frontmatter.schema.json
   data_schema:
     schema: schemas/StR.json
-    digest: sha256:6f58d6cf60c635db20ebc34e45f28ddd2ef63e726925254f6a9a76218c85f079
+    digest: sha256:87f4705a50b41fc68955ff69e593c25b413e22858414256ca82098cd7e837b2c
   defaults:
     id_pattern: StR-{next:03d}
   allowed_links:
@@ -442,7 +442,7 @@ artifact_types:
   frontmatter_schema_ref: schemas/us-frontmatter.schema.json
   data_schema:
     schema: schemas/US.json
-    digest: sha256:d0402d82a169adfc3cc587c60af95a392f72cc8536cff7edc620ed3fa6ca3eeb
+    digest: sha256:f2b90a60c6427df47795ddd7c693851276ceb200d25411f7e26a8818478fe1cd
   defaults:
     id_pattern: US-{next:03d}
   allowed_links:
@@ -523,7 +523,7 @@ artifact_types:
   frontmatter_schema_ref: schemas/it-frontmatter.schema.json
   data_schema:
     schema: schemas/IT.json
-    digest: sha256:6f263e8428567381420e9a505879aad70387ccf9a462da26be7383f5e83e2317
+    digest: sha256:f08612466bb93dbe4a3f78f1de058961a32c9e7cae4ab7ef736d36b3c3a718ef
   defaults:
     id_pattern: IT-{next:03d}
   allowed_links:
@@ -604,7 +604,7 @@ artifact_types:
   frontmatter_schema_ref: schemas/tc-frontmatter.schema.json
   data_schema:
     schema: schemas/TC.json
-    digest: sha256:c5c0e927e22b21f420c1410f02f75ea52db09ef1e491e7866d1fe314a25a6f77
+    digest: sha256:0f82b9516ca9178a070c7c5c7d7d4baf7b78a4d4052f0a4ac1db49a7aab84bd7
   defaults:
     id_pattern: TC-{next:03d}
   allowed_links:
