@@ -3,5 +3,5 @@
   "$id": "https://schemas.agent-ix.org/agent-ix/spec-artifacts-iso/0.2.0/StRId.json",
   "type": "string",
   "pattern": "^StR-[0-9]+$",
-  "description": "Stakeholder requirement id (`StR-N`, 542 documents); the frontmatter schema pins the same form."
+  "description": "Stakeholder requirement id (`StR-N`, 543 documents); the frontmatter schema pins the same form."
 }

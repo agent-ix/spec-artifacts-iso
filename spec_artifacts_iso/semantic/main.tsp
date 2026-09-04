@@ -28,19 +28,19 @@ namespace AgentIx.SpecArtifactsIso;
 @minLength(1)
 scalar NonEmptyText extends string;
 
-/** Functional requirement id; the corpus population (2,851 documents, census 2026-09-04) is `FR-N`. */
+/** Functional requirement id; the corpus population (2,885 documents, census 2026-09-04) is `FR-N`. */
 @pattern("^FR-[0-9]+$")
 scalar FRId extends string;
 
-/** Non-functional requirement id (`NFR-N`, 811 documents). */
+/** Non-functional requirement id (`NFR-N`, 825 documents). */
 @pattern("^NFR-[0-9]+$")
 scalar NFRId extends string;
 
-/** Stakeholder requirement id (`StR-N`, 542 documents); the frontmatter schema pins the same form. */
+/** Stakeholder requirement id (`StR-N`, 543 documents); the frontmatter schema pins the same form. */
 @pattern("^StR-[0-9]+$")
 scalar StRId extends string;
 
-/** User story id (`US-N`, 1,057 documents). */
+/** User story id (`US-N`, 1,064 documents). */
 @pattern("^US-[0-9]+$")
 scalar USId extends string;
 
@@ -97,7 +97,7 @@ scalar IxTarget extends string;
 
 /**
  * Relationship cardinality as authored. Admits the census population (11 forms
- * over 2,923 entries): `1:1`, `1:N`, `N:1`, `n:1`, `1`, `0:1`, `1:n`, `many:1`,
+ * over 2,925 entries): `1:1`, `1:N`, `N:1`, `n:1`, `1`, `0:1`, `1:n`, `many:1`,
  * `1..1`, `0..1`, `1:m`; each side is a number, a letter token, or `*`,
  * optionally a `..` range.
  */
@@ -197,7 +197,7 @@ model Relationship {
  * `annotation`.
  */
 model Verification {
-  /** free text: the method vocabulary is owned by the advisory lint rules `ac-verification-method` / `vc-validation-method` (four ISO 29148 methods); the census counts 1,141 distinct spellings over 20,881 cells, of which the four the lint rule admits account for 13,258, and a schema that closed them would reject the corpus it describes. */
+  /** free text: the method vocabulary is owned by the advisory lint rules `ac-verification-method` / `vc-validation-method` (four ISO 29148 methods); the census counts 1,144 distinct spellings over 21,181 cells, of which the four the lint rule admits are the large majority, and a schema that closed them would reject the corpus it describes. */
   method: NonEmptyText;
   testRefs: TestCaseRef[];
   /** free text: the parenthesized remainder of the cell, verbatim, so the split loses nothing the author wrote. */
@@ -220,7 +220,7 @@ model Constraint {
   id: ConstraintId;
   /** free text: the constraint statement. */
   constraint: NonEmptyText;
-  /** free text: the constraint category; the census counts 334 distinct categories over 3,924 constraint rows and no rule owns the vocabulary. */
+  /** free text: the constraint category; the census counts 335 distinct categories over 3,960 constraint rows and no rule owns the vocabulary. */
   type: NonEmptyText;
   validation: Verification;
   line: LineNumber;
@@ -429,7 +429,7 @@ model MasterRequirements {
   /** `null` is authored for components without one; the frontmatter schema admits it. */
   implementationLanguage?: NonEmptyText | null;
   tags?: NonEmptyText[];
-  /** Bare module names, as the census finds (143 non-empty lists, 66 empty). */
+  /** Bare module names, as the census finds (143 non-empty lists, 67 empty). */
   dependsOn?: NonEmptyText[];
   standardsAlignment?: NonEmptyText[];
   securityCritical?: boolean;

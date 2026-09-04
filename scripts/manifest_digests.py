@@ -72,10 +72,49 @@ def _indent_of(line: str) -> int:
     return len(line) - len(line.lstrip(" "))
 
 
+def resolve_schema(
+    pkg_root: pathlib.Path, schema_value: str, source: pathlib.Path
+) -> pathlib.Path:
+    """Resolve a manifest ``data_schema.schema`` value under ``pkg_root``.
+
+    The value is manifest-supplied text being joined onto a filesystem path, so
+    it is checked here rather than trusted: the bundled FR-035 schema forbids
+    ``..`` in it, but this script never validates against that schema before
+    joining, so ``../../..`` would otherwise resolve and be digested. Absolute
+    paths, ``..`` segments and anything that escapes the module root are
+    refused.
+    """
+    candidate = pathlib.PurePosixPath(schema_value)
+    if candidate.is_absolute() or pathlib.PureWindowsPath(schema_value).is_absolute():
+        raise SystemExit(
+            f"{source}: data_schema.schema {schema_value!r} is an absolute path; "
+            "it must be relative to the module root"
+        )
+    if ".." in candidate.parts:
+        raise SystemExit(
+            f"{source}: data_schema.schema {schema_value!r} contains a '..' "
+            "segment; it must stay inside the module root"
+        )
+    root = pkg_root.resolve()
+    target = (pkg_root / schema_value).resolve()
+    if target != root and root not in target.parents:
+        raise SystemExit(
+            f"{source}: data_schema.schema {schema_value!r} resolves to {target}, "
+            f"outside the module root {root}"
+        )
+    return target
+
+
 def rewrite(
-    text: str, pkg_root: pathlib.Path
+    text: str, pkg_root: pathlib.Path, source: pathlib.Path | None = None
 ) -> tuple[str, list[tuple[str, str, str]]]:
-    """Return ``(new_text, changes)`` where each change is ``(schema, old, new)``."""
+    """Return ``(new_text, changes)`` where each change is ``(schema, old, new)``.
+
+    ``source`` names the file ``text`` came from and appears in every error
+    message, so a failure against a fixture reports the fixture rather than the
+    bundled manifest.
+    """
+    source = source if source is not None else MANIFEST_PATH
     lines = text.split("\n")
     changes: list[tuple[str, str, str]] = []
     i = 0
@@ -101,14 +140,14 @@ def rewrite(
             j += 1
         if schema_value is None or digest_index is None:
             raise SystemExit(
-                f"{MANIFEST_PATH}: data_schema block at line {i + 1} lacks a "
+                f"{source}: data_schema block at line {i + 1} lacks a "
                 f"schema or digest key (schema={schema_value!r}, "
                 f"digest_line={digest_index})"
             )
-        target = pkg_root / schema_value
+        target = resolve_schema(pkg_root, schema_value, source)
         if not target.is_file():
             raise SystemExit(
-                f"{MANIFEST_PATH}: data_schema.schema {schema_value!r} names no "
+                f"{source}: data_schema.schema {schema_value!r} names no "
                 f"file under {pkg_root}"
             )
         computed = file_digest(target)
@@ -141,7 +180,7 @@ def write_legacy_fixture(manifest_path: pathlib.Path, fixture: pathlib.Path) -> 
     fixture.write_text(LEGACY_HEADER + body)
 
 
-def main(argv: list[str] | None = None) -> int:
+def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     parser.add_argument(
         "--check",
@@ -159,20 +198,36 @@ def main(argv: list[str] | None = None) -> int:
         action="store_true",
         help=(
             "regenerate tests/fixtures/manifest-legacy.yaml (the manifest with "
-            "the semantic block and every data_schema removed) and exit"
+            "the semantic block and every data_schema removed) and exit; only "
+            "valid for the bundled module manifest"
         ),
     )
+    return parser
+
+
+def main(argv: list[str] | None = None) -> int:
+    parser = build_parser()
     args = parser.parse_args(argv)
 
     manifest_path = args.manifest.resolve()
 
     if args.write_legacy_fixture:
+        # The fixture is derived from *the* module manifest; deriving it from
+        # some other file would overwrite the committed fixture from an
+        # unrelated manifest, so the combination is refused rather than
+        # silently ignoring --manifest.
+        if manifest_path != MANIFEST_PATH.resolve():
+            parser.error(
+                "--write-legacy-fixture regenerates "
+                f"{LEGACY_FIXTURE} from {MANIFEST_PATH}, so it cannot be "
+                f"combined with --manifest {manifest_path}"
+            )
         write_legacy_fixture(manifest_path, LEGACY_FIXTURE)
         print(f"wrote {LEGACY_FIXTURE}")
         return 0
 
     text = manifest_path.read_text()
-    new_text, changes = rewrite(text, manifest_path.parent)
+    new_text, changes = rewrite(text, manifest_path.parent, manifest_path)
 
     if args.check:
         for schema, old, new in changes:

@@ -99,6 +99,19 @@ def _artifact_types(manifest: dict) -> dict[str, dict]:
     return {at["name"]: at for at in manifest.get("artifact_types") or []}
 
 
+def _object_types(manifest: dict) -> dict[str, dict]:
+    """The mapping-form object types, keyed by name.
+
+    ``object_types`` is empty in this manifest today and an entry may be a bare
+    string, so only mapping entries are returned — but the list is walked, not
+    assumed empty, because ``_derive_legacy`` strips ``data_schema`` from it."""
+    return {
+        str(ot.get("name", index)): ot
+        for index, ot in enumerate(manifest.get("object_types") or [])
+        if isinstance(ot, dict)
+    }
+
+
 def _schema_errors(manifest: dict) -> list[str]:
     validator = Draft202012Validator(module_manifest_schema())
     return [
@@ -244,11 +257,22 @@ def test_tc046_legacy_fixture_is_in_sync_with_the_manifest() -> None:
 
 def test_tc046_legacy_fixture_carries_neither_addition() -> None:
     """TC-046: FR-006-AC-7: the fixture is the pre-change form — no ``semantic``
-    block and no ``data_schema`` on any artifact type."""
+    block and no ``data_schema`` on any artifact type *or object type*.
+
+    ``_derive_legacy`` strips ``data_schema`` from both lists, so both are
+    walked here: checking only ``artifact_types`` would leave the object-type
+    half of the derivation unasserted, and a ``data_schema`` reaching an object
+    type would ride into the fixture unnoticed.
+    """
     fixture = yaml.safe_load(LEGACY_FIXTURE.read_text())
     assert "semantic" not in fixture
-    for name, at in _artifact_types(fixture).items():
-        assert "data_schema" not in at, f"{name} still carries a data_schema"
+    typed = {
+        **_artifact_types(fixture),
+        **_object_types(fixture),
+    }
+    assert typed, "the fixture declares no type at all; the walk proves nothing"
+    for name, entry in typed.items():
+        assert "data_schema" not in entry, f"{name} still carries a data_schema"
 
 
 def test_tc046_legacy_fixture_validates_under_the_fr035_schema() -> None:

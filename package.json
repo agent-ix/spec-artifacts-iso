@@ -19,9 +19,9 @@
     "skeletons/",
     "mappings.yaml",
     "mappings.schema.json",
-    "examples/",
+    "examples/*.record.json",
     "semantic/main.tsp",
-    "semantic/generated/",
+    "semantic/generated/toolchain.json",
     "README.md",
     "LICENSE"
   ],

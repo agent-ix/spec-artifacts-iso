@@ -29,8 +29,8 @@ relationships:
 > which is now a committed, tested script rather than a scratch file. Six
 > figures changed materially and are corrected below. The constraint-category
 > count was a display limit (the old scratch script printed `most_common(30)`),
-> not a measurement: the true distinct count is 334. Verification-method
-> spellings are 1,141, not "more than thirty". Empty verification cells are 7,
+> not a measurement: the true distinct count is 335. Verification-method
+> spellings are 1,144, not "more than thirty". Empty verification cells are 7,
 > not 41. `status` is declared on 863 documents, not 973. `US` stories matching
 > neither form are 0, not 8. `log` undated entries are 104 across 9
 > repositories, not ~30 across 4. No constraint changes as a result — every
@@ -142,7 +142,7 @@ Identity, relationships, status, provenance:
 - The `MasterRequirements` model SHALL carry `type` (`master-requirements`),
   `name`, `org`, `componentType` (`^[a-z][a-z0-9-]*$`), and the optional
   `implementationLanguage` (non-empty string or `null`), `tags`, `dependsOn`
-  (bare module names; census: 143 non-empty string lists, 66 empty),
+  (bare module names; census: 143 non-empty string lists, 67 empty),
   `standardsAlignment`, and `securityCritical` the frontmatter schema declares.
 - The `MasterRequirements` model SHALL carry an optional `title` filled from the
   document's H1, not from frontmatter. FR-003 requires a master-requirements
@@ -156,8 +156,8 @@ Identity, relationships, status, provenance:
 - The `id` scalar of each model SHALL be the artifact type's own prefix:
   `^FR-[0-9]+$`, `^NFR-[0-9]+$`, `^StR-[0-9]+$`, `^US-[0-9]+$`, `^IT-[0-9]+$`,
   `^TC-[0-9]+$`, and `^[A-Z][A-Za-z]{1,3}-[0-9]+$` for `Glossary` (`GLO-001`).
-  The census population is every one of the 5,511 identified requirement and
-  test documents (`FR-N` 2,851, `US-N` 1,057, `NFR-N` 811, `StR-N` 542, `IT-N`
+  The census population is every one of the 5,567 identified requirement and
+  test documents (`FR-N` 2,885, `US-N` 1,064, `NFR-N` 825, `StR-N` 543, `IT-N`
   183, `TC-N` 67 — six patterns, no other spelling).
 - Every model SHALL carry `provenance: Provenance` — the document's
   corpus-relative `path`, its optional `sourceIdentity` (a semantic-core
@@ -167,7 +167,7 @@ Identity, relationships, status, provenance:
   `relationships: Relationship[]` with `target` (`^ix://`), `type` (an edge verb,
   `^[a-z][a-z0-9_]*$`), and an optional `cardinality` matching
   `^[0-9A-Za-z*]+(\.\.[0-9A-Za-z*]+)?(:[0-9A-Za-z*]+(\.\.[0-9A-Za-z*]+)?)?$`
-  (census: 11 forms over 2,923 relationship entries — `1:1` 1,708, `1:N` 545,
+  (census: 11 forms over 2,925 relationship entries — `1:1` 1,710, `1:N` 545,
   `N:1` 536, `n:1` 57, `1` 55, `0:1` 9, `1:n` 5, `many:1` 4, `1..1` 2, `0..1`
   1, `1:m` 1).
 - The `Relationship` model SHALL declare exactly `target`, `type`, and the
@@ -240,13 +240,13 @@ Sections and tables:
   `ValidationCriterion` as `Verification`, whose own `method` carries that
   `minLength: 1`, so `validation` is not one of the plain-string cells above.
   `type` (census:
-  334 distinct categories over 3,924 constraint rows),
-  `Verification.method` (census: 1,141 distinct spellings over 20,881 cells, of
-  which the four the advisory lint rule `ac-verification-method` admits account
-  for 13,258), and `target` and `threshold` (census: prose quantities such as
+  335 distinct categories over 3,960 constraint rows),
+  `Verification.method` (census: 1,144 distinct spellings over 21,181 cells, of
+  which the four the advisory lint rule `ac-verification-method` admits are the
+  large majority), and `target` and `threshold` (census: prose quantities such as
   `600 imports/s`) are free text because their vocabularies are owned by
   advisory lint rules or by no rule at all, and a schema that closed them would
-  reject the corpus it describes. An empty cell (census: 7 of 20,881
+  reject the corpus it describes. An empty cell (census: 7 of 21,181
   verification cells)
   fails `minLength: 1`; such a document is a census finding, not a form this
   module admits.
@@ -256,8 +256,8 @@ Sections and tables:
   whose section is present but holds no table (census: 74 FR documents with a
   prose `## Constraints`) maps to an absent field, never to `[]`.
 - The `US` model SHALL declare `story: Story { asA, iWant, soThat, section }`,
-  filled by the FR-007 story grammar (census: 908 bold, 149 plain, 0 neither
-  over 1,057 `US` documents — the grammar matches every story in the corpus).
+  filled by the FR-007 story grammar (census: 915 bold, 149 plain, 0 neither
+  over 1,064 `US` documents — the grammar matches every story in the corpus).
 - The `IT` model SHALL declare `successCriteria: SuccessCriterion { id:
   ^IT-[0-9]+-SC-[0-9]+$, text, line }[]`, one per `IT-XXX-SC-NN` token in
   `## Test Procedure` with `text` the trimmed remainder of the token's line
@@ -265,7 +265,7 @@ Sections and tables:
   lint rule is advisory; census: 157 of 183 IT documents carry tokens).
 - The `Index` model SHALL declare `entries: IndexEntry { title, href, summary?,
   line }[]`, one per `* [title](href) - summary` or `- [title](href)` line
-  under `## Contents` (census: 6,274 link lines over 1,168 index documents, 736
+  under `## Contents` (census: 6,286 link lines over 1,169 index documents, 736
   with `-` bullets, 5,163 without a summary), where `href` is a relative path
   (`^(\./|\.\./)*[^:/][^:]*$`, never a scheme), because index links are local
   navigation and not knowledge-graph edges. A line under `## Contents` that
@@ -276,7 +276,7 @@ Sections and tables:
   ^[0-9]{4}-[0-9]{2}-[0-9]{2}$, text, line }[]`, one per
   `* **YYYY-MM-DD** — text` entry under `## History`, where the bullet is `*`
   or `-`, the dash separator is optional, and the entry extends to the next
-  bullet at the same indentation (census: 770 dated entries, 104 undated across
+  bullet at the same indentation (census: 782 dated entries, 104 undated across
   9 repositories, which the mapping rejects naming the line).
 - The `FR` model SHALL declare `invariants?: ClauseRef[]` (semantic-core,
   `minItems: 1`), filled by the FR-007 `ocl-clause` mapping from an optional
@@ -302,11 +302,11 @@ Sections and tables:
 | FR-005-AC-1 | `spec_artifacts_iso/schemas/` carries `FR.json`, `NFR.json`, `StR.json`, `US.json`, `IT.json`, `TC.json`, `MasterRequirements.json`, `Index.json`, `Log.json`, and `Glossary.json`, each a JSON Schema 2020-12 document whose `$id` is `https://schemas.agent-ix.org/agent-ix/spec-artifacts-iso/<manifest version>/<Model>.json`, and each `type` `const` equals the archetype name of the map in Outputs. | Test (TC-041) |
 | FR-005-AC-2 | Every `$ref` across the emitted bundle resolves to a shipped sibling or to a file name of the semantic-core 0.1.0 bundle (the file list of filament-core-data `toolchain.json` at the revision quire vendors), with no network read; no `$ref` names another semantic-core version or an unshipped file; no `$id` under the semantic-core base ships. | Test (TC-041) |
 | FR-005-AC-3 | Every property of every emitted object schema is either constrained — its schema, after following `$ref`, carries `pattern`, `minLength`, `minimum`, `enum`, `const`, or `format`, or is an object whose properties are all constrained, or an array of such items, or `boolean`/`null` — or is free text, in which case its description carries `free text:` and a reason and its name is in the closed list the test enumerates (`Section.text`, the prose cells, `detail`, `summary`, `description`, `annotation`). | Test (TC-040) |
-| FR-005-AC-4 | For each of the ten skeletons, the record built by the FR-007 reference mapping validates against the type's schema; a record with one extra property, one row whose id has the wrong prefix, one required section removed, a `line: 0`, an empty typed table, or a `status` outside its pattern fails validation naming the path. | Test (TC-044, TC-045) |
+| FR-005-AC-4 | For each of the ten skeletons, the record built by the FR-007 reference mapping validates against the type's schema; a record with one extra property, one required section removed, a `line: 0`, an empty typed table, or a `status` outside its pattern fails schema validation naming the JSON path. A row id with the wrong *document* prefix (`FR-002-CON-1` inside `FR-001`) is not one of these: the row-id scalars are anchored to the artifact type, not to the document, so the schema accepts it by design and the FR-007 mapping rejects it against the locator's `id_pattern`, naming the line (FR-007-AC-6). | Test (TC-044, TC-045) |
 | FR-005-AC-5 | `make schemas-check` exits 0 on the committed tree, and exits non-zero naming the file after any one emitted schema is edited by a single byte. | Test (TC-042) |
 | FR-005-AC-6 | No emitted schema property is named `result`, `outcome`, `passed`, `failed`, `run`, `executedAt`, or `evidence`, and the `TC.json` description carries the sentence `execution results (pass/fail, run time, evidence) are not modelled`. | Test (TC-043) |
 | FR-005-AC-7 | The set of emitted schema files equals the `files` list of `toolchain.json`, and the digest recomputed over those files (`sha256(concat(name + "\n" + bytes))`, sorted) equals the recorded digest, with no toolchain run. | Test (TC-061) |
-| FR-005-AC-8 | Every emitted object schema declares its properties inline (no `allOf`, `oneOf`, `anyOf`, or `$ref` at the object's top level except the `anyOf` of a nullable scalar), so `unevaluatedProperties` and `additionalProperties` agree; the Python `jsonschema` validator accepts every golden record and rejects every mutation of TC-045. | Test (TC-060) |
+| FR-005-AC-8 | Every emitted object schema declares its properties inline (no `allOf`, `oneOf`, `anyOf`, or `$ref` at the object's top level except the `anyOf` of a nullable scalar), so `unevaluatedProperties` and `additionalProperties` agree; the Python `jsonschema` validator accepts every golden record and rejects every TC-045 mutation that produces a record at all — the mapping-layer cases fail before a record exists, and are FR-007-AC-6's. | Test (TC-060) |
 | FR-005-AC-9 | The sdist/wheel `include` list and the npm `files` list both name every shipped payload entry of Outputs and neither names any TypeSpec toolchain file; a fresh `poetry build` sdist and a fresh `npm pack` tarball carry the same payload entry set. | Test (TC-062) |
 
 ## Dependencies

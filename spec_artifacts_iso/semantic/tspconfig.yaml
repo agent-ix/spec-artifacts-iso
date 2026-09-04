@@ -6,4 +6,8 @@ options:
     emitAllModels: true
     emitAllRefs: true
     seal-object-schemas: true
-    emitter-output-dir: "{project-root}/generated/json-schema"
+    # Scratch only. `scripts/generate.mjs` overrides this with a tmpdir and
+    # writes the bundle to `spec_artifacts_iso/schemas/`; this default exists
+    # so a bare `tsp compile` cannot drop 48 files into `generated/`, which
+    # the npm payload ships as a directory (FR-005-AC-9).
+    emitter-output-dir: "{project-root}/.tsp-scratch"

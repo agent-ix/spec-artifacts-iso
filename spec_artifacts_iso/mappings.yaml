@@ -147,7 +147,7 @@ models:
           Constraint: {property: constraint}
           Type: {property: type}
           Validation: {property: validation, parse: verification}
-        row_id: {column: ID, pattern: '^{id}-CON-[0-9]+$'}
+        row_id: {column: ID, pattern: '^{id}-CON-\d+$'}
         lossless: false
       acceptanceCriteria:
         kind: typed-table
@@ -158,7 +158,7 @@ models:
           ID: {property: id, parse: row-id}
           Criteria: {property: criteria}
           Verification: {property: verification, parse: verification}
-        row_id: {column: ID, pattern: '^{id}-AC-[0-9]+$'}
+        row_id: {column: ID, pattern: '^{id}-AC-\d+$'}
         detail: {heading_level: 3, property: detail}
         lossless: false
       invariants:
@@ -258,7 +258,7 @@ models:
           ID: {property: id, parse: row-id}
           Criteria: {property: criteria}
           Verification: {property: verification, parse: verification}
-        row_id: {column: ID, pattern: '^{id}-AC-[0-9]+$'}
+        row_id: {column: ID, pattern: '^{id}-AC-\d+$'}
         detail: {heading_level: 3, property: detail}
         lossless: false
       dependencies:
@@ -327,7 +327,7 @@ models:
           ID: {property: id, parse: row-id}
           Criteria: {property: criteria}
           Validation: {property: validation, parse: verification}
-        row_id: {column: ID, pattern: '^{id}-VC-[0-9]+$'}
+        row_id: {column: ID, pattern: '^{id}-VC-\d+$'}
         lossless: false
       stakeholders:
         kind: section

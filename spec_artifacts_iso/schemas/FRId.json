@@ -3,5 +3,5 @@
   "$id": "https://schemas.agent-ix.org/agent-ix/spec-artifacts-iso/0.2.0/FRId.json",
   "type": "string",
   "pattern": "^FR-[0-9]+$",
-  "description": "Functional requirement id; the corpus population (2,851 documents, census 2026-09-04) is `FR-N`."
+  "description": "Functional requirement id; the corpus population (2,885 documents, census 2026-09-04) is `FR-N`."
 }

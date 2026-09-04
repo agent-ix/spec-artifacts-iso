@@ -221,8 +221,13 @@ def test_no_npmrc_exists_anywhere_in_the_repository() -> None:
     assert not found, found
 
 
+# Untagged deliberately: the TC-054 matrix row covers the three exact pins, the
+# committed lockfile, `file:`/`link:` references and `.npmrc` — it says nothing
+# about `poetry.lock` sources, so tagging this TC-054 would mint a trace the
+# row does not claim. The check stands on its own: a lockfile naming the local
+# devpi cannot be installed by CI or by a consumer.
 def test_poetry_lock_names_no_local_registry_source() -> None:
-    """TC-054: the committed ``poetry.lock`` names only the published index.
+    """The committed ``poetry.lock`` names only the published index.
 
     ``quire`` resolves from the internal index; ``pypi.ix`` is the local devpi
     that only exists on a developer's network, so a lockfile naming it cannot

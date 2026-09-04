@@ -5,7 +5,7 @@
   "properties": {
     "method": {
       "$ref": "https://schemas.agent-ix.org/agent-ix/spec-artifacts-iso/0.2.0/NonEmptyText.json",
-      "description": "free text: the method vocabulary is owned by the advisory lint rules `ac-verification-method` / `vc-validation-method` (four ISO 29148 methods); the census counts 1,141 distinct spellings over 20,881 cells, of which the four the lint rule admits account for 13,258, and a schema that closed them would reject the corpus it describes."
+      "description": "free text: the method vocabulary is owned by the advisory lint rules `ac-verification-method` / `vc-validation-method` (four ISO 29148 methods); the census counts 1,144 distinct spellings over 21,181 cells, of which the four the lint rule admits are the large majority, and a schema that closed them would reject the corpus it describes."
     },
     "testRefs": {
       "type": "array",

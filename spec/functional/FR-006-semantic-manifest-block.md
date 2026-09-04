@@ -57,6 +57,16 @@ bytes.
   `semantic` block and the `data_schema` reference form of
   filament-core-service FR-035 CR-003 (agent-ix/filament-core-service#21,
   revision a77f31e, SHA-256 `69cf9738…dcbbc`, as vendored by quoin 3e842ce).
+  Two known defects travel with that copy and are upstream's to fix, because
+  AC-4 requires the vendored parts to stay byte-identical to a77f31e:
+  the `data_schema` path guard is written with ECMA negative lookaheads
+  (`^(?!/)(?!.*\.\.)…`), which the Rust `jsonschema` crate cannot compile, so
+  the traversal guard is a no-op in any Rust consumer of the manifest schema
+  (agent-ix/filament-core-service#24 — no emitted model schema uses a
+  lookaround, so FR-005-AC-8's Python/Rust agreement is unaffected); and the
+  `semantic.exports` description still reads "Object-type names … each must be
+  declared in `object_types`", which contradicts this manifest's artifact-type
+  exports (agent-ix/quoin#336).
 - The quire wheel the suite runs against: `>= 0.33.0`, the published floor of
   the internal package index. Every criterion of this requirement except AC-8
   is discharged at that floor, because a consumer that ignores the `semantic`

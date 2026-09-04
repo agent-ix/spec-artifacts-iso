@@ -644,7 +644,7 @@ artifact_types:
   frontmatter_schema_ref: schemas/master-requirements-frontmatter.schema.json
   data_schema:
     schema: schemas/MasterRequirements.json
-    digest: sha256:bd57231ff400042bf7598548fe67cff3f1fd6d3a4569ed0a81c8af3132184588
+    digest: sha256:c601ce54f4a1d38871342b4bf75395fe6d68a69448d9e722b11f17207ddca86e
   allowed_links:
   - depends_on
   - calls

@@ -44,6 +44,14 @@ if (!inner) {
 
 const unstage = process.argv.includes("--unstage");
 
+// npm does not run `postpack` when `pack`/`publish` fails, so a failed pack can
+// leave the staged copies behind — and a root `manifest.yaml` makes quire treat
+// the repo root as a module, which breaks archetype discovery. Staging is
+// therefore idempotent: it clears the previous staging before writing, so a
+// leftover from a failed pack is cleaned by the next one rather than compounding.
+// Every staged name is also gitignored, so a leftover is never an untracked
+// surprise in `git status`.
+
 const PAYLOAD = [
   "manifest.yaml",
   "module-manifest.schema.json",
@@ -55,30 +63,63 @@ const PAYLOAD = [
   "semantic/main.tsp",
   "semantic/generated",
 ];
-for (const item of PAYLOAD) {
-  const to = join(root, item);
-  if (unstage) {
+// The record of what THIS run staged, one payload path per line. `--unstage`
+// removes only what the record names, so a repo-root path that legitimately
+// carries a payload name — one this script never copied — is never deleted by
+// a postpack. The name ends in `.log`, which the repo's .gitignore already
+// covers, and is absent from package.json `files`, so it is neither committed
+// nor packed.
+const RECORD = join(root, "stage-npm-staged.log");
+
+/** Drop the empty `semantic/` that removing its two payload entries leaves. */
+function pruneEmptySemantic() {
+  const leftover = join(root, "semantic");
+  if (existsSync(leftover) && readdirSync(leftover).length === 0) {
+    rmSync(leftover, { recursive: true, force: true });
+  }
+}
+
+if (unstage) {
+  if (!existsSync(RECORD)) {
+    console.log(
+      `stage-npm: no staging record (${"stage-npm-staged.log"}); nothing was staged by this script, leaving the repo root untouched`,
+    );
+    process.exit(0);
+  }
+  const staged = readFileSync(RECORD, "utf8")
+    .split("\n")
+    .map((line) => line.trim())
+    .filter(Boolean);
+  for (const item of staged) {
+    if (!PAYLOAD.includes(item)) {
+      console.error(
+        `stage-npm: staging record names ${item}, which is not a payload path; refusing to remove it`,
+      );
+      process.exit(1);
+    }
+    const to = join(root, item);
     if (existsSync(to)) {
       rmSync(to, { recursive: true, force: true });
       console.log(`stage-npm: unstaged ${item}`);
     }
-    continue;
   }
+  pruneEmptySemantic();
+  rmSync(RECORD, { force: true });
+  process.exit(0);
+}
+
+const staged = [];
+for (const item of PAYLOAD) {
+  const to = join(root, item);
   const from = join(root, inner, item);
   if (!existsSync(from)) continue;
   rmSync(to, { recursive: true, force: true });
   mkdirSync(dirname(to), { recursive: true });
   cpSync(from, to, { recursive: true });
+  staged.push(item);
   console.log(`stage-npm: ${inner}/${item} -> ${item}`);
 }
-if (unstage) {
-  // `semantic/main.tsp` and `semantic/generated` leave an empty `semantic/`.
-  const leftover = join(root, "semantic");
-  if (existsSync(leftover) && readdirSync(leftover).length === 0) {
-    rmSync(leftover, { recursive: true, force: true });
-  }
-  process.exit(0);
-}
+writeFileSync(RECORD, staged.map((item) => `${item}\n`).join(""));
 
 // Version sync: when packing from a CI tag (vX.Y.Z), stamp package.json so the
 // tarball is named/published at the tag version. No-op locally (no env / no match).

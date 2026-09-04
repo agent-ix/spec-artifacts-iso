@@ -64,7 +64,13 @@ ARTIFACT_TYPES = frozenset(
 #: The requirement/test/glossary types that carry a prefixed identifier.
 IDENTIFIED_TYPES = frozenset({"FR", "NFR", "StR", "US", "IT", "TC", "Glossary"})
 
-FRONTMATTER_RE = re.compile(r"^---\n(.*?)\n---\n", re.S)
+# Line endings: a corpus document may be authored CRLF, and FR-005 carries a
+# rule about exactly that, so the measurement behind FR-005 must not be
+# LF-only. ``Path.read_text`` opens in universal-newline mode and already
+# folds CRLF to LF before this pattern ever sees it; the ``\r?`` keeps the
+# pattern correct for any caller that hands the scanner untranslated text, so
+# the two never disagree about line endings.
+FRONTMATTER_RE = re.compile(r"^---\r?\n(.*?)\r?\n---\r?\n", re.S)
 ROW_ID_RE = re.compile(r"^(?P<prefix>.+?)-(?P<kind>AC|CON|VC)-(?P<n>\d+)$")
 STORY_BOLD_RE = re.compile(r"^\s*(?:[-*]\s+)?\*\*As an?\b", re.I)
 STORY_PLAIN_RE = re.compile(r"^\s*(?:[-*]\s+)?As an?\b", re.I)
@@ -79,6 +85,16 @@ HEADING_RE = re.compile(r"^(?P<hashes>#{1,6})\s+(?P<text>.*?)\s*$")
 #: The four verification methods the advisory ``ac-verification-method`` lint
 #: rule admits. Every other spelling in the corpus is free text.
 LINT_ADMITTED_METHODS = ("Test", "Analysis", "Inspection", "Demonstration")
+
+#: The heading level ISO artifact sections are authored at. ``section_lines``
+#: and ``has_heading`` both use it, so a ``### Constraints`` can never satisfy
+#: the presence check while yielding an empty body to the reader.
+SECTION_HEADING_LEVEL = 2
+
+#: Read cap. ``--root`` is an arbitrary user-supplied glob, so a matched
+#: document is read whole only up to this size; anything larger is counted as
+#: oversized and reported rather than pulled into memory or dropped silently.
+MAX_DOCUMENT_BYTES = 4 * 1024 * 1024
 
 
 class Metric:
@@ -156,6 +172,22 @@ def split_row(line: str) -> list[str] | None:
     return [cell.strip() for cell in cells]
 
 
+def is_section_heading(
+    line: str, heading: str, level: int = SECTION_HEADING_LEVEL
+) -> bool:
+    """True when ``line`` is ``<level hashes> <heading>``.
+
+    The single place the heading level is decided, so the presence check and
+    the body reader below can never disagree about which level counts.
+    """
+    match = HEADING_RE.match(line)
+    return bool(
+        match
+        and len(match.group("hashes")) == level
+        and match.group("text").strip().lower() == heading.lower()
+    )
+
+
 def section_lines(lines: list[str], heading: str) -> list[str]:
     """Return the body lines under ``## <heading>`` up to the next heading."""
     body: list[str] = []
@@ -165,10 +197,7 @@ def section_lines(lines: list[str], heading: str) -> list[str]:
         if match:
             if collecting:
                 break
-            if (
-                len(match.group("hashes")) == 2
-                and match.group("text").strip().lower() == heading.lower()
-            ):
+            if is_section_heading(line, heading):
                 collecting = True
             continue
         if collecting:
@@ -177,11 +206,13 @@ def section_lines(lines: list[str], heading: str) -> list[str]:
 
 
 def has_heading(lines: list[str], heading: str) -> bool:
-    for line in lines:
-        match = HEADING_RE.match(line)
-        if match and match.group("text").strip().lower() == heading.lower():
-            return True
-    return False
+    """True when the document carries ``## <heading>``.
+
+    Deliberately the same level ``section_lines`` reads: a ``### Constraints``
+    used to satisfy this check and then yield an empty body, so a figure drawn
+    from the pair (``fr_prose_constraints``) could be counted off either way.
+    """
+    return any(is_section_heading(line, heading) for line in lines)
 
 
 class Census:
@@ -192,6 +223,8 @@ class Census:
         self.repositories: set[str] = set()
         self.documents_scanned = 0
         self.documents_unreadable = 0
+        self.documents_oversized = 0
+        self.directories_unreadable = 0
         self.documents_with_frontmatter = 0
         self.documents_typed = 0
         self.documents_identified = 0
@@ -240,12 +273,58 @@ class Census:
         for root in roots:
             self.bundles += 1
             self.repositories.add(root.parent.name)
-            for path in sorted(root.rglob("*.md")):
-                if path.is_file():
-                    self.scan_document(path, root.parent.name)
+            for path in self.walk(root):
+                self.scan_document(path, root.parent.name)
+
+    def walk(self, root: pathlib.Path) -> list[pathlib.Path]:
+        """Return every ``*.md`` file under ``root``, skipping what it cannot read.
+
+        ``Path.rglob`` raises out of its generator on the first unreadable
+        directory, which aborts the whole census over an arbitrary corpus glob.
+        ``os.walk`` with an ``onerror`` hook turns that into a counted, reported
+        skip, matching the discipline the per-file read already follows.
+        """
+        found: list[pathlib.Path] = []
+
+        def on_error(error: OSError) -> None:
+            self.directories_unreadable += 1
+            print(
+                f"corpus_census: skipped unreadable directory: {error}",
+                file=sys.stderr,
+            )
+
+        for dirpath, _dirnames, filenames in os.walk(root, onerror=on_error):
+            for name in filenames:
+                if not name.endswith(".md"):
+                    continue
+                path = pathlib.Path(dirpath) / name
+                try:
+                    if not path.is_file():
+                        continue
+                except OSError:
+                    self.documents_unreadable += 1
+                    continue
+                found.append(path)
+        return sorted(found)
 
     def scan_document(self, path: pathlib.Path, repository: str) -> None:
         self.documents_scanned += 1
+        try:
+            size = path.stat().st_size
+        except OSError:
+            self.documents_unreadable += 1
+            return
+        if size > MAX_DOCUMENT_BYTES:
+            # Bounded read: the corpus root is a user-supplied glob, so an
+            # arbitrarily large file is counted and named, never read whole
+            # and never dropped without a number to show for it.
+            self.documents_oversized += 1
+            print(
+                f"corpus_census: skipped {path} ({size} bytes exceeds the "
+                f"{MAX_DOCUMENT_BYTES}-byte read cap)",
+                file=sys.stderr,
+            )
+            return
         try:
             text = path.read_text(encoding="utf-8")
         except (OSError, UnicodeDecodeError):
@@ -428,6 +507,19 @@ class Census:
                 "documents",
                 "scanned documents that could not be decoded as UTF-8",
                 "by document",
+            ),
+            "documents_oversized": Metric(
+                self.documents_oversized,
+                "documents",
+                "scanned documents larger than the "
+                f"{MAX_DOCUMENT_BYTES}-byte read cap, counted but not read",
+                "by document",
+            ),
+            "directories_unreadable": Metric(
+                self.directories_unreadable,
+                "directories",
+                "directories under the matched bundles that could not be listed",
+                "by directory",
             ),
             "documents_with_frontmatter": Metric(
                 self.documents_with_frontmatter,
@@ -682,6 +774,23 @@ def render_table(
     return "\n".join(out)
 
 
+def positive_int(value: str) -> int:
+    """``--top`` argument type: a count, so at least one.
+
+    A negative value silently truncated the distribution from the wrong end
+    and made the "... N more value(s)" line wrong, so it is rejected outright.
+    """
+    try:
+        number = int(value)
+    except ValueError:
+        raise argparse.ArgumentTypeError(f"{value!r} is not an integer") from None
+    if number < 1:
+        raise argparse.ArgumentTypeError(
+            f"--top counts values to show, so it must be 1 or greater (got {number})"
+        )
+    return number
+
+
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(
         prog="corpus_census.py",
@@ -706,7 +815,7 @@ def build_parser() -> argparse.ArgumentParser:
     )
     parser.add_argument(
         "--top",
-        type=int,
+        type=positive_int,
         default=30,
         help="how many values of each distribution the table shows (default 30)",
     )

@@ -60,6 +60,34 @@ def _map(name_or_bytes: str | bytes, declaration: dict) -> rm.MappingResult:
     return rm.map_bytes(data, path="tests/fixtures/mutations", declaration=declaration)
 
 
+def _failing_map(name_or_bytes: str | bytes, declaration: dict) -> rm.MappingError:
+    """Map a document that must fail, and assert it yielded **no record**.
+
+    FR-007 Failure discipline: the mapping "SHALL emit no record when any
+    failure is found". `pytest.raises` alone does not pin that — it would pass
+    just as well for a mapping that built a half-record, handed it back through
+    some other channel, and raised afterwards. So the result name is bound
+    before the call and asserted to have stayed unbound: the only way this
+    assertion holds is that nothing was returned. The error is also asserted to
+    carry the failures it found, so an empty `MappingError` is not a pass
+    either.
+    """
+    outcome: rm.MappingResult | None = None
+    try:
+        outcome = _map(name_or_bytes, declaration)
+    except rm.MappingError as error:
+        assert outcome is None, "the mapping produced a record and then failed"
+        assert error.failures, "the mapping raised carrying no failure at all"
+        assert all(
+            failure.line >= 1 and failure.message for failure in error.failures
+        ), "every failure names a 1-based document line and says what is wrong"
+        return error
+    raise AssertionError(
+        "the mapping emitted a record where a failure was required: "
+        f"{sorted(outcome.record)}"
+    )
+
+
 def _schema_errors(record: dict, model: str, declaration: dict, bundle: dict):
     return validation_errors(
         record, declaration["models"][model]["schema"].split("/")[-1], bundle
@@ -80,22 +108,17 @@ def test_tc045_wrong_prefix_row_id_fails_naming_the_line(declaration: dict) -> N
     locator's `id_pattern` fails the mapping naming the line, and no record is
     emitted.
     """
-    with pytest.raises(rm.MappingError) as raised:
-        _map("fr-wrong-prefix-row-id.md", declaration)
-    (failure,) = raised.value.failures
+    (failure,) = _failing_map("fr-wrong-prefix-row-id.md", declaration).failures
     assert failure.line == 20, "the failure names the offending row's line"
     assert "FR-002-CON-1" in failure.message
-    assert "^FR-001-CON-[0-9]+$" in failure.message
-    assert not hasattr(raised.value, "record"), "no partial record is emitted"
+    assert r"^FR-001-CON-\d+$" in failure.message
 
 
 def test_tc045_repeated_row_id_fails_naming_the_line(declaration: dict) -> None:
     """TC-045: FR-007-AC-6: a row id repeated within one table fails the
     mapping naming the repeat's line and the line it first appeared on.
     """
-    with pytest.raises(rm.MappingError) as raised:
-        _map("fr-repeated-row-id.md", declaration)
-    (failure,) = raised.value.failures
+    (failure,) = _failing_map("fr-repeated-row-id.md", declaration).failures
     assert failure.line == 21
     assert "repeated" in failure.message
     assert "first at line 20" in failure.message
@@ -105,9 +128,7 @@ def test_tc045_duplicated_heading_fails_naming_the_line(declaration: dict) -> No
     """TC-045: FR-007-AC-6: a level-2 heading the mapping names twice fails
     naming the second occurrence's line.
     """
-    with pytest.raises(rm.MappingError) as raised:
-        _map("fr-duplicated-heading.md", declaration)
-    (failure,) = raised.value.failures
+    (failure,) = _failing_map("fr-duplicated-heading.md", declaration).failures
     assert failure.line == 16
     assert "Description" in failure.message
 
@@ -116,9 +137,7 @@ def test_tc045_malformed_story_fails_naming_the_line(declaration: dict) -> None:
     """TC-045: FR-007-AC-6: a `## Story` section that does not carry the
     As-a / I-want / So-that anchors fails the mapping naming the section's line.
     """
-    with pytest.raises(rm.MappingError) as raised:
-        _map("us-malformed-story.md", declaration)
-    (failure,) = raised.value.failures
+    (failure,) = _failing_map("us-malformed-story.md", declaration).failures
     assert failure.line == 11
     assert "story grammar" in failure.message
     for anchor in ("`As a`", "`I want`", "`So that`"):
@@ -136,18 +155,192 @@ def test_tc045_all_failures_in_one_document_are_reported_together(
     wrong-prefix constraint id, and a repeated acceptance-criterion id — and all
     three are reported.
     """
-    with pytest.raises(rm.MappingError) as raised:
-        _map("fr-three-defects.md", declaration)
-    failures = raised.value.failures
+    raised = _failing_map("fr-three-defects.md", declaration)
+    failures = raised.failures
     assert len(failures) == 3, (
         "one-pass reporting: three defects must report three failures, not the "
         f"first — got {[str(f) for f in failures]}"
     )
-    assert raised.value.lines == (16, 24, 31)
+    assert raised.lines == (16, 24, 31)
     messages = " | ".join(f.message for f in failures)
     assert "Description" in messages
     assert "FR-002-CON-1" in messages
     assert "repeated" in messages
+
+
+# ---------------------------------------------------------------------------
+# The rest of the oracle's declared error paths
+#
+# These carry no TC tag: the TC-045 matrix row enumerates its cases and none of
+# them is one of these, so tagging them would mint a trace the row does not
+# claim. They are the error semantics of the reference
+# mapping itself — the code that decides whether a defect is reported or
+# silently swallowed — and an untested error branch is a branch that reports
+# nothing.
+# ---------------------------------------------------------------------------
+def test_table_whose_columns_differ_from_the_declaration_fails(
+    declaration: dict,
+) -> None:
+    """FR-007 Golden records: a `table`/`typed-table` column list equals the
+    locator's `assert.columns`. A document whose header renames a column
+    therefore fails naming the header's line, rather than mapping the cell into
+    the wrong property.
+    """
+    (failure,) = _failing_map("fr-table-columns-mismatch.md", declaration).failures
+    assert failure.line == 18, "the failure names the header row's line"
+    assert "'Verification Method'" in failure.message
+    assert "FR.acceptanceCriteria" in failure.message
+
+
+def test_row_with_the_wrong_cell_count_fails_naming_the_line(
+    declaration: dict,
+) -> None:
+    """FR-007 Behavior: a `table` mapping fills one object per data row with a
+    cell per declared column. A row carrying fewer cells than the table has
+    columns fails naming the row's line — it is never zipped short into a row
+    missing a property, which the schema would then report as the author's
+    fault at the wrong layer.
+    """
+    (failure,) = _failing_map("fr-row-cell-count.md", declaration).failures
+    assert failure.line == 20
+    assert "2 cells" in failure.message
+    assert "3 columns" in failure.message
+
+
+def test_a_section_with_no_table_leaves_the_property_absent(
+    declaration: dict, bundle: dict
+) -> None:
+    """FR-007: a named section carrying no table at all is not a mapping
+    failure — the mapping has no row to name a line on — so the property is
+    absent and the schema reports the omission by path. Both halves are
+    asserted, or the case would pass for a mapping that invented an empty
+    array.
+    """
+    result = _map("fr-acceptance-table-missing.md", declaration)
+    assert "acceptanceCriteria" not in result.record
+    assert _schema_errors(result.record, "FR", declaration, bundle) == [
+        ": 'acceptanceCriteria' is a required property"
+    ]
+
+
+def test_a_header_row_with_no_delimiter_is_not_a_table(
+    declaration: dict, bundle: dict
+) -> None:
+    """FR-007: a pipe row that is not followed by a `|---|` delimiter is not a
+    table. The mapping does not read the following rows as data — which would
+    silently promote the header itself into a row — and the absent property is
+    reported by the schema.
+    """
+    result = _map("fr-acceptance-delimiter-malformed.md", declaration)
+    assert "acceptanceCriteria" not in result.record
+    assert _schema_errors(result.record, "FR", declaration, bundle) == [
+        ": 'acceptanceCriteria' is a required property"
+    ]
+
+
+def test_an_escaped_pipe_stays_inside_its_cell(declaration: dict, bundle: dict) -> None:
+    """FR-007 Behavior: cells are split on unescaped `|` only. A `\\|` inside a
+    cell is one literal `|` in the cell's text and never a column boundary, so
+    a criterion that talks about the pipe character keeps its bytes and the row
+    keeps its declared cell count.
+    """
+    result = _map("fr-escaped-pipe-cell.md", declaration)
+    (row,) = result.record["acceptanceCriteria"]
+    assert row["criteria"] == "Given a digest of `a | b`, the artifact is persisted"
+    assert row["verification"]["method"] == "Test"
+    assert not _schema_errors(result.record, "FR", declaration, bundle)
+
+
+def test_a_history_bullet_with_no_date_fails_naming_the_line(
+    declaration: dict,
+) -> None:
+    """FR-007 Behavior: a `list` mapping fills `Log.history` with one object per
+    matching bullet. A bullet carrying no `YYYY-MM-DD` date cannot fill
+    `LogEntry.date`, so it fails naming the bullet's line and quotes the text —
+    it is not skipped, which would drop an authored entry from the record
+    without a word.
+    """
+    (failure,) = _failing_map("log-history-without-date.md", declaration).failures
+    assert failure.line == 11
+    assert "YYYY-MM-DD" in failure.message
+    assert "Renamed the bundle index" in failure.message
+
+
+def test_a_type_that_names_no_model_is_refused(declaration: dict) -> None:
+    """FR-007: the model of a document is its frontmatter `type`. A `type` that
+    names no model in `mappings.yaml` is refused naming the value and listing
+    the models that exist — the document is never mapped against some default
+    model, which would produce a record of the wrong shape.
+    """
+    document = b"---\ntype: NotAModel\n---\n# X\n\n## Description\n\nText.\n"
+    for call in (
+        lambda: rm.model_for(document, declaration),
+        lambda: rm.map_bytes(document, path="tests/fixtures", declaration=declaration),
+    ):
+        with pytest.raises(ValueError) as raised:
+            call()
+        message = str(raised.value)
+        assert "NotAModel" in message
+        assert "FR" in message and "log" in message, (
+            "the refusal lists the models that do exist: " f"{message}"
+        )
+
+
+# ---------------------------------------------------------------------------
+# `typed-table` detail subsections (FR-007 Behavior, Failure discipline)
+#
+# Also untagged, for the same reason: TC-045 does not enumerate the `### <row
+# id>` cases. FR-007 Behavior declares them and both of its failure branches.
+# ---------------------------------------------------------------------------
+def test_a_row_id_subsection_fills_the_row_detail(
+    declaration: dict, bundle: dict
+) -> None:
+    """FR-007 Behavior: a `typed-table` mapping reads a supplementary
+    `### <row id>` subsection into that row's `detail`, and only that row's —
+    the rows the document does not supplement carry no `detail` at all, and the
+    detail is the subsection's byte-exact body, ending where the next heading
+    begins.
+
+    The fixture also carries a `### Notes` subsection under the same table: a
+    `###` heading naming no row id is ordinary prose, so it is passed over
+    rather than failing as a subsection that "matches no row".
+    """
+    result = _map("fr-detail-subsection.md", declaration)
+    first, second = result.record["acceptanceCriteria"]
+    assert first["id"] == "FR-001-AC-1"
+    assert first["detail"] == (
+        "\nThe digest is computed over the bytes as read, with no line-ending\n"
+        "normalization, and compared to the declared value.\n\n"
+    )
+    assert "Notes" not in first["detail"], "the detail ran past the next heading"
+    assert "detail" not in second, "an unsupplemented row gains no detail"
+    assert not _schema_errors(result.record, "FR", declaration, bundle)
+
+
+def test_a_row_id_subsection_naming_no_row_fails_naming_the_line(
+    declaration: dict,
+) -> None:
+    """FR-007 Failure discipline: a `### <row id>` subsection whose id matches
+    no row fails naming the line. The subsection is authored *about* a
+    criterion, so an id that has drifted from the table is a defect, not
+    content to drop.
+    """
+    (failure,) = _failing_map("fr-detail-names-no-row.md", declaration).failures
+    assert failure.line == 22
+    assert "FR-001-AC-9" in failure.message
+    assert "matches no row" in failure.message
+
+
+def test_a_second_subsection_for_one_row_fails_naming_the_line(
+    declaration: dict,
+) -> None:
+    """FR-007 Failure discipline: a `### <row id>` subsection naming a row that
+    already carries a `detail` fails naming the second subsection's line —
+    neither body silently wins.
+    """
+    (failure,) = _failing_map("fr-detail-repeated.md", declaration).failures
+    assert failure.line == 26
+    assert "already carries a detail subsection" in failure.message
 
 
 # ---------------------------------------------------------------------------
@@ -308,14 +501,25 @@ def test_tc045_each_case_is_reported_by_exactly_one_layer(
         "fr-duplicated-heading.md",
         "fr-three-defects.md",
         "us-malformed-story.md",
+        "fr-table-columns-mismatch.md",
+        "fr-row-cell-count.md",
+        "fr-detail-names-no-row.md",
+        "fr-detail-repeated.md",
+        "log-history-without-date.md",
     }
     schema_layer = {
         "fr-missing-required-section.md",
         "fr-empty-typed-table.md",
         "fr-empty-verification-cell.md",
         "fr-status-outside-pattern.md",
+        "fr-acceptance-table-missing.md",
+        "fr-acceptance-delimiter-malformed.md",
     }
-    clean = {"fr-crlf-source.md"}
+    clean = {
+        "fr-crlf-source.md",
+        "fr-escaped-pipe-cell.md",
+        "fr-detail-subsection.md",
+    }
     fixtures = {path.name for path in MUTATIONS.glob("*.md")}
     assert fixtures == mapping_layer | schema_layer | clean, (
         "every mutation fixture must be attributed to a layer: "
@@ -326,10 +530,9 @@ def test_tc045_each_case_is_reported_by_exactly_one_layer(
         data = _fixture(name)
         model = rm.model_for(data, declaration)
         if name in mapping_layer:
-            with pytest.raises(rm.MappingError) as raised:
-                _map(name, declaration)
+            error = _failing_map(name, declaration)
             assert all(
-                failure.line >= 1 for failure in raised.value.failures
+                failure.line >= 1 for failure in error.failures
             ), f"{name}: a mapping failure must name a document line"
             continue
         result = _map(name, declaration)  # the mapping does not fail

@@ -22,6 +22,7 @@
 import { execFileSync } from "node:child_process";
 import { createHash } from "node:crypto";
 import {
+  existsSync,
   mkdtempSync,
   readdirSync,
   readFileSync,
@@ -44,10 +45,24 @@ const NORMALIZATION = {
   issue: "https://github.com/agent-ix/filament-core-data/issues/31",
 };
 
+const INSTALL_HINT = "run `make semantic-install` first";
+
+/** Turn a bare ENOENT under node_modules into the command that fixes it. */
+function missingInstall(error, what) {
+  if (error && error.code === "ENOENT") {
+    return new Error(`${what} is not installed under ${packageRoot}/node_modules — ${INSTALL_HINT}`);
+  }
+  return error;
+}
+
 function version(name) {
-  return JSON.parse(
-    readFileSync(resolve(packageRoot, "node_modules", name, "package.json"), "utf8"),
-  ).version;
+  try {
+    return JSON.parse(
+      readFileSync(resolve(packageRoot, "node_modules", name, "package.json"), "utf8"),
+    ).version;
+  } catch (error) {
+    throw missingInstall(error, name);
+  }
 }
 
 /**
@@ -60,7 +75,11 @@ function semanticCoreDigest() {
     packageRoot,
     "node_modules/@agent-ix/semantic-core/generated/toolchain.json",
   );
-  return `sha256:${createHash("sha256").update(readFileSync(path)).digest("hex")}`;
+  try {
+    return `sha256:${createHash("sha256").update(readFileSync(path)).digest("hex")}`;
+  } catch (error) {
+    throw missingInstall(error, "@agent-ix/semantic-core");
+  }
 }
 
 /** The manifest `version` is the authority; the `@jsonSchema` base must embed it (FR-005). */
@@ -97,17 +116,41 @@ function render(schema) {
 
 function emit() {
   const { base, manifestVersion } = packageBase();
+  const tsp = resolve(packageRoot, "node_modules/.bin/tsp");
+  if (!existsSync(tsp)) {
+    throw new Error(`the TypeSpec compiler (${tsp}) is not installed — ${INSTALL_HINT}`);
+  }
   const scratch = mkdtempSync(join(tmpdir(), "spec-artifacts-iso-emit-"));
   try {
-    execFileSync(
-      resolve(packageRoot, "node_modules/.bin/tsp"),
-      ["compile", packageRoot, "--option", `@typespec/json-schema.emitter-output-dir=${scratch}`],
-      { cwd: packageRoot, stdio: "pipe" },
+    try {
+      execFileSync(
+        tsp,
+        ["compile", packageRoot, "--option", `@typespec/json-schema.emitter-output-dir=${scratch}`],
+        { cwd: packageRoot, stdio: "pipe" },
+      );
+    } catch (error) {
+      throw missingInstall(error, "the TypeSpec compiler (node_modules/.bin/tsp)");
+    }
+    // Read the emitter's output explicitly rather than assuming it is flat: a
+    // future emitter that writes into a subdirectory would otherwise have those
+    // files dropped from both the bundle and the digest without a word. An
+    // unexpected entry is a hard failure, never a silent omission.
+    const entries = readdirSync(scratch, { withFileTypes: true }).sort((a, b) =>
+      a.name < b.name ? -1 : a.name > b.name ? 1 : 0,
     );
-    const all = readdirSync(scratch)
-      .filter((name) => name.endsWith(".json"))
-      .sort()
-      .map((name) => [name, JSON.parse(readFileSync(join(scratch, name), "utf8"))]);
+    const unexpected = entries
+      .filter((entry) => !(entry.isFile() && entry.name.endsWith(".json")))
+      .map((entry) => `${entry.name}${entry.isDirectory() ? "/" : ""}`);
+    if (unexpected.length > 0) {
+      throw new Error(
+        `the JSON Schema emitter wrote entries this script does not read:\n  ${unexpected.join("\n  ")}\n` +
+          "generate.mjs bundles a flat directory of *.json files; update it before regenerating.",
+      );
+    }
+    const all = entries.map((entry) => [
+      entry.name,
+      JSON.parse(readFileSync(join(scratch, entry.name), "utf8")),
+    ]);
     const excluded = [];
     const files = new Map();
     for (const [name, schema] of all) {

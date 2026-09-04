@@ -29,11 +29,16 @@ import pathlib
 
 import pytest
 
+from scripts import corpus_census
 from scripts.corpus_census import (
     DEFAULT_ROOT_GLOB,
+    FRONTMATTER_RE,
+    MAX_DOCUMENT_BYTES,
     Census,
     expand_roots,
+    has_heading,
     main,
+    section_lines,
 )
 
 FIXTURE_ROOT = pathlib.Path(__file__).resolve().parent / "fixtures" / "census"
@@ -49,6 +54,8 @@ EXPECTED_METRICS = {
     "repositories": 2,
     "documents_scanned": 12,
     "documents_unreadable": 0,
+    "documents_oversized": 0,
+    "directories_unreadable": 0,
     "documents_with_frontmatter": 11,
     "documents_typed": 11,
     "documents_identified": 7,
@@ -250,3 +257,158 @@ def test_census_writes_nothing_to_the_corpus(capsys) -> None:
     assert main(["--root", FIXTURE_GLOB, "--json"]) == 0
     capsys.readouterr()
     assert _corpus_snapshot() == before
+
+
+# --------------------------------------------------------------------------
+# Review findings F-06..F-10: the census must not lose documents silently.
+# --------------------------------------------------------------------------
+
+
+def _bundle(tmp_path: pathlib.Path, name: str) -> pathlib.Path:
+    """Create ``<tmp>/<name>/spec`` — one bundle in the shape the census walks."""
+    bundle = tmp_path / name / "spec"
+    bundle.mkdir(parents=True)
+    return bundle
+
+
+CRLF_DOCUMENT = (
+    b"---\r\n"
+    b"type: FR\r\n"
+    b"id: FR-001\r\n"
+    b"status: approved\r\n"
+    b"---\r\n"
+    b"\r\n"
+    b"# FR-001: A CRLF-authored requirement\r\n"
+    b"\r\n"
+    b"## Constraints\r\n"
+    b"\r\n"
+    b"| ID | Statement | Type | Verification |\r\n"
+    b"| --- | --- | --- | --- |\r\n"
+    b"| FR-001-CON-1 | Bounded | Boundary | Test (TC-001) |\r\n"
+)
+
+
+def test_frontmatter_detection_is_not_lf_only() -> None:
+    """F-06: a CRLF frontmatter block is a frontmatter block.
+
+    FR-005 carries a rule about CRLF, so the measurement its figures come from
+    cannot itself be LF-only: the pattern has to match untranslated CRLF text,
+    not only text a universal-newline read already folded.
+    """
+    match = FRONTMATTER_RE.match(CRLF_DOCUMENT.decode("utf-8"))
+    assert match is not None
+    assert "type: FR" in match.group(1)
+
+
+def test_a_crlf_document_is_counted_in_every_population(
+    tmp_path: pathlib.Path,
+) -> None:
+    """F-06: a CRLF-authored document reaches the typed, status and row counts."""
+    bundle = _bundle(tmp_path, "repo-crlf")
+    (bundle / "FR-001-crlf.md").write_bytes(CRLF_DOCUMENT)
+
+    census = Census()
+    census.run([bundle])
+
+    reported = {name: metric.value for name, metric in census.metrics().items()}
+    assert reported["documents_scanned"] == 1
+    assert reported["documents_with_frontmatter"] == 1
+    assert reported["documents_typed"] == 1
+    assert reported["fr_documents"] == 1
+    assert reported["status_documents"] == 1
+    assert reported["constraint_rows"] == 1
+    assert reported["verification_cells"] == 1
+    assert census.verification_methods == {"Test": 1}
+
+
+def test_an_unlistable_directory_is_a_counted_skip_not_a_traceback(
+    tmp_path: pathlib.Path, monkeypatch, capsys
+) -> None:
+    """F-07: one unreadable directory must not abort the whole census."""
+    bundle = _bundle(tmp_path, "repo-walk")
+    (bundle / "FR-001-readable.md").write_bytes(
+        b"---\ntype: FR\nid: FR-001\n---\n\n# FR-001: Readable\n"
+    )
+    real_walk = corpus_census.os.walk
+
+    def exploding_walk(top, onerror=None, **kwargs):
+        if onerror is not None:
+            onerror(PermissionError(13, "Permission denied", f"{top}/locked"))
+        yield from real_walk(top, onerror=onerror, **kwargs)
+
+    monkeypatch.setattr(corpus_census.os, "walk", exploding_walk)
+
+    census = Census()
+    census.run([bundle])
+
+    assert census.directories_unreadable == 1
+    assert census.documents_typed == 1, "the readable document is still counted"
+    assert "skipped unreadable directory" in capsys.readouterr().err
+
+
+def test_a_document_over_the_read_cap_is_counted_not_read(
+    tmp_path: pathlib.Path, monkeypatch, capsys
+) -> None:
+    """F-08: the read is bounded, and what the bound excluded is reported."""
+    assert MAX_DOCUMENT_BYTES > 0
+    bundle = _bundle(tmp_path, "repo-large")
+    (bundle / "FR-001-huge.md").write_bytes(
+        b"---\ntype: FR\nid: FR-001\n---\n\n# FR-001: Huge\n" + b"x" * 512
+    )
+    (bundle / "FR-002-small.md").write_bytes(
+        b"---\ntype: FR\nid: FR-002\n---\n\n# FR-002: Small\n"
+    )
+    monkeypatch.setattr(corpus_census, "MAX_DOCUMENT_BYTES", 128)
+
+    census = Census()
+    census.run([bundle])
+
+    assert census.documents_scanned == 2
+    assert census.documents_oversized == 1
+    assert census.documents_typed == 1, "only the document under the cap was read"
+    assert "read cap" in capsys.readouterr().err
+
+
+def test_the_heading_check_and_the_body_reader_agree_on_level() -> None:
+    """F-09: ``has_heading`` matches exactly the level ``section_lines`` reads."""
+    level_three = ["### Constraints", "", "Prose under the wrong level.", ""]
+    assert has_heading(level_three, "Constraints") is False
+    assert section_lines(level_three, "Constraints") == []
+
+    level_two = ["## Constraints", "", "Prose under the right level.", ""]
+    assert has_heading(level_two, "Constraints") is True
+    assert [
+        line.strip() for line in section_lines(level_two, "Constraints") if line.strip()
+    ] == ["Prose under the right level."]
+
+
+def test_a_wrong_level_constraints_heading_is_not_a_prose_constraints_document(
+    tmp_path: pathlib.Path,
+) -> None:
+    """F-09: ``fr_prose_constraints`` counts ``## Constraints`` prose, only that."""
+    bundle = _bundle(tmp_path, "repo-headings")
+    (bundle / "FR-001-level-three.md").write_bytes(
+        b"---\ntype: FR\nid: FR-001\n---\n\n"
+        b"# FR-001: Wrong level\n\n### Constraints\n\nProse.\n"
+    )
+    (bundle / "FR-002-level-two.md").write_bytes(
+        b"---\ntype: FR\nid: FR-002\n---\n\n"
+        b"# FR-002: Right level\n\n## Constraints\n\nProse.\n"
+    )
+
+    census = Census()
+    census.run([bundle])
+
+    assert census.fr_documents == 2
+    assert census.fr_prose_constraints == 1
+
+
+def test_top_rejects_a_non_positive_value(capsys) -> None:
+    """F-10: a negative --top truncated from the wrong end and lied about it."""
+    with pytest.raises(SystemExit) as excinfo:
+        main(["--root", FIXTURE_GLOB, "--top", "-1"])
+    assert excinfo.value.code == 2
+    assert "--top" in capsys.readouterr().err
+
+    with pytest.raises(SystemExit):
+        main(["--root", FIXTURE_GLOB, "--top", "0"])

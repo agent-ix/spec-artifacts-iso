@@ -12,7 +12,7 @@
     },
     "type": {
       "$ref": "https://schemas.agent-ix.org/agent-ix/spec-artifacts-iso/0.2.0/NonEmptyText.json",
-      "description": "free text: the constraint category; the census counts 334 distinct categories over 3,924 constraint rows and no rule owns the vocabulary."
+      "description": "free text: the constraint category; the census counts 335 distinct categories over 3,960 constraint rows and no rule owns the vocabulary."
     },
     "validation": {
       "$ref": "https://schemas.agent-ix.org/agent-ix/spec-artifacts-iso/0.2.0/Verification.json"

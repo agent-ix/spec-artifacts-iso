@@ -3,5 +3,5 @@
   "$id": "https://schemas.agent-ix.org/agent-ix/spec-artifacts-iso/0.2.0/Cardinality.json",
   "type": "string",
   "pattern": "^[0-9A-Za-z*]+(\\.\\.[0-9A-Za-z*]+)?(:[0-9A-Za-z*]+(\\.\\.[0-9A-Za-z*]+)?)?$",
-  "description": "Relationship cardinality as authored. Admits the census population (11 forms\nover 2,923 entries): `1:1`, `1:N`, `N:1`, `n:1`, `1`, `0:1`, `1:n`, `many:1`,\n`1..1`, `0..1`, `1:m`; each side is a number, a letter token, or `*`,\noptionally a `..` range."
+  "description": "Relationship cardinality as authored. Admits the census population (11 forms\nover 2,925 entries): `1:1`, `1:N`, `N:1`, `n:1`, `1`, `0:1`, `1:n`, `many:1`,\n`1..1`, `0..1`, `1:m`; each side is a number, a letter token, or `*`,\noptionally a `..` range."
 }

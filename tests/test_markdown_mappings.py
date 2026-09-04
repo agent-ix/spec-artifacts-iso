@@ -381,7 +381,11 @@ def test_tc052_row_id_patterns_match_the_locator_patterns(
                 if spec.get("from") == "table_row"
                 and spec.get("under_section") == entry["source"]["section"]
             )
-            expected = locator["assert"]["id_pattern"].replace(r"\d", "[0-9]")
+            # Byte-for-byte: the declaration and the manifest state one rule
+            # once. Normalizing one side's `\d` to `[0-9]` before comparing
+            # would let two textually divergent hand-maintained copies of that
+            # rule pass, which is what this check exists to prevent.
+            expected = locator["assert"]["id_pattern"]
             assert entry["row_id"]["pattern"] == expected, (
                 f"{model}.{name} declares row ids {entry['row_id']['pattern']}; "
                 f"the locator asserts {locator['assert']['id_pattern']}"

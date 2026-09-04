@@ -59,6 +59,28 @@ def _map(data: bytes, declaration: dict, identity: str | None = CALLER_IDENTITY)
     )
 
 
+def _failing_map(data: bytes, declaration: dict) -> rm.MappingError:
+    """Map a document that must fail, and assert it yielded **no record**.
+
+    FR-007 Failure discipline: the mapping "SHALL emit no record when any
+    failure is found". `pytest.raises` alone does not pin that — it would pass
+    for a mapping that built a half-record and raised afterwards — so the
+    result name is bound before the call and asserted to have stayed unbound,
+    and the error is asserted to carry the failures it found.
+    """
+    outcome: rm.MappingResult | None = None
+    try:
+        outcome = _map(data, declaration)
+    except rm.MappingError as error:
+        assert outcome is None, "the mapping produced a record and then failed"
+        assert error.failures, "the mapping raised carrying no failure at all"
+        return error
+    raise AssertionError(
+        "the mapping emitted a record where a failure was required: "
+        f"{sorted(outcome.record)}"
+    )
+
+
 def _skeleton(declaration: dict) -> bytes:
     return (PKG_ROOT / declaration["models"]["FR"]["skeleton"]).read_bytes()
 
@@ -174,12 +196,9 @@ def test_tc051_each_clause_defect_fails_naming_the_line(
     `clauseId`, and an `ocl` fence owned by no `###` heading each fail the
     mapping naming the line, and yield no record.
     """
-    with pytest.raises(rm.MappingError) as raised:
-        _map(_clause_fixture(fixture), declaration)
-    (failure,) = raised.value.failures
+    (failure,) = _failing_map(_clause_fixture(fixture), declaration).failures
     assert failure.line == line, f"{fixture}: failure named line {failure.line}"
     assert needle in failure.message
-    assert not hasattr(raised.value, "record"), "no partial record is emitted"
 
 
 def test_tc051_prose_invariants_leaves_the_property_absent(
@@ -195,6 +214,27 @@ def test_tc051_prose_invariants_leaves_the_property_absent(
         assert "invariants" not in result.record, fixture
         assert result.invariants_text == ()
         assert not validation_errors(result.record, "FR.json", bundle), fixture
+
+
+def test_a_prose_clause_heading_yields_no_clause_ref(
+    declaration: dict, bundle: dict
+) -> None:
+    """FR-007 Clauses: a `### <clauseId>` heading that owns no fence yields no
+    `ClauseRef` and does not fail — the same policy as a prose `## Invariants`,
+    applied one heading at a time. The fixture carries a prose clause heading
+    beside a fenced one, so the fenced clause is still mapped: the prose
+    heading is passed over, not treated as the end of the section.
+
+    Untagged: TC-051 enumerates a prose `## Invariants` *section*, not a prose
+    clause heading inside a section that also carries a fence.
+    """
+    result = _map(_clause_fixture("clause-heading-without-fence.md"), declaration)
+    (clause,) = result.record["invariants"]
+    assert clause["clauseId"] == "digest_matches_declared"
+    assert [entry["clauseId"] for entry in result.invariants_text] == [
+        "digest_matches_declared"
+    ]
+    assert not validation_errors(result.record, "FR.json", bundle)
 
 
 # ---------------------------------------------------------------------------
@@ -249,7 +289,15 @@ def _support_python_files() -> list[pathlib.Path]:
 
 
 def _write_calls(path: pathlib.Path) -> list[str]:
-    """Every file-mutating call in a Python file, as `name:line` strings."""
+    """Every file-mutating call in a Python file, as `name:line` strings.
+
+    Both spellings of `open` are inspected on their mode: the builtin
+    (`open(p, "w")`, mode at argument index 1) and the attribute form
+    (`pathlib.Path(p).open("w")`, `io.open(...)`, `os.open(...)` — mode at
+    index 0). The attribute form is not in `WRITE_APIS`, so before it was
+    checked here a file could write a document through `Path.open` and this
+    enumeration would have called the tree clean.
+    """
     tree = ast.parse(path.read_text(encoding="utf-8"), filename=str(path))
     found: list[str] = []
     for node in ast.walk(tree):
@@ -261,21 +309,26 @@ def _write_calls(path: pathlib.Path) -> list[str]:
                 f"{path.relative_to(REPO_ROOT)}:{node.lineno} .{function.attr}"
             )
         if isinstance(function, ast.Name) and function.id == "open":
-            found.extend(_open_violation(path, node))
+            found.extend(_open_violation(path, node, mode_index=1))
+        if isinstance(function, ast.Attribute) and function.attr == "open":
+            found.extend(_open_violation(path, node, mode_index=0))
     return found
 
 
-def _open_violation(path: pathlib.Path, node: ast.Call) -> list[str]:
-    """A builtin `open` is a violation unless its mode is a read-only literal."""
+def _open_violation(
+    path: pathlib.Path, node: ast.Call, *, mode_index: int
+) -> list[str]:
+    """An `open` call is a violation unless its mode is a read-only literal."""
     mode: str | None = "r"
-    if len(node.args) > 1:
-        mode = node.args[1].value if isinstance(node.args[1], ast.Constant) else None
+    if len(node.args) > mode_index:
+        argument = node.args[mode_index]
+        mode = argument.value if isinstance(argument, ast.Constant) else None
     for keyword in node.keywords:
         if keyword.arg == "mode":
             mode = (
                 keyword.value.value if isinstance(keyword.value, ast.Constant) else None
             )
-    if mode is None or not mode.startswith("r") or set(mode) & set("+wax"):
+    if not isinstance(mode, str) or not mode.startswith("r") or set(mode) & set("+wax"):
         return [f"{path.relative_to(REPO_ROOT)}:{node.lineno} open(mode={mode!r})"]
     return []
 
