@@ -2,7 +2,7 @@
 id: Task-004
 title: "Gate — a record built from a real skeleton validates against its model"
 type: Task
-status: in_progress
+status: done
 track: Gate
 priority: P0
 relationships:

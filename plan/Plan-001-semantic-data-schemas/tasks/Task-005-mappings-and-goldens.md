@@ -2,7 +2,7 @@
 id: Task-005
 title: "FR-007 — mappings.yaml, its schema, and the golden records"
 type: Task
-status: not_started
+status: done
 track: A
 priority: P0
 relationships:

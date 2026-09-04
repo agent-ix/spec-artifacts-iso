@@ -2,7 +2,7 @@
 id: Task-008
 title: "FR-007 — mapping failure semantics"
 type: Task
-status: not_started
+status: done
 track: C
 priority: P0
 relationships:

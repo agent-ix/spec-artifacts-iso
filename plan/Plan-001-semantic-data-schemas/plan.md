@@ -31,28 +31,28 @@ None new. StR-001 (module activation) is unchanged and already discharged.
 
 ### User Stories
 
-- [ ] **US-001**: a consumer loads the module and gets typed ISO artifact
+- [x] **US-001**: a consumer loads the module and gets typed ISO artifact
   records — schemas it can validate against, and a mapping that says how a
   document becomes one.
 
 ### Functional Requirements
 
-- [ ] **FR-005**: one semantic data model per ISO artifact type, declared in
+- [x] **FR-005**: one semantic data model per ISO artifact type, declared in
   TypeSpec importing `@agent-ix/semantic-core` 0.1.0, projected to JSON Schema
   2020-12 at `spec_artifacts_iso/schemas/<Model>.json` by the official
   `@typespec/json-schema` emitter, with `make schemas` / `make schemas-check`
   and a `toolchain.json` recording the toolchain and the bundle digest.
-- [ ] **FR-006**: the manifest carries the quoin FR-070 `semantic` block and
+- [x] **FR-006**: the manifest carries the quoin FR-070 `semantic` block and
   references each emitted schema by module-relative path and SHA-256 digest,
   with no inline `data_schema` left and no new required key.
-- [ ] **FR-007**: `mappings.yaml` declares, per model property, the mapping kind
+- [x] **FR-007**: `mappings.yaml` declares, per model property, the mapping kind
   and its source across eight kinds, plus the round-trip policy; one golden
   record per skeleton under `examples/`; a Python reference mapping in test
   support as the oracle.
 
 ### Non-Functional Requirements
 
-- [ ] **NFR-001**: the projection is byte-reproducible from the committed
+- [x] **NFR-001**: the projection is byte-reproducible from the committed
   TypeSpec source and lockfile, and resolves with no network read.
 
 ## Dependency Graph
@@ -176,16 +176,16 @@ tag form this repository already uses, so `quire coverage` binds each row.
 
 | Task | Track | Owns (references) | Verified by (verifies) | Status |
 |------|-------|-------------------|------------------------|--------|
-| Task-001 | A | FR-005 | TC-039, TC-040 | not_started |
-| Task-002 | A | FR-005 | TC-041, TC-042, TC-043, TC-060, TC-061 | not_started |
-| Task-003 | A | FR-006 | TC-046, TC-047, TC-048, TC-049 | not_started |
-| Task-004 | Gate | US-001 | TC-044 | not_started |
-| Task-005 | A | FR-007 | TC-044, TC-050, TC-052, TC-053 | not_started |
-| Task-006 | B | FR-005 | TC-054, TC-062 | not_started |
-| Task-007 | B | FR-005 | TC-040 | not_started |
-| Task-008 | C | FR-007 | TC-045 | not_started |
-| Task-009 | C | FR-007 | TC-051, TC-059 | not_started |
-| Task-010 | C | NFR-001 | TC-056, TC-057, TC-058, TC-063, TC-055 | not_started |
+| Task-001 | A | FR-005 | TC-039, TC-040 | done        |
+| Task-002 | A | FR-005 | TC-041, TC-042, TC-043, TC-060, TC-061 | done        |
+| Task-003 | A | FR-006 | TC-046, TC-047, TC-048, TC-049 | done        |
+| Task-004 | Gate | US-001 | TC-044 | done        |
+| Task-005 | A | FR-007 | TC-044, TC-050, TC-052, TC-053 | done        |
+| Task-006 | B | FR-005 | TC-054, TC-062 | done        |
+| Task-007 | B | FR-005 | TC-040 | done        |
+| Task-008 | C | FR-007 | TC-045 | done        |
+| Task-009 | C | FR-007 | TC-051, TC-059 | done        |
+| Task-010 | C | NFR-001 | TC-056, TC-057, TC-058, TC-063, TC-055 | done        |
 
 ## Coordination Rules
 

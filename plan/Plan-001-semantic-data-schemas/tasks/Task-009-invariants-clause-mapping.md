@@ -2,7 +2,7 @@
 id: Task-009
 title: "FR-007 — the ## Invariants section and the ocl-clause mapping"
 type: Task
-status: not_started
+status: done
 track: C
 priority: P1
 relationships:
