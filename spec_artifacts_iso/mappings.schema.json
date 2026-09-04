@@ -1,0 +1,422 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.agent-ix.org/agent-ix/spec-artifacts-iso/mappings.schema.json",
+  "title": "spec-artifacts-iso Markdown mapping declaration",
+  "description": "The shape of `spec_artifacts_iso/mappings.yaml` (FR-007 Inputs), so a malformed mapping is a schema error rather than a reader's surprise. Every object is sealed: an unknown key is an error, not a comment.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["version", "kinds", "golden_records", "parses", "models"],
+  "properties": {
+    "version": {
+      "type": "integer",
+      "minimum": 1,
+      "description": "Declaration format version."
+    },
+    "kinds": {
+      "type": "array",
+      "description": "The eight mapping kinds FR-007 fixes, in the order `manifest.yaml` publishes them under `semantic.mappings`.",
+      "items": { "$ref": "#/$defs/kind" },
+      "minItems": 8,
+      "maxItems": 8,
+      "uniqueItems": true
+    },
+    "golden_records": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["source_identity", "path_prefix", "serialization"],
+      "description": "The caller inputs the committed goldens under `examples/` were built from, so a consumer can reproduce them byte-for-byte.",
+      "properties": {
+        "source_identity": {
+          "type": "string",
+          "pattern": "^ix://[a-z0-9][a-z0-9._-]*/[A-Za-z0-9][A-Za-z0-9._~:/-]*$"
+        },
+        "path_prefix": { "type": "string", "minLength": 1 },
+        "serialization": { "type": "string", "minLength": 1 }
+      }
+    },
+    "parses": {
+      "type": "object",
+      "description": "The closed set of named parse and split rules the property entries may name. A rule is described here once and named, never re-described, at each use.",
+      "additionalProperties": false,
+      "required": [
+        "story",
+        "verification",
+        "row-id",
+        "index-entry",
+        "log-entry",
+        "success-criterion"
+      ],
+      "properties": {
+        "story": { "type": "string", "minLength": 1 },
+        "verification": { "type": "string", "minLength": 1 },
+        "row-id": { "type": "string", "minLength": 1 },
+        "index-entry": { "type": "string", "minLength": 1 },
+        "log-entry": { "type": "string", "minLength": 1 },
+        "success-criterion": { "type": "string", "minLength": 1 }
+      }
+    },
+    "models": {
+      "type": "object",
+      "description": "One entry per exported archetype name (FR-005 Outputs export map).",
+      "minProperties": 10,
+      "maxProperties": 10,
+      "propertyNames": {
+        "enum": [
+          "FR",
+          "NFR",
+          "StR",
+          "US",
+          "IT",
+          "TC",
+          "master-requirements",
+          "index",
+          "log",
+          "Glossary"
+        ]
+      },
+      "additionalProperties": { "$ref": "#/$defs/model" }
+    }
+  },
+  "$defs": {
+    "kind": {
+      "type": "string",
+      "enum": [
+        "frontmatter",
+        "section",
+        "table",
+        "typed-table",
+        "ocl-clause",
+        "list",
+        "token",
+        "provenance"
+      ]
+    },
+    "model": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "schema",
+        "skeleton",
+        "example",
+        "authority",
+        "round_trip",
+        "dropped_frontmatter_keys",
+        "properties"
+      ],
+      "properties": {
+        "schema": {
+          "type": "string",
+          "pattern": "^schemas/[A-Za-z]+\\.json$"
+        },
+        "skeleton": {
+          "type": "string",
+          "pattern": "^skeletons/[a-z-]+\\.md$"
+        },
+        "example": {
+          "type": "string",
+          "pattern": "^examples/[A-Za-z-]+\\.record\\.json$"
+        },
+        "authority": {
+          "const": "markdown",
+          "description": "FR-007 round-trip policy: Markdown is the sole authority."
+        },
+        "round_trip": {
+          "const": "derived",
+          "description": "FR-007 round-trip policy: the record is a derived projection."
+        },
+        "dropped_frontmatter_keys": {
+          "type": "array",
+          "uniqueItems": true,
+          "description": "The frontmatter keys the schema beside this model admits and the sealed model does not carry. `relationships[].<key>` names an annotation key on a relationship item.",
+          "items": {
+            "type": "string",
+            "pattern": "^(relationships\\[\\]\\.)?[a-z][a-z0-9_]*$"
+          }
+        },
+        "properties": {
+          "type": "object",
+          "description": "One entry per property the emitted model declares — exactly one, and no property the model does not declare (FR-007-AC-1).",
+          "minProperties": 1,
+          "propertyNames": { "pattern": "^[a-z][A-Za-z0-9]*$" },
+          "additionalProperties": { "$ref": "#/$defs/property" }
+        }
+      }
+    },
+    "property": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["kind", "source", "lossless"],
+      "properties": {
+        "kind": { "$ref": "#/$defs/kind" },
+        "lossless": {
+          "type": "boolean",
+          "description": "FR-007-AC-7: true on `section` and `ocl-clause`, whose text is the byte-exact slice; false on `table`, `typed-table`, `list`, `token`, `frontmatter` and `provenance`, because cell whitespace, column alignment, bullet spelling and YAML key order are not preserved."
+        },
+        "yield": {
+          "type": "string",
+          "enum": ["Section", "HeadingRef", "HeadingText", "Story"],
+          "description": "What a `section` mapping produces: the whole `Section`, a `HeadingRef { heading, line }`, the heading text alone, or a parsed `Story`."
+        },
+        "parse": { "$ref": "#/$defs/parseName" },
+        "source": { "$ref": "#/$defs/source" },
+        "cells": {
+          "type": "object",
+          "description": "Column name -> the row property it fills and the split it applies. Keyed by the column names of `source.columns`.",
+          "minProperties": 1,
+          "additionalProperties": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["property"],
+            "properties": {
+              "property": { "type": "string", "pattern": "^[a-z][A-Za-z0-9]*$" },
+              "parse": { "$ref": "#/$defs/parseName" }
+            }
+          }
+        },
+        "row_id": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["column", "pattern"],
+          "description": "A typed table's id column and the pattern its cells match, `{id}` bound to the document's frontmatter `id`.",
+          "properties": {
+            "column": { "type": "string", "minLength": 1 },
+            "pattern": { "type": "string", "pattern": "^\\^\\{id\\}-" }
+          }
+        },
+        "detail": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["heading_level", "property"],
+          "description": "A supplementary `### <row id>` subsection fills this row property.",
+          "properties": {
+            "heading_level": { "type": "integer", "const": 3 },
+            "property": { "type": "string", "pattern": "^[a-z][A-Za-z0-9]*$" }
+          }
+        }
+      },
+      "allOf": [
+        {
+          "if": { "properties": { "kind": { "const": "frontmatter" } } },
+          "then": {
+            "required": ["source"],
+            "properties": { "source": { "$ref": "#/$defs/frontmatterSource" } },
+            "not": { "anyOf": [
+              { "required": ["cells"] },
+              { "required": ["row_id"] },
+              { "required": ["detail"] },
+              { "required": ["yield"] },
+              { "required": ["parse"] }
+            ] }
+          }
+        },
+        {
+          "if": { "properties": { "kind": { "const": "section" } } },
+          "then": {
+            "required": ["yield"],
+            "properties": { "source": { "$ref": "#/$defs/headingSource" } },
+            "not": { "anyOf": [
+              { "required": ["cells"] },
+              { "required": ["row_id"] },
+              { "required": ["detail"] }
+            ] }
+          }
+        },
+        {
+          "if": { "properties": { "kind": { "const": "table" } } },
+          "then": {
+            "required": ["cells"],
+            "properties": { "source": { "$ref": "#/$defs/tableSource" } },
+            "not": { "anyOf": [
+              { "required": ["row_id"] },
+              { "required": ["detail"] },
+              { "required": ["yield"] },
+              { "required": ["parse"] }
+            ] }
+          }
+        },
+        {
+          "if": { "properties": { "kind": { "const": "typed-table" } } },
+          "then": {
+            "required": ["cells", "row_id"],
+            "properties": { "source": { "$ref": "#/$defs/tableSource" } },
+            "not": { "anyOf": [
+              { "required": ["yield"] },
+              { "required": ["parse"] }
+            ] }
+          }
+        },
+        {
+          "if": { "properties": { "kind": { "const": "list" } } },
+          "then": {
+            "required": ["parse"],
+            "properties": { "source": { "$ref": "#/$defs/listSource" } },
+            "not": { "anyOf": [
+              { "required": ["cells"] },
+              { "required": ["row_id"] },
+              { "required": ["detail"] },
+              { "required": ["yield"] }
+            ] }
+          }
+        },
+        {
+          "if": { "properties": { "kind": { "const": "token" } } },
+          "then": {
+            "required": ["parse"],
+            "properties": { "source": { "$ref": "#/$defs/tokenSource" } },
+            "not": { "anyOf": [
+              { "required": ["cells"] },
+              { "required": ["row_id"] },
+              { "required": ["detail"] },
+              { "required": ["yield"] }
+            ] }
+          }
+        },
+        {
+          "if": { "properties": { "kind": { "const": "ocl-clause" } } },
+          "then": {
+            "properties": { "source": { "$ref": "#/$defs/clauseSource" } },
+            "not": { "anyOf": [
+              { "required": ["cells"] },
+              { "required": ["row_id"] },
+              { "required": ["detail"] },
+              { "required": ["yield"] },
+              { "required": ["parse"] }
+            ] }
+          }
+        },
+        {
+          "if": { "properties": { "kind": { "const": "provenance" } } },
+          "then": {
+            "properties": { "source": { "$ref": "#/$defs/provenanceSource" } },
+            "not": { "anyOf": [
+              { "required": ["cells"] },
+              { "required": ["row_id"] },
+              { "required": ["detail"] },
+              { "required": ["yield"] },
+              { "required": ["parse"] }
+            ] }
+          }
+        },
+        {
+          "if": {
+            "properties": { "kind": { "enum": ["section", "ocl-clause"] } }
+          },
+          "then": { "properties": { "lossless": { "const": true } } },
+          "else": { "properties": { "lossless": { "const": false } } }
+        }
+      ]
+    },
+    "parseName": {
+      "type": "string",
+      "enum": [
+        "story",
+        "verification",
+        "row-id",
+        "index-entry",
+        "log-entry",
+        "success-criterion"
+      ]
+    },
+    "source": {
+      "type": "object",
+      "minProperties": 1,
+      "description": "Where the property comes from. The admitted shape is fixed by the entry's `kind`."
+    },
+    "frontmatterSource": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["key"],
+      "properties": {
+        "key": { "type": "string", "pattern": "^[a-z][a-z0-9_]*$" },
+        "item_keys": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": { "type": "string", "pattern": "^[a-z][a-z0-9_]*$" },
+          "description": "For `relationships`: the item keys the sealed `Relationship` model carries. Every other key on an item is dropped."
+        },
+        "default": {
+          "type": "array",
+          "maxItems": 0,
+          "description": "The value a model-required array takes when the frontmatter key is absent: an empty edge set, declared rather than assumed. The only admitted default is `[]` — the mapping never invents a value."
+        }
+      }
+    },
+    "headingSource": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["heading", "level"],
+      "properties": {
+        "heading": { "type": "string", "minLength": 1 },
+        "level": { "type": "integer", "minimum": 1, "maximum": 6 }
+      }
+    },
+    "tableSource": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["section", "columns"],
+      "properties": {
+        "section": { "type": "string", "minLength": 1 },
+        "columns": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": { "type": "string", "minLength": 1 },
+          "description": "Equal to the `assert.columns` of the corresponding manifest locator (FR-007 Golden records, TC-052)."
+        }
+      }
+    },
+    "listSource": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["section", "locator", "bullets", "indent"],
+      "properties": {
+        "section": { "type": "string", "minLength": 1 },
+        "locator": { "type": "string", "pattern": "^[a-z][a-z0-9_]*$" },
+        "bullets": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": { "enum": ["*", "-"] }
+        },
+        "indent": { "type": "integer", "const": 0 }
+      }
+    },
+    "tokenSource": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["section", "pattern"],
+      "properties": {
+        "section": { "type": "string", "minLength": 1 },
+        "pattern": { "type": "string", "minLength": 1 }
+      }
+    },
+    "clauseSource": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["section", "clause_heading_level", "language", "sidecar"],
+      "properties": {
+        "section": { "type": "string", "minLength": 1 },
+        "clause_heading_level": { "type": "integer", "const": 3 },
+        "language": { "const": "ocl" },
+        "sidecar": {
+          "const": "invariantsText",
+          "description": "The clause text is carried beside the record, never in it (FR-007-CON-2)."
+        }
+      }
+    },
+    "provenanceSource": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["path", "digest", "source_identity"],
+      "properties": {
+        "path": { "const": "corpus-relative" },
+        "digest": { "const": "sha256-of-bytes-as-read" },
+        "source_identity": {
+          "const": "caller",
+          "description": "FR-007: filled from the caller and absent when the caller supplies none. Never synthesized."
+        }
+      }
+    }
+  }
+}

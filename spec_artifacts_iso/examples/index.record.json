@@ -1,0 +1,25 @@
+{
+  "description": "Index of the functional requirement artifacts in this directory.",
+  "entries": [
+    {
+      "href": "./FR-001-verify-checksums-on-artifact-import.md",
+      "line": 11,
+      "summary": "Defines checksum verification on artifact import.",
+      "title": "FR-001: Verify checksums on artifact import"
+    },
+    {
+      "href": "./FR-002-reject-mismatched-digests.md",
+      "line": 12,
+      "summary": "Rejects imports whose digest does not match the manifest.",
+      "title": "FR-002: Reject mismatched digests"
+    }
+  ],
+  "okfVersion": "0.1",
+  "provenance": {
+    "digest": "sha256:9972afe51b656a24fcd4e78976125db3d10006c37c5e9af5db5d0e513e87a497",
+    "path": "spec_artifacts_iso/skeletons/index.md",
+    "sourceIdentity": "ix://agent-ix/spec-artifacts-iso/skeletons"
+  },
+  "title": "Functional Requirements",
+  "type": "index"
+}

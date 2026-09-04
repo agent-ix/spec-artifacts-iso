@@ -1,0 +1,66 @@
+{
+  "acceptanceExamples": {
+    "endLine": 45,
+    "startLine": 41,
+    "text": "\nThese examples clarify the operator's expectations. They are illustrative only —\nnot test cases and not verification criteria.\n\n"
+  },
+  "constraints": {
+    "endLine": 70,
+    "startLine": 65,
+    "text": "\nOperators noted that imports already feel slow, so any integrity work should not\nnoticeably lengthen the import. This context is not binding and may be refined or\ndiscarded during requirements analysis.\n\n"
+  },
+  "context": {
+    "endLine": 40,
+    "startLine": 33,
+    "text": "\nArtifacts arrive from an external build pipeline and are stored for later\ndistribution. Operators have repeatedly seen silent corruption during transfer,\nand downstream consumers currently have no way to know whether the bytes they\nreceive are intact. This story sits alongside the broader import workflow and\ninforms later requirements rather than specifying them.\n\n"
+  },
+  "dependencies": {
+    "endLine": 77,
+    "startLine": 71,
+    "text": "\nRelationships observed during discovery. Upstream: the platform's existing import\nworkflow and security posture. Downstream: a likely functional requirement for\nchecksum verification on import. These are potential relationships, not formal\ntraceability.\n\n"
+  },
+  "id": "US-001",
+  "notes": {
+    "endLine": 89,
+    "startLine": 85,
+    "text": "\nOpen question raised in discovery: should re-verification happen on every read or\nonly at import? Captured here for later analysis; it introduces no requirement.\n\n"
+  },
+  "options": {
+    "endLine": 64,
+    "startLine": 58,
+    "text": "\nApproaches discussed during discovery, none of which imply commitment: verifying\na digest supplied alongside the artifact; deriving and storing a digest at import\ntime for later re-checking; or signing artifacts at build time. These options may\nor may not influence later requirements.\n\n"
+  },
+  "priorityAndRisk": {
+    "endLine": 84,
+    "startLine": 78,
+    "text": "\nBusiness value is high because corrupted artifacts undermine trust in the whole\ndistribution pipeline; urgency is medium; the risk if unmet is loss of confidence\nin stored artifacts. This information is for planning only and does not affect\ncompliance or verification.\n\n"
+  },
+  "provenance": {
+    "digest": "sha256:22161b99003c9e1d74e41c02d2a78c3b6bf5a514a02b861fdb0c173234f0e978",
+    "path": "spec_artifacts_iso/skeletons/us.md",
+    "sourceIdentity": "ix://agent-ix/spec-artifacts-iso/skeletons"
+  },
+  "relationships": [
+    {
+      "target": "ix://agent-ix/example/StR-001",
+      "type": "traces_to"
+    }
+  ],
+  "story": {
+    "asA": "operator importing release artifacts",
+    "iWant": "the platform to verify the integrity of each artifact as it is imported",
+    "section": {
+      "endLine": 32,
+      "startLine": 24,
+      "text": "\n**As an** operator importing release artifacts\n**I want** the platform to verify the integrity of each artifact as it is imported\n**So that** I can trust that the stored bytes exactly match what I intended to upload.\n\nThis story expresses the operator's perspective in informal language and avoids\nprescribing how the platform performs the verification.\n\n"
+    },
+    "soThat": "I can trust that the stored bytes exactly match what I intended to upload."
+  },
+  "title": "Import an artifact with integrity verification",
+  "traceability": {
+    "endLine": 95,
+    "startLine": 90,
+    "text": "\nPotential trace relationships established during refinement: this user story may\ntrace to a stakeholder requirement for tamper-evident imports and to a candidate\nfunctional requirement for checksum verification. Links may be updated as\nunderstanding evolves.\n"
+  },
+  "type": "US"
+}

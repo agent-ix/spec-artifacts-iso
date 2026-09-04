@@ -1,0 +1,50 @@
+{
+  "componentType": "fastapi-service",
+  "dependsOn": [],
+  "implementationLanguage": "python",
+  "name": "example-service",
+  "org": "agent-ix",
+  "provenance": {
+    "digest": "sha256:ce7cc2a47b122b9f9e4d97981b6884a2672f9e564ad9eb48f26b76b27a383f1a",
+    "path": "spec_artifacts_iso/skeletons/spec.md",
+    "sourceIdentity": "ix://agent-ix/spec-artifacts-iso/skeletons"
+  },
+  "purpose": {
+    "endLine": 38,
+    "startLine": 32,
+    "text": "\nThis document specifies the requirements for the component named in the\nfrontmatter. It states what the component does, the boundary of its\nresponsibility, and the quality attributes it must uphold, so that implementers,\nreviewers, and downstream consumers share one authoritative definition of done.\n\n"
+  },
+  "references": {
+    "endLine": 79,
+    "startLine": 74,
+    "text": "\n- ISO/IEC/IEEE 29148 — Requirements engineering.\n- The component's source repository and README.\n- The specifications of the upstream and downstream components named in the\n  frontmatter `relationships`.\n"
+  },
+  "relationships": [
+    {
+      "cardinality": "1:1",
+      "target": "ix://agent-ix/identity/FR-001",
+      "type": "depends_on"
+    }
+  ],
+  "requirementsArchitecture": {
+    "heading": "Requirements Architecture",
+    "line": 66
+  },
+  "scope": {
+    "heading": "Scope",
+    "line": 39
+  },
+  "securityCritical": false,
+  "standardsAlignment": [
+    "iso-iec-ieee-29148"
+  ],
+  "systemOverview": {
+    "heading": "System Overview",
+    "line": 54
+  },
+  "tags": [
+    "example"
+  ],
+  "title": "Master Requirements Specification",
+  "type": "master-requirements"
+}

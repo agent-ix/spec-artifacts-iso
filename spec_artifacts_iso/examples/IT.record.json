@@ -1,0 +1,83 @@
+{
+  "dependencies": {
+    "endLine": 74,
+    "startLine": 70,
+    "text": "\n**Upstream**: the functional requirement for checksum verification on import,\nwhich this test verifies. **Downstream**: none — no other test depends on this one.\n\n"
+  },
+  "expectedResults": {
+    "endLine": 63,
+    "startLine": 58,
+    "text": "\nThe import is rejected with a digest-mismatch error that reports the declared and\ncomputed digests, and the artifact store contains zero rows for the run's\nidentifier. The test passes only when every per-step success criterion holds.\n\n"
+  },
+  "id": "IT-001",
+  "inputs": {
+    "endLine": 46,
+    "startLine": 41,
+    "text": "\nA single artifact payload whose body is a known fixed byte sequence, accompanied\nby a declared SHA-256 digest that is deliberately altered so it does not match the\npayload. The mismatch is the property under test; all other fields are valid.\n\n"
+  },
+  "metadata": {
+    "endLine": 69,
+    "startLine": 64,
+    "text": "\n- Priority: High\n- Target Integration: artifact store HTTP persistence API\n- Automation: Automated\n\n"
+  },
+  "notes": {
+    "endLine": 79,
+    "startLine": 75,
+    "text": "\nThe complementary success path (a matching digest is accepted and persisted) is\ncovered by a separate integration test and is intentionally out of scope here.\n\n"
+  },
+  "objective": {
+    "endLine": 27,
+    "startLine": 21,
+    "text": "\nVerify the integration boundary between the import service and the artifact store\nfor the failure path: an artifact whose declared digest does not match its bytes\nmust be rejected end to end and never persisted. Without this test, silent\nacceptance of a corrupted artifact would go undetected.\n\n"
+  },
+  "preconditions": {
+    "endLine": 40,
+    "startLine": 35,
+    "text": "\nThe import service and the artifact store are both running and reachable, and the\nstore is empty so the absence of a persisted row is meaningful. A unique artifact\nidentifier is allocated for this run to avoid collision with other tests.\n\n"
+  },
+  "provenance": {
+    "digest": "sha256:0e123f80ae7a8ef26a10f1fd61386984ac221027e7e3e3cb883ded80dbdd0f9a",
+    "path": "spec_artifacts_iso/skeletons/it.md",
+    "sourceIdentity": "ix://agent-ix/spec-artifacts-iso/skeletons"
+  },
+  "relationships": [
+    {
+      "target": "ix://agent-ix/example/FR-001",
+      "type": "verifies"
+    }
+  ],
+  "successCriteria": [
+    {
+      "id": "IT-001-SC-01",
+      "line": 52,
+      "text": "the endpoint returns a rejection status rather than success."
+    },
+    {
+      "id": "IT-001-SC-02",
+      "line": 54,
+      "text": "the response carries both the declared and the computed digest."
+    },
+    {
+      "id": "IT-001-SC-03",
+      "line": 56,
+      "text": "the store reports no artifact persisted for that identifier."
+    }
+  ],
+  "targetIntegration": {
+    "endLine": 34,
+    "startLine": 28,
+    "text": "\nThe service under test is the import service. The external dependency is the\nartifact store it persists to, reached over its HTTP persistence API. The\nintegration type exercised is an HTTP client call from the import service to the\nstore, triggered by submitting an artifact to the import endpoint.\n\n"
+  },
+  "testProcedure": {
+    "endLine": 57,
+    "startLine": 47,
+    "text": "\nEach step performs one discrete action and has its own success criterion.\n\n1. Submit the artifact and its mismatched declared digest to the import endpoint.\n   - IT-001-SC-01: the endpoint returns a rejection status rather than success.\n2. Inspect the rejection response.\n   - IT-001-SC-02: the response carries both the declared and the computed digest.\n3. Query the artifact store for the run's artifact identifier.\n   - IT-001-SC-03: the store reports no artifact persisted for that identifier.\n\n"
+  },
+  "title": "Checksum mismatch rejects the import",
+  "traceability": {
+    "endLine": 83,
+    "startLine": 80,
+    "text": "\nThis integration test verifies the checksum-verification functional requirement\nand exercises the stakeholder need for tamper-evident imports.\n"
+  },
+  "type": "IT"
+}

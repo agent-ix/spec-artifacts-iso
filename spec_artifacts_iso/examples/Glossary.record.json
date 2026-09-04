@@ -1,0 +1,34 @@
+{
+  "id": "GLO-001",
+  "provenance": {
+    "digest": "sha256:fb127b0a946ce49dc375b4dec44973207ab0cbbe821c2d972cc9c71de37edc02",
+    "path": "spec_artifacts_iso/skeletons/glossary.md",
+    "sourceIdentity": "ix://agent-ix/spec-artifacts-iso/skeletons"
+  },
+  "relationships": [],
+  "scope": "order-management",
+  "terms": [
+    {
+      "definition": "Convert a draft order into a binding purchase request.",
+      "line": 26,
+      "term": "Place"
+    },
+    {
+      "definition": "Confirm payment for a placed order at the authorised amount.",
+      "line": 27,
+      "term": "Capture"
+    },
+    {
+      "definition": "The pick, pack, and ship work that completes a paid order.",
+      "line": 28,
+      "term": "Fulfilment"
+    },
+    {
+      "definition": "The period during which a placed order may still be cancelled without compensation steps.",
+      "line": 29,
+      "term": "Cancellation window"
+    }
+  ],
+  "title": "Order Management Glossary",
+  "type": "Glossary"
+}

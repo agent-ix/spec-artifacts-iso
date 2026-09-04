@@ -1,0 +1,818 @@
+# =============================================================================
+# spec-artifacts-iso — Markdown → record mappings (FR-007)
+# =============================================================================
+# How an authored ISO Markdown document becomes one of the FR-005 semantic
+# records, declared as data so a consumer can build the record without reading
+# this module's Python.
+#
+# Markdown is the sole authority (`authority: markdown`) and every record is a
+# derived projection of it (`round_trip: derived`). Nothing in this module
+# derives Markdown from a record (FR-007-CON-3).
+#
+# This file is AUTHORED, not generated. `manifest.yaml` is the independent
+# truth TC-052 checks the `columns` lists against; generating them from it
+# would make that assertion prove nothing.
+#
+# Every property of every emitted model has exactly one entry here, and every
+# entry names a property its model declares (FR-007-AC-1, TC-052). Line
+# numbers are 1-based document lines, counting the frontmatter block, exactly
+# as `quire-rs` reports them.
+# =============================================================================
+version: 1
+
+# FR-007: the eight mapping kinds, the same list `manifest.yaml` publishes
+# under `semantic.mappings`.
+kinds:
+  - frontmatter
+  - section
+  - table
+  - typed-table
+  - ocl-clause
+  - list
+  - token
+  - provenance
+
+# The caller inputs the committed golden records under `examples/` were built
+# from, so a consumer can reproduce them byte-for-byte (FR-007 Golden records,
+# TC-044). `source_identity` is caller-supplied data, never synthesized by the
+# mapping (FR-007 Behavior).
+golden_records:
+  source_identity: "ix://agent-ix/spec-artifacts-iso/skeletons"
+  path_prefix: spec_artifacts_iso/skeletons
+  serialization: sorted keys, two-space indent, trailing newline
+
+# The parse and split rules the entries below name. Each is a closed rule of
+# FR-007 Behavior; a mapping entry names one, it does not describe one.
+parses:
+  story: >-
+    The three anchored lines `As a <asA>`, `I want <iWant>`, `So that
+    <soThat>`, each optionally wrapped in `**`/`__`/`*`/`_` emphasis and
+    optionally followed by `:`, matched case-insensitively at the start of a
+    line. The captured text is trimmed and its surrounding emphasis markers
+    removed. A `## Story` section missing any of the three fails the mapping
+    naming the heading line.
+  verification: >-
+    A verification/validation cell split into `Verification { method,
+    testRefs, annotation? }`: `method` is the text before the first `(`
+    trimmed, `annotation` is the text between the first `(` and the last `)`
+    verbatim, and `testRefs` are the `TC-[0-9]+` tokens of `annotation` in
+    order. A cell with no parenthesised remainder is `method` alone with
+    `testRefs: []` and no `annotation`. No byte of the cell is dropped.
+  row-id: >-
+    The row's id cell, which SHALL match the table's `row_id.pattern` with
+    `{id}` bound to the document's frontmatter `id`, and SHALL be unique
+    within the table. Either failure names the row's line.
+  index-entry: >-
+    One `* [title](href) - summary` or `- [title](href)` line at indent 0,
+    the summary separated by a spaced `-` or em dash. A line matching neither
+    form (prose, a nested bullet, a blank line) is not an entry and is not an
+    error.
+  log-entry: >-
+    One `* **YYYY-MM-DD** — text` entry at indent 0; the bullet is `*` or `-`,
+    the date may be wrapped in `**`/`__`, the dash separator is optional, and
+    the entry extends to the next bullet at the same indentation. An entry
+    carrying no date fails the mapping naming its line.
+  success-criterion: >-
+    One `IT-[0-9]+-SC-[0-9]+` token occurrence; `text` is the trimmed
+    remainder of the token's line after an optional `:`.
+
+models:
+
+  # ---------------------------------------------------------------------------
+  FR:
+    schema: schemas/FR.json
+    skeleton: skeletons/fr.md
+    example: examples/FR.record.json
+    authority: markdown
+    round_trip: derived
+    dropped_frontmatter_keys: []
+    properties:
+      id:
+        kind: frontmatter
+        source: {key: id}
+        lossless: false
+      title:
+        kind: frontmatter
+        source: {key: title}
+        lossless: false
+      type:
+        kind: frontmatter
+        source: {key: type}
+        lossless: false
+      object:
+        kind: frontmatter
+        source: {key: object}
+        lossless: false
+      status:
+        kind: frontmatter
+        source: {key: status}
+        lossless: false
+      relationships:
+        kind: frontmatter
+        source: {key: relationships, item_keys: [target, type, cardinality],
+                 default: []}
+        lossless: false
+      provenance:
+        kind: provenance
+        source: {path: corpus-relative, digest: sha256-of-bytes-as-read,
+                 source_identity: caller}
+        lossless: false
+      description:
+        kind: section
+        source: {heading: Description, level: 2}
+        yield: Section
+        lossless: true
+      inputs:
+        kind: section
+        source: {heading: Inputs, level: 2}
+        yield: Section
+        lossless: true
+      outputs:
+        kind: section
+        source: {heading: Outputs, level: 2}
+        yield: Section
+        lossless: true
+      behavior:
+        kind: section
+        source: {heading: Behavior, level: 2}
+        yield: Section
+        lossless: true
+      constraints:
+        kind: typed-table
+        source:
+          section: Constraints
+          columns: [ID, Constraint, Type, Validation]
+        cells:
+          ID: {property: id, parse: row-id}
+          Constraint: {property: constraint}
+          Type: {property: type}
+          Validation: {property: validation, parse: verification}
+        row_id: {column: ID, pattern: '^{id}-CON-[0-9]+$'}
+        lossless: false
+      acceptanceCriteria:
+        kind: typed-table
+        source:
+          section: Acceptance Criteria
+          columns: [ID, Criteria, Verification]
+        cells:
+          ID: {property: id, parse: row-id}
+          Criteria: {property: criteria}
+          Verification: {property: verification, parse: verification}
+        row_id: {column: ID, pattern: '^{id}-AC-[0-9]+$'}
+        detail: {heading_level: 3, property: detail}
+        lossless: false
+      invariants:
+        kind: ocl-clause
+        source:
+          section: Invariants
+          clause_heading_level: 3
+          language: ocl
+          sidecar: invariantsText
+        lossless: true
+      dependencies:
+        kind: section
+        source: {heading: Dependencies, level: 2}
+        yield: Section
+        lossless: true
+
+  # ---------------------------------------------------------------------------
+  NFR:
+    schema: schemas/NFR.json
+    skeleton: skeletons/nfr.md
+    example: examples/NFR.record.json
+    authority: markdown
+    round_trip: derived
+    dropped_frontmatter_keys: []
+    properties:
+      id:
+        kind: frontmatter
+        source: {key: id}
+        lossless: false
+      title:
+        kind: frontmatter
+        source: {key: title}
+        lossless: false
+      type:
+        kind: frontmatter
+        source: {key: type}
+        lossless: false
+      qualityAttribute:
+        kind: frontmatter
+        source: {key: quality_attribute}
+        lossless: false
+      object:
+        kind: frontmatter
+        source: {key: object}
+        lossless: false
+      status:
+        kind: frontmatter
+        source: {key: status}
+        lossless: false
+      relationships:
+        kind: frontmatter
+        source: {key: relationships, item_keys: [target, type, cardinality],
+                 default: []}
+        lossless: false
+      provenance:
+        kind: provenance
+        source: {path: corpus-relative, digest: sha256-of-bytes-as-read,
+                 source_identity: caller}
+        lossless: false
+      statement:
+        kind: section
+        source: {heading: Statement, level: 2}
+        yield: Section
+        lossless: true
+      scope:
+        kind: section
+        source: {heading: Scope, level: 2}
+        yield: Section
+        lossless: true
+      rationale:
+        kind: section
+        source: {heading: Rationale, level: 2}
+        yield: Section
+        lossless: true
+      measurement:
+        kind: table
+        source:
+          section: Measurement and Evaluation
+          columns: [Metric, Target, Threshold, Method]
+        cells:
+          Metric: {property: metric}
+          Target: {property: target}
+          Threshold: {property: threshold}
+          Method: {property: method}
+        lossless: false
+      verification:
+        kind: section
+        source: {heading: Verification, level: 2}
+        yield: Section
+        lossless: true
+      acceptanceCriteria:
+        kind: typed-table
+        source:
+          section: Acceptance Criteria
+          columns: [ID, Criteria, Verification]
+        cells:
+          ID: {property: id, parse: row-id}
+          Criteria: {property: criteria}
+          Verification: {property: verification, parse: verification}
+        row_id: {column: ID, pattern: '^{id}-AC-[0-9]+$'}
+        detail: {heading_level: 3, property: detail}
+        lossless: false
+      dependencies:
+        kind: section
+        source: {heading: Dependencies, level: 2}
+        yield: Section
+        lossless: true
+
+  # ---------------------------------------------------------------------------
+  StR:
+    schema: schemas/StR.json
+    skeleton: skeletons/str.md
+    example: examples/StR.record.json
+    authority: markdown
+    round_trip: derived
+    # The StR frontmatter schema declares `object:`, and the sealed StR model
+    # carries no `object` property, so the key is dropped.
+    dropped_frontmatter_keys: [object]
+    properties:
+      id:
+        kind: frontmatter
+        source: {key: id}
+        lossless: false
+      title:
+        kind: frontmatter
+        source: {key: title}
+        lossless: false
+      type:
+        kind: frontmatter
+        source: {key: type}
+        lossless: false
+      status:
+        kind: frontmatter
+        source: {key: status}
+        lossless: false
+      relationships:
+        kind: frontmatter
+        source: {key: relationships, item_keys: [target, type, cardinality],
+                 default: []}
+        lossless: false
+      provenance:
+        kind: provenance
+        source: {path: corpus-relative, digest: sha256-of-bytes-as-read,
+                 source_identity: caller}
+        lossless: false
+      stakeholderNeed:
+        kind: section
+        source: {heading: Stakeholder Need, level: 2}
+        yield: Section
+        lossless: true
+      rationale:
+        kind: section
+        source: {heading: Rationale, level: 2}
+        yield: Section
+        lossless: true
+      validationCriteria:
+        kind: typed-table
+        source:
+          section: Validation Criteria
+          columns: [ID, Criteria, Validation]
+        cells:
+          ID: {property: id, parse: row-id}
+          Criteria: {property: criteria}
+          Validation: {property: validation, parse: verification}
+        row_id: {column: ID, pattern: '^{id}-VC-[0-9]+$'}
+        lossless: false
+      stakeholders:
+        kind: section
+        source: {heading: Stakeholders, level: 2}
+        yield: Section
+        lossless: true
+      contextAndAssumptions:
+        kind: section
+        source: {heading: Context and Assumptions, level: 2}
+        yield: Section
+        lossless: true
+      stakeholderConstraints:
+        kind: section
+        source: {heading: Stakeholder Constraints (Contextual), level: 2}
+        yield: Section
+        lossless: true
+      dependencies:
+        kind: section
+        source: {heading: Dependencies, level: 2}
+        yield: Section
+        lossless: true
+      priorityAndRisk:
+        kind: section
+        source: {heading: Priority and Risk (Informative), level: 2}
+        yield: Section
+        lossless: true
+      notes:
+        kind: section
+        source: {heading: Notes (Informative), level: 2}
+        yield: Section
+        lossless: true
+      traceability:
+        kind: section
+        source: {heading: Traceability, level: 2}
+        yield: Section
+        lossless: true
+
+  # ---------------------------------------------------------------------------
+  US:
+    schema: schemas/US.json
+    skeleton: skeletons/us.md
+    example: examples/US.record.json
+    authority: markdown
+    round_trip: derived
+    # The US frontmatter schema declares `object:`, and the sealed US model
+    # carries no `object` property, so the key is dropped.
+    dropped_frontmatter_keys: [object]
+    properties:
+      id:
+        kind: frontmatter
+        source: {key: id}
+        lossless: false
+      title:
+        kind: frontmatter
+        source: {key: title}
+        lossless: false
+      type:
+        kind: frontmatter
+        source: {key: type}
+        lossless: false
+      status:
+        kind: frontmatter
+        source: {key: status}
+        lossless: false
+      relationships:
+        kind: frontmatter
+        source: {key: relationships, item_keys: [target, type, cardinality],
+                 default: []}
+        lossless: false
+      provenance:
+        kind: provenance
+        source: {path: corpus-relative, digest: sha256-of-bytes-as-read,
+                 source_identity: caller}
+        lossless: false
+      story:
+        kind: section
+        source: {heading: Story, level: 2}
+        yield: Story
+        parse: story
+        lossless: true
+      context:
+        kind: section
+        source: {heading: Context, level: 2}
+        yield: Section
+        lossless: true
+      acceptanceExamples:
+        kind: section
+        source: {heading: Acceptance Examples (Illustrative), level: 2}
+        yield: Section
+        lossless: true
+      options:
+        kind: section
+        source: {heading: Options (Exploratory), level: 2}
+        yield: Section
+        lossless: true
+      constraints:
+        kind: section
+        source: {heading: Constraints (Contextual), level: 2}
+        yield: Section
+        lossless: true
+      dependencies:
+        kind: section
+        source: {heading: Dependencies (Contextual), level: 2}
+        yield: Section
+        lossless: true
+      priorityAndRisk:
+        kind: section
+        source: {heading: Priority and Risk (Informative), level: 2}
+        yield: Section
+        lossless: true
+      notes:
+        kind: section
+        source: {heading: Notes (Informative), level: 2}
+        yield: Section
+        lossless: true
+      traceability:
+        kind: section
+        source: {heading: Traceability (Informative), level: 2}
+        yield: Section
+        lossless: true
+
+  # ---------------------------------------------------------------------------
+  IT:
+    schema: schemas/IT.json
+    skeleton: skeletons/it.md
+    example: examples/IT.record.json
+    authority: markdown
+    round_trip: derived
+    # The IT frontmatter schema declares `object:`, and the sealed IT model
+    # carries no `object` property, so the key is dropped.
+    dropped_frontmatter_keys: [object]
+    properties:
+      id:
+        kind: frontmatter
+        source: {key: id}
+        lossless: false
+      title:
+        kind: frontmatter
+        source: {key: title}
+        lossless: false
+      type:
+        kind: frontmatter
+        source: {key: type}
+        lossless: false
+      status:
+        kind: frontmatter
+        source: {key: status}
+        lossless: false
+      relationships:
+        kind: frontmatter
+        source: {key: relationships, item_keys: [target, type, cardinality],
+                 default: []}
+        lossless: false
+      provenance:
+        kind: provenance
+        source: {path: corpus-relative, digest: sha256-of-bytes-as-read,
+                 source_identity: caller}
+        lossless: false
+      objective:
+        kind: section
+        source: {heading: Objective, level: 2}
+        yield: Section
+        lossless: true
+      targetIntegration:
+        kind: section
+        source: {heading: Target Integration, level: 2}
+        yield: Section
+        lossless: true
+      preconditions:
+        kind: section
+        source: {heading: Preconditions, level: 2}
+        yield: Section
+        lossless: true
+      inputs:
+        kind: section
+        source: {heading: Inputs, level: 2}
+        yield: Section
+        lossless: true
+      testProcedure:
+        kind: section
+        source: {heading: Test Procedure, level: 2}
+        yield: Section
+        lossless: true
+      successCriteria:
+        kind: token
+        source:
+          section: Test Procedure
+          pattern: 'IT-[0-9]+-SC-[0-9]+'
+        parse: success-criterion
+        lossless: false
+      expectedResults:
+        kind: section
+        source: {heading: Expected Results, level: 2}
+        yield: Section
+        lossless: true
+      metadata:
+        kind: section
+        source: {heading: Metadata, level: 2}
+        yield: Section
+        lossless: true
+      dependencies:
+        kind: section
+        source: {heading: Dependencies, level: 2}
+        yield: Section
+        lossless: true
+      notes:
+        kind: section
+        source: {heading: Notes, level: 2}
+        yield: Section
+        lossless: true
+      traceability:
+        kind: section
+        source: {heading: Traceability, level: 2}
+        yield: Section
+        lossless: true
+
+  # ---------------------------------------------------------------------------
+  TC:
+    schema: schemas/TC.json
+    skeleton: skeletons/tc.md
+    example: examples/TC.record.json
+    authority: markdown
+    round_trip: derived
+    # The TC frontmatter schema declares `object:`, and the sealed TC model
+    # carries no `object` property, so the key is dropped.
+    dropped_frontmatter_keys: [object]
+    properties:
+      id:
+        kind: frontmatter
+        source: {key: id}
+        lossless: false
+      title:
+        kind: frontmatter
+        source: {key: title}
+        lossless: false
+      type:
+        kind: frontmatter
+        source: {key: type}
+        lossless: false
+      status:
+        kind: frontmatter
+        source: {key: status}
+        lossless: false
+      relationships:
+        kind: frontmatter
+        source: {key: relationships, item_keys: [target, type, cardinality],
+                 default: []}
+        lossless: false
+      provenance:
+        kind: provenance
+        source: {path: corpus-relative, digest: sha256-of-bytes-as-read,
+                 source_identity: caller}
+        lossless: false
+      description:
+        kind: section
+        source: {heading: Description, level: 2}
+        yield: Section
+        lossless: true
+      testProcedure:
+        kind: section
+        source: {heading: Test Procedure, level: 2}
+        yield: Section
+        lossless: true
+      expectedResults:
+        kind: section
+        source: {heading: Expected Results, level: 2}
+        yield: Section
+        lossless: true
+
+  # ---------------------------------------------------------------------------
+  master-requirements:
+    schema: schemas/MasterRequirements.json
+    skeleton: skeletons/spec.md
+    example: examples/master-requirements.record.json
+    authority: markdown
+    round_trip: derived
+    # FR-003 admits decorative annotation keys on a master-requirements
+    # relationship item; `Relationship` is sealed to three keys, so they are
+    # dropped — a declared loss, not a silent one (FR-005 Behavior).
+    dropped_frontmatter_keys:
+      - relationships[].note
+      - relationships[].models
+      - relationships[].endpoints
+    properties:
+      type:
+        kind: frontmatter
+        source: {key: type}
+        lossless: false
+      name:
+        kind: frontmatter
+        source: {key: name}
+        lossless: false
+      org:
+        kind: frontmatter
+        source: {key: org}
+        lossless: false
+      componentType:
+        kind: frontmatter
+        source: {key: component_type}
+        lossless: false
+      # The master spec carries no frontmatter `title` (FR-003: the schema
+      # requires neither `id` nor `title`); the `title` locator is the H1, so
+      # the H1 heading text is the title.
+      title:
+        kind: section
+        source: {heading: Master Requirements Specification, level: 1}
+        yield: HeadingText
+        lossless: true
+      implementationLanguage:
+        kind: frontmatter
+        source: {key: implementation_language}
+        lossless: false
+      tags:
+        kind: frontmatter
+        source: {key: tags}
+        lossless: false
+      dependsOn:
+        kind: frontmatter
+        source: {key: depends_on}
+        lossless: false
+      standardsAlignment:
+        kind: frontmatter
+        source: {key: standards_alignment}
+        lossless: false
+      securityCritical:
+        kind: frontmatter
+        source: {key: security_critical}
+        lossless: false
+      status:
+        kind: frontmatter
+        source: {key: status}
+        lossless: false
+      relationships:
+        kind: frontmatter
+        source: {key: relationships, item_keys: [target, type, cardinality],
+                 default: []}
+        lossless: false
+      provenance:
+        kind: provenance
+        source: {path: corpus-relative, digest: sha256-of-bytes-as-read,
+                 source_identity: caller}
+        lossless: false
+      purpose:
+        kind: section
+        source: {heading: Purpose, level: 2}
+        yield: Section
+        lossless: true
+      scope:
+        kind: section
+        source: {heading: Scope, level: 2}
+        yield: HeadingRef
+        lossless: true
+      systemOverview:
+        kind: section
+        source: {heading: System Overview, level: 2}
+        yield: HeadingRef
+        lossless: true
+      requirementsArchitecture:
+        kind: section
+        source: {heading: Requirements Architecture, level: 2}
+        yield: HeadingRef
+        lossless: true
+      references:
+        kind: section
+        source: {heading: References, level: 2}
+        yield: Section
+        lossless: true
+
+  # ---------------------------------------------------------------------------
+  index:
+    schema: schemas/Index.json
+    skeleton: skeletons/index.md
+    example: examples/index.record.json
+    authority: markdown
+    round_trip: derived
+    dropped_frontmatter_keys: []
+    properties:
+      type:
+        kind: frontmatter
+        source: {key: type}
+        lossless: false
+      title:
+        kind: frontmatter
+        source: {key: title}
+        lossless: false
+      description:
+        kind: frontmatter
+        source: {key: description}
+        lossless: false
+      okfVersion:
+        kind: frontmatter
+        source: {key: okf_version}
+        lossless: false
+      provenance:
+        kind: provenance
+        source: {path: corpus-relative, digest: sha256-of-bytes-as-read,
+                 source_identity: caller}
+        lossless: false
+      # The one locator whose property name is not its own: `contents` fills
+      # `entries`, the list the section carries (FR-005 Behavior).
+      entries:
+        kind: list
+        source: {section: Contents, locator: contents, bullets: ['*', '-'],
+                 indent: 0}
+        parse: index-entry
+        lossless: false
+
+  # ---------------------------------------------------------------------------
+  log:
+    schema: schemas/Log.json
+    skeleton: skeletons/log.md
+    example: examples/log.record.json
+    authority: markdown
+    round_trip: derived
+    dropped_frontmatter_keys: []
+    properties:
+      type:
+        kind: frontmatter
+        source: {key: type}
+        lossless: false
+      title:
+        kind: frontmatter
+        source: {key: title}
+        lossless: false
+      description:
+        kind: frontmatter
+        source: {key: description}
+        lossless: false
+      provenance:
+        kind: provenance
+        source: {path: corpus-relative, digest: sha256-of-bytes-as-read,
+                 source_identity: caller}
+        lossless: false
+      history:
+        kind: list
+        source: {section: History, locator: history, bullets: ['*', '-'],
+                 indent: 0}
+        parse: log-entry
+        lossless: false
+
+  # ---------------------------------------------------------------------------
+  Glossary:
+    schema: schemas/Glossary.json
+    skeleton: skeletons/glossary.md
+    example: examples/Glossary.record.json
+    authority: markdown
+    round_trip: derived
+    dropped_frontmatter_keys: []
+    properties:
+      id:
+        kind: frontmatter
+        source: {key: id}
+        lossless: false
+      title:
+        kind: frontmatter
+        source: {key: title}
+        lossless: false
+      type:
+        kind: frontmatter
+        source: {key: type}
+        lossless: false
+      scope:
+        kind: frontmatter
+        source: {key: scope}
+        lossless: false
+      description:
+        kind: frontmatter
+        source: {key: description}
+        lossless: false
+      status:
+        kind: frontmatter
+        source: {key: status}
+        lossless: false
+      relationships:
+        kind: frontmatter
+        source: {key: relationships, item_keys: [target, type, cardinality],
+                 default: []}
+        lossless: false
+      provenance:
+        kind: provenance
+        source: {path: corpus-relative, digest: sha256-of-bytes-as-read,
+                 source_identity: caller}
+        lossless: false
+      terms:
+        kind: table
+        source:
+          section: Terms
+          columns: [Term, Definition]
+        cells:
+          Term: {property: term}
+          Definition: {property: definition}
+        lossless: false

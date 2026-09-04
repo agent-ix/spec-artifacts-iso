@@ -1,0 +1,81 @@
+{
+  "contextAndAssumptions": {
+    "endLine": 73,
+    "startLine": 67,
+    "text": "\nArtifacts arrive from an external build pipeline over a network that is not\nassumed to be reliable. It is assumed that a trustworthy digest can be associated\nwith each artifact at or before import. The existing import workflow performs no\nintegrity check today.\n\n"
+  },
+  "dependencies": {
+    "endLine": 87,
+    "startLine": 81,
+    "text": "\nRelationships at the stakeholder level. **Upstream**: the platform's security\npolicy mandating tamper detection at trust boundaries. **Downstream**: an\nanticipated functional requirement for checksum verification on import and a\nnon-functional requirement bounding its overhead.\n\n"
+  },
+  "id": "StR-001",
+  "notes": {
+    "endLine": 99,
+    "startLine": 94,
+    "text": "\nDiscussion point for later analysis: whether the same guarantee should extend to\nartifacts already stored before this need was adopted. Captured here without\nintroducing a new requirement.\n\n"
+  },
+  "priorityAndRisk": {
+    "endLine": 93,
+    "startLine": 88,
+    "text": "\nBusiness value is high because the guarantee underpins trust in the catalog;\nurgency is high given known transfer corruption; risk if unmet is acceptance of\ntampered artifacts. Used for planning and sequencing only.\n\n"
+  },
+  "provenance": {
+    "digest": "sha256:6b70b42360ab329b2018db7b9188ed00fbcc2fed56a425bd4421262284873dd0",
+    "path": "spec_artifacts_iso/skeletons/str.md",
+    "sourceIdentity": "ix://agent-ix/spec-artifacts-iso/skeletons"
+  },
+  "rationale": {
+    "endLine": 53,
+    "startLine": 46,
+    "text": "\nOperators are accountable for the integrity of distributed artifacts. Silent\ncorruption during transfer and the possibility of malicious substitution both\nerode trust in the whole distribution pipeline, and today there is no signal that\nthe stored bytes match what was intended. Detecting tampering at the boundary\ncontains the blast radius and preserves confidence in the catalog.\n\n"
+  },
+  "relationships": [
+    {
+      "target": "ix://agent-ix/example/FR-001",
+      "type": "satisfied_by"
+    }
+  ],
+  "stakeholderConstraints": {
+    "endLine": 80,
+    "startLine": 74,
+    "text": "\nOperators expect integrity verification to add only negligible overhead to an\nimport, since the import path is already perceived as slow. This is a\nstakeholder-level expectation that may be refined into a concrete non-functional\nrequirement later.\n\n"
+  },
+  "stakeholderNeed": {
+    "endLine": 45,
+    "startLine": 38,
+    "text": "\nPlatform operators require that every artifact entering the platform shall be\nverifiable against a declared cryptographic digest, so that corruption or\ntampering is detected and rejected before any downstream system trusts the\nartifact. The need is stated from the operators' perspective and avoids\nprescribing a mechanism.\n\n"
+  },
+  "stakeholders": {
+    "endLine": 66,
+    "startLine": 61,
+    "text": "\nThe primary stakeholders are platform operators, who are accountable for artifact\nintegrity and act as decision-makers for import policy. Downstream consumers of\nthe catalog are affected parties who rely on the guarantee but do not set it.\n\n"
+  },
+  "title": "Operators need tamper-evident artifact imports",
+  "traceability": {
+    "endLine": 105,
+    "startLine": 100,
+    "text": "\nThis stakeholder need is expected to be satisfied by a functional requirement for\nchecksum verification on import and supported by a non-functional requirement\nbounding verification overhead. Links are added incrementally as the\nspecification evolves.\n"
+  },
+  "type": "StR",
+  "validationCriteria": [
+    {
+      "criteria": "An artifact whose declared digest does not match its bytes is rejected at import and never persisted.",
+      "id": "StR-001-VC-1",
+      "line": 58,
+      "validation": {
+        "method": "Demonstration",
+        "testRefs": []
+      }
+    },
+    {
+      "criteria": "An artifact whose declared digest matches its bytes is accepted and persisted.",
+      "id": "StR-001-VC-2",
+      "line": 59,
+      "validation": {
+        "method": "Demonstration",
+        "testRefs": []
+      }
+    }
+  ]
+}

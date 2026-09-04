@@ -1,0 +1,31 @@
+{
+  "description": {
+    "endLine": 22,
+    "startLine": 18,
+    "text": "\nVerify that importing an artifact whose declared digest differs from the digest\ncomputed over its bytes is rejected and leaves the artifact store unchanged.\n\n"
+  },
+  "expectedResults": {
+    "endLine": 33,
+    "startLine": 29,
+    "text": "\nThe request is rejected with a digest-mismatch error reporting both the declared\nand computed digests, and the store contains no artifact for the submitted\nidentifier.\n"
+  },
+  "id": "TC-001",
+  "provenance": {
+    "digest": "sha256:89c949f950c849c5a3991e8632102358786fa5e576ce0dc30b3599b011c86de3",
+    "path": "spec_artifacts_iso/skeletons/tc.md",
+    "sourceIdentity": "ix://agent-ix/spec-artifacts-iso/skeletons"
+  },
+  "relationships": [
+    {
+      "target": "ix://agent-ix/example/FR-001",
+      "type": "verifies"
+    }
+  ],
+  "testProcedure": {
+    "endLine": 28,
+    "startLine": 23,
+    "text": "\nWith the import service running and the store empty, submit an artifact whose\ndeclared SHA-256 digest does not match its bytes to the import endpoint, then\nquery the store for the submitted artifact's identifier.\n\n"
+  },
+  "title": "Reject artifact with mismatched digest",
+  "type": "TC"
+}

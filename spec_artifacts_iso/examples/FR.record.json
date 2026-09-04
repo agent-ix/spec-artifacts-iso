@@ -1,0 +1,93 @@
+{
+  "acceptanceCriteria": [
+    {
+      "criteria": "Given a matching digest, the artifact is persisted",
+      "id": "FR-001-AC-1",
+      "line": 107,
+      "verification": {
+        "annotation": "TC-001",
+        "method": "Test",
+        "testRefs": [
+          "TC-001"
+        ]
+      }
+    },
+    {
+      "criteria": "Given a mismatched digest, the import is rejected",
+      "id": "FR-001-AC-2",
+      "line": 108,
+      "verification": {
+        "annotation": "TC-002",
+        "method": "Test",
+        "testRefs": [
+          "TC-002"
+        ]
+      }
+    }
+  ],
+  "behavior": {
+    "endLine": 82,
+    "startLine": 76,
+    "text": "\n- The system SHALL compute the SHA-256 digest of the artifact bytes on import.\n- The system SHALL reject the artifact when the computed digest differs from the\n  declared digest.\n- The system SHALL persist the artifact only after a successful digest match.\n\n"
+  },
+  "constraints": [
+    {
+      "constraint": "Digest computation SHALL use SHA-256 only",
+      "id": "FR-001-CON-1",
+      "line": 87,
+      "type": "Security",
+      "validation": {
+        "method": "Integration Test",
+        "testRefs": []
+      }
+    }
+  ],
+  "dependencies": {
+    "endLine": 113,
+    "startLine": 110,
+    "text": "\n- **Upstream**: [US-001](../usecase/US-001-artifact-import.md) artifact import\n- **Downstream**: [IT-001](../integration/IT-001-checksum-rejection.md) checksum rejection coverage\n"
+  },
+  "description": {
+    "endLine": 65,
+    "startLine": 60,
+    "text": "\nThe system SHALL verify the SHA-256 checksum of every imported artifact before\npersisting it, rejecting any artifact whose computed digest does not match the\ndeclared digest.\n\n"
+  },
+  "id": "FR-001",
+  "inputs": {
+    "endLine": 70,
+    "startLine": 66,
+    "text": "\n- Imported artifact bytes\n- Declared SHA-256 digest from the import manifest\n\n"
+  },
+  "invariants": [
+    {
+      "clauseId": "digest_matches_declared",
+      "language": "ocl",
+      "sourceSpan": {
+        "endColumn": 3,
+        "endLine": 101,
+        "path": "spec_artifacts_iso/skeletons/fr.md",
+        "sourceIdentity": "ix://agent-ix/spec-artifacts-iso/skeletons",
+        "startColumn": 1,
+        "startLine": 97
+      }
+    }
+  ],
+  "outputs": {
+    "endLine": 75,
+    "startLine": 71,
+    "text": "\n- Accepted artifact persisted to the store\n- Rejection error carrying the declared/computed digest pair\n\n"
+  },
+  "provenance": {
+    "digest": "sha256:ebd1ffcba4dc10ed56f8ffe9ce3f0bb7a47e33e9833a9aa7a7f67e87ae816a90",
+    "path": "spec_artifacts_iso/skeletons/fr.md",
+    "sourceIdentity": "ix://agent-ix/spec-artifacts-iso/skeletons"
+  },
+  "relationships": [
+    {
+      "target": "ix://agent-ix/example/US-001",
+      "type": "implements"
+    }
+  ],
+  "title": "Verify checksums on artifact import",
+  "type": "FR"
+}
