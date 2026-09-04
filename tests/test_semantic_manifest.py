@@ -1,4 +1,4 @@
-"""FR-006: the manifest ``semantic`` block and the ``data_schema`` digest refs.
+"""The manifest ``semantic`` block and its ``data_schema`` digest references (FR-006).
 
 Covers TC-046, TC-047, TC-048 and TC-049 of the FR-006 test matrix:
 

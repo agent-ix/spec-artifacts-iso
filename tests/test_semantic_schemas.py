@@ -1,4 +1,4 @@
-"""FR-005 — the emitted JSON Schema projection of the semantic data models.
+"""The emitted JSON Schema projection of the semantic data models (FR-005).
 
 The bundle under ``spec_artifacts_iso/schemas/<Model>.json`` is *generated* by
 the official ``@typespec/json-schema`` emitter from
@@ -177,7 +177,9 @@ def _free_text_reason(property_name: str, schema: dict) -> bool:
 def _is_acceptable(
     property_name: str, schema: dict, bundle: dict[str, dict], seen: frozenset[str]
 ) -> bool:
-    """FR-005-AC-3: a property is acceptable when, after following `$ref`, it is
+    """Decide whether a property satisfies FR-005-AC-3.
+
+    A property is acceptable when, after following `$ref`, it is
     constrained — `pattern`, `minLength`, `minimum`, `enum`, `const` or
     `format`, or an object whose properties are all acceptable, or an array of
     such items, or `boolean`/`null` — or it is declared free text with a reason

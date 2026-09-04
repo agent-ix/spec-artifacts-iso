@@ -1,4 +1,12 @@
-"""FR-007 — mapping failure semantics (TC-045).
+"""Mapping failure semantics for the ISO records (FR-007, matrix row TC-045).
+
+Some tests here are deliberately untagged. The TC-045 row enumerates its own
+cases, and the oracle's remaining declared error paths — a column-list
+mismatch, a row cell-count mismatch, a malformed table delimiter, an escaped
+pipe, an undated history bullet, a `### <row id>` subsection naming no row —
+are not among them, so tagging them would mint a trace the row does not claim.
+They are covered because an untested error branch reports nothing, not because
+a matrix row asks for them.
 
 A mapping that silently produces a half-record is worse than one that fails.
 Every failure the requirements name is pinned here, and so is the layer that
@@ -171,12 +179,10 @@ def test_tc045_all_failures_in_one_document_are_reported_together(
 # ---------------------------------------------------------------------------
 # The rest of the oracle's declared error paths
 #
-# These carry no TC tag: the TC-045 matrix row enumerates its cases and none of
-# them is one of these, so tagging them would mint a trace the row does not
-# claim. They are the error semantics of the reference
-# mapping itself — the code that decides whether a defect is reported or
-# silently swallowed — and an untested error branch is a branch that reports
-# nothing.
+# Deliberately untagged — see the module docstring for why. These are the error
+# semantics of the reference mapping itself: the code that decides whether a
+# defect is reported or silently swallowed, where an untested error branch is a
+# branch that reports nothing.
 # ---------------------------------------------------------------------------
 def test_table_whose_columns_differ_from_the_declaration_fails(
     declaration: dict,
@@ -287,10 +293,11 @@ def test_a_type_that_names_no_model_is_refused(declaration: dict) -> None:
 
 
 # ---------------------------------------------------------------------------
-# `typed-table` detail subsections (FR-007 Behavior, Failure discipline)
+# `typed-table` detail subsections
 #
-# Also untagged, for the same reason: TC-045 does not enumerate the `### <row
-# id>` cases. FR-007 Behavior declares them and both of its failure branches.
+# Also deliberately untagged, for the reason the module docstring gives. The
+# requirement's Behavior section declares the `### <row id>` cases and both of
+# their failure branches.
 # ---------------------------------------------------------------------------
 def test_a_row_id_subsection_fills_the_row_detail(
     declaration: dict, bundle: dict

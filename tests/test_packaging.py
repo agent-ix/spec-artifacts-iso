@@ -1,5 +1,10 @@
 """Packaging and TypeSpec-toolchain conformance (FR-005-CON-3, FR-005-AC-9).
 
+One test here is deliberately untagged: the TC-054 row covers the three exact
+pins, the committed lockfile, `file:`/`link:` references and `.npmrc`, and says
+nothing about `poetry.lock` sources, so tagging the lockfile-source check would
+mint a trace the row does not claim.
+
 Two payloads leave this repository — a Python sdist/wheel and an npm tarball —
 and FR-005 Outputs requires them to carry the same module: ``schemas/``,
 ``skeletons/``, ``manifest.yaml``, ``module-manifest.schema.json``,
@@ -221,11 +226,8 @@ def test_no_npmrc_exists_anywhere_in_the_repository() -> None:
     assert not found, found
 
 
-# Untagged deliberately: the TC-054 matrix row covers the three exact pins, the
-# committed lockfile, `file:`/`link:` references and `.npmrc` — it says nothing
-# about `poetry.lock` sources, so tagging this TC-054 would mint a trace the
-# row does not claim. The check stands on its own: a lockfile naming the local
-# devpi cannot be installed by CI or by a consumer.
+# Deliberately untagged — see the module docstring. The check stands on its own:
+# a lockfile naming the local devpi cannot be installed by CI or by a consumer.
 def test_poetry_lock_names_no_local_registry_source() -> None:
     """The committed ``poetry.lock`` names only the published index.
 

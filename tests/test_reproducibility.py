@@ -1,5 +1,5 @@
-"""NFR-001 — the projection is reproducible and offline; FR-006-AC-8 — the
-digest binding is real.
+"""Reproducibility and offline resolution of the schema projection (NFR-001),
+and the digest binding at load (FR-006-AC-8).
 
 NFR-001 has three measurements and this module discharges two of them as tests
 (byte reproducibility, wall time) and one as a manual gate (no network read).
