@@ -76,11 +76,21 @@ carried into the requirements as a constraint rather than restated as a story.
 
 ## Dependencies (Contextual)
 
-Upstream: `@agent-ix/semantic-core` 0.1.0 (agent-ix/filament-core-data#35), the
-quoin semantic module contract (agent-ix/quoin#293), the quire-rs semantic
-extraction surface (agent-ix/quire-rs#388). Downstream: agent-ix/filament-core-data#36
-and agent-ix/quire-contract-ir#52, which consume this module's schemas and
-skeletons as fixtures.
+Upstream: `@agent-ix/semantic-core` 0.1.0 (agent-ix/filament-core-data#35) and
+its public publish (agent-ix/filament-core-data#11), without which the package
+resolves only from the registry a developer's npm configuration routes the
+`@agent-ix` scope to; the quoin semantic module contract
+(agent-ix/quoin#293); the quire-rs semantic extraction surface
+(agent-ix/quire-rs#388).
+
+Two open consumer-side gaps stand between the shipped schemas and a consumer
+actually binding them: agent-ix/quoin#336 (quoin resolves `data_schema` and
+`semantic.exports` against `object_types` only, so an artifact-type export is
+refused at install) and agent-ix/quire-rs#393 (no engine validates an
+artifact-type record against its `data_schema`).
+
+Downstream: agent-ix/filament-core-data#36 and agent-ix/quire-contract-ir#52,
+which consume this module's schemas and skeletons as fixtures.
 
 ## Priority and Risk (Informative)
 
