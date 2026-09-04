@@ -56,6 +56,43 @@ listed as pending rather than quietly dropped.
 | FR-004 | FR-004-AC-3 | TC-019 | ✅ Complete |
 | FR-004 | FR-004-AC-4 | TC-020 | ✅ Complete |
 | FR-004 | FR-004-AC-5 | TC-021 | ✅ Complete |
+| FR-005 | FR-005-AC-1 | TC-041 | 🚧 Pending |
+| FR-005 | FR-005-AC-2 | TC-041 | 🚧 Pending |
+| FR-005 | FR-005-AC-3 | TC-040 | 🚧 Pending |
+| FR-005 | FR-005-AC-4 | TC-044, TC-045 | 🚧 Pending |
+| FR-005 | FR-005-AC-5 | TC-042 | 🚧 Pending |
+| FR-005 | FR-005-AC-6 | TC-043 | 🚧 Pending |
+| FR-005 | FR-005-AC-7 | TC-042 | 🚧 Pending |
+| FR-005 | FR-005-CON-1 | TC-039, TC-040 | 🚧 Pending |
+| FR-005 | FR-005-CON-2 | TC-041 | 🚧 Pending |
+| FR-005 | FR-005-CON-3 | TC-054 | 🚧 Pending |
+| FR-005 | FR-005-CON-4 | TC-043 | 🚧 Pending |
+| FR-006 | FR-006-AC-1 | TC-046 | 🚧 Pending |
+| FR-006 | FR-006-AC-2 | TC-047 | 🚧 Pending |
+| FR-006 | FR-006-AC-3 | TC-048 | 🚧 Pending |
+| FR-006 | FR-006-AC-4 | TC-049 | 🚧 Pending |
+| FR-006 | FR-006-AC-5 | TC-047 | 🚧 Pending |
+| FR-006 | FR-006-AC-6 | TC-055 | 🚧 Pending |
+| FR-006 | FR-006-CON-1 | TC-046 | 🚧 Pending |
+| FR-006 | FR-006-CON-2 | TC-047 | 🚧 Pending |
+| FR-007 | FR-007-AC-1 | TC-052 | 🚧 Pending |
+| FR-007 | FR-007-AC-2 | TC-044 | 🚧 Pending |
+| FR-007 | FR-007-AC-3 | TC-053 | 🚧 Pending |
+| FR-007 | FR-007-AC-4 | TC-051 | 🚧 Pending |
+| FR-007 | FR-007-AC-5 | TC-050 | 🚧 Pending |
+| FR-007 | FR-007-AC-6 | TC-045 | 🚧 Pending |
+| FR-007 | FR-007-AC-7 | TC-052 | 🚧 Pending |
+| FR-007 | FR-007-CON-1 | TC-050 | 🚧 Pending |
+| FR-007 | FR-007-CON-2 | TC-051 | 🚧 Pending |
+| FR-007 | FR-007-CON-3 | TC-059 | 🚧 Pending |
+
+### Non-Functional Requirement Coverage
+
+| Non-Functional Req | Verification Method | Evidence/Test Cases | Status |
+|--------------------|---------------------|---------------------|--------|
+| NFR-001 | Test (metric 1: byte differences between two `make schemas` runs) | TC-056 | 🚧 Pending |
+| NFR-001 | Demonstration (metric 2: network reads during `make schemas-check` and `make test`) | TC-057 | 🚧 Pending |
+| NFR-001 | Benchmark (metric 3: wall time of `make schemas-check`) | TC-058 | 🚧 Pending |
 
 ## Test Case Summary
 
@@ -99,3 +136,24 @@ listed as pending rather than quietly dropped.
 | TC-036 | `source_exclude` coexists with `exclude` as a distinct key — declaring both is legal and neither aliases the other (`test_tc_schema_028_source_exclude_is_not_exclude`) | Unit | P0 | FR-001-AC-1 | ✅ |
 | TC-037 | the anchored globs modules actually declare stay legal under the CR-011 value constraints — `tests/fixtures/**`, `tests_integration/fixtures/**`, `fixtures/**` (the exact spec-artifacts-process list) plus the depth-anchored `tests/**/fixtures/**`, which a literal later segment re-anchors (`test_tc_schema_029_anchored_source_exclude_globs_stay_legal`) | Unit | P0 | FR-001-AC-1 | ✅ |
 | TC-038 | an evidence-deleting `source_exclude` glob is a schema error, not a prose violation — bare `**`, wildcard-leading `*/fixtures/**`, and every `tests`-tree form with no literal anchor after it (`tests`, `tests/`, `tests/**`, `tests/**/*.py`, `tests/x*`, `tests/f*/**`, `tests//**`) are rejected (`test_tc_schema_030_evidence_deleting_source_exclude_is_rejected`) | Unit | P0 | FR-001-AC-1 | ✅ |
+| TC-039 | Every locator output of every artifact type is a property of its model, and every model property traces to a locator, a frontmatter key, or a `mappings.yaml` entry (FR-005-CON-1) | Unit | P0 | FR-005-CON-1 | 🚧 |
+| TC-040 | Every property of every emitted object schema is typed and constrained, or its description carries `free text:` and a reason (FR-005-AC-3) | Unit | P0 | FR-005-AC-3, FR-005-CON-1 | 🚧 |
+| TC-041 | The ten exported schemas exist with the 2020-12 `$schema` and the versioned `$id`; every `$ref` in the bundle resolves to a shipped sibling or to the semantic-core 0.1.0 bundle vendored by the quire wheel, offline (FR-005-AC-1, AC-2) | Unit | P0 | FR-005-AC-1, FR-005-AC-2, FR-005-CON-2 | 🚧 |
+| TC-042 | `make schemas-check` exits 0 on the committed tree and non-zero naming the file after a one-byte edit; the emitted file set and bundle digest equal `toolchain.json` (FR-005-AC-5, AC-7) | Integration | P0 | FR-005-AC-5, FR-005-AC-7 | 🚧 |
+| TC-043 | No emitted property is an execution-result field and the `TC` model's description says results are not modelled (FR-005-AC-6) | Static | P1 | FR-005-AC-6, FR-005-CON-4 | 🚧 |
+| TC-044 | For each of the ten skeletons the reference mapping yields the committed `examples/<type>.record.json` and the record validates against `schemas/<Model>.json` (FR-005-AC-4, FR-007-AC-2) | Snapshot | P0 | FR-005-AC-4, FR-007-AC-2 | 🚧 |
+| TC-045 | An extra property, a wrong-prefix row id, a removed required section, a duplicated H2, and a malformed `## Story` each fail — the schema naming the path, the mapping naming the line, and no partial record (FR-005-AC-4, FR-007-AC-6) | Unit | P0 | FR-005-AC-4, FR-007-AC-6 | 🚧 |
+| TC-046 | The manifest validates under the bundled FR-035 schema with the `semantic` block, whose key set is exactly the nine declared keys, and the block adds no required key (FR-006-AC-1) | Unit | P0 | FR-006-AC-1, FR-006-CON-1 | 🚧 |
+| TC-047 | Every exported artifact type carries a `{schema, digest}` reference to an existing file whose SHA-256 equals the digest; `exports` equals the referencing set; no inline `data_schema` remains; a one-byte schema edit fails naming the type and both digests (FR-006-AC-2, AC-5) | Unit | P0 | FR-006-AC-2, FR-006-AC-5, FR-006-CON-2 | 🚧 |
+| TC-048 | `quire.Registry` loads the module root, each exported archetype reports the manifest's digest, and every skeleton passes `validate_document` (FR-006-AC-3) | Integration | P0 | FR-006-AC-3 | 🚧 |
+| TC-049 | The bundled FR-035 schema rejects an unknown `semantic` key naming it, an ambiguous `data_schema`, and a non-`<org>/<repo>` package (FR-006-AC-4) | Unit | P0 | FR-006-AC-4 | 🚧 |
+| TC-050 | Each pre-change skeleton committed at 3d87196 maps to a record that validates against the new schema; no table header, heading, or column order changed (FR-007-AC-5) | Snapshot | P0 | FR-007-AC-5, FR-007-CON-1 | 🚧 |
+| TC-051 | The FR skeleton's `## Invariants` clause maps to a `ClauseRef` with `language: ocl`, the heading as `clauseId`, and fence-line spans; the clause text equals the fence body byte-for-byte; a non-identifier heading and a `tla` fence fail naming the line; no module code parses the clause (FR-007-AC-4) | Unit | P0 | FR-007-AC-4, FR-007-CON-2 | 🚧 |
+| TC-052 | `mappings.yaml` names every model property exactly once with one of the five mapping kinds, names no undeclared property, matches locator `assert.columns` on tables, and records the round-trip policy (FR-007-AC-1, AC-7) | Unit | P0 | FR-007-AC-1, FR-007-AC-7 | 🚧 |
+| TC-053 | The FR skeleton's AC rows split `Test (TC-001)` into `method` and `testRefs`, and its constraint row carries `type: Security` (FR-007-AC-3) | Unit | P0 | FR-007-AC-3 | 🚧 |
+| TC-054 | The TypeSpec package pins `@typespec/compiler` 1.15.0, `@typespec/json-schema` 1.15.0, and `@agent-ix/semantic-core` 0.1.0 with a committed lockfile, no `file:`/`link:` reference, and no `.npmrc` in the repository (FR-005-CON-3) | Static | P1 | FR-005-CON-3 | 🚧 |
+| TC-055 | `quoin module install path:<module root>` on quoin main ≥ 3e842ce succeeds, or fails only with `semantic.unknown-export`, recorded verbatim in FR-006 and in a filed agent-ix/quoin issue (FR-006-AC-6) | Manual | P1 | FR-006-AC-6 | 🚧 |
+| TC-056 | Two consecutive `make schemas` runs on one tree produce byte-identical bundles for every emitted file (NFR-001 metric 1) | Property | P1 | NFR-001 (metric 1) | 🚧 |
+| TC-057 | `make schemas-check` and `make test` exit 0 with the network namespace disabled after `npm ci` and `poetry install` (NFR-001 metric 2) | Manual | P2 | NFR-001 (metric 2) | 🚧 |
+| TC-058 | `make schemas-check` completes within 30 s on the reference machine (NFR-001 metric 3) | Benchmark | P3 | NFR-001 (metric 3) | 🚧 |
+| TC-059 | No file in the module derives Markdown from a record; the reference mapping is read-only over the document (FR-007-CON-3) | Static | P2 | FR-007-CON-3 | 🚧 |

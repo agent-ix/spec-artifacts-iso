@@ -1,0 +1,10 @@
+---
+type: index
+title: "Non-Functional"
+description: "Index of artifacts in this directory."
+---
+# Non-Functional
+
+## Contents
+
+* [NFR-001: Schema projection is reproducible and offline](./NFR-001-reproducible-offline-schema-projection.md)
