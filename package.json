@@ -14,13 +14,20 @@
   ],
   "files": [
     "manifest.yaml",
+    "module-manifest.schema.json",
     "schemas/",
     "skeletons/",
+    "mappings.yaml",
+    "mappings.schema.json",
+    "examples/*.record.json",
+    "semantic/main.tsp",
+    "semantic/generated/toolchain.json",
     "README.md",
     "LICENSE"
   ],
   "scripts": {
-    "prepack": "node scripts/stage-npm.mjs"
+    "prepack": "node scripts/stage-npm.mjs",
+    "postpack": "node scripts/stage-npm.mjs --unstage"
   },
   "publishConfig": {
     "registry": "https://registry.npmjs.org/",

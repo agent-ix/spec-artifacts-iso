@@ -15,6 +15,12 @@ relationships:
        genuinely has operational I/O; object FRs (`object:` frontmatter,
        e.g. data_schema/process/configuration/interface) carry their
        kind's anchor sections instead.
+     - Invariants (optional, level 2): one `### <clauseId>` subsection per
+       invariant, each holding exactly one ```ocl fence. `clauseId` is an
+       Identifier (letters/digits/underscore, no leading digit). The clause
+       text is never parsed by the manifest locator; it fills the FR record's
+       `invariants` via the FR-007 `ocl-clause` mapping. Omit the section when
+       the FR states no formal invariant.
      - Constraints, when present: table headers exactly
        ID | Constraint | Type | Validation, ≥1 data row, ID column
        matching ^<this-doc-id>-CON-\d+$. Omit the section rather than
@@ -79,6 +85,20 @@ declared digest.
 | ID | Constraint | Type | Validation |
 |----|------------|------|------------|
 | FR-001-CON-1 | Digest computation SHALL use SHA-256 only | Security | Integration Test |
+
+## Invariants
+
+Each invariant is one `### <clauseId>` subsection holding exactly one ```ocl
+fence. `clauseId` is an Identifier — letters, digits and underscores, never a
+leading digit — unique within the document.
+
+### digest_matches_declared
+
+```ocl
+context Artifact
+inv digest_matches_declared:
+  self.persisted implies self.computedDigest = self.declaredDigest
+```
 
 ## Acceptance Criteria
 

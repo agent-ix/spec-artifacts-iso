@@ -1,0 +1,17 @@
+{
+  "description": "Chronological log of structural changes to this bundle.",
+  "history": [
+    {
+      "date": "2026-06-15",
+      "line": 10,
+      "text": "Adopted OKF-compatible bundle structure with directory indexes."
+    }
+  ],
+  "provenance": {
+    "digest": "sha256:5d583ebae2710bceea6db458e7bf0a2fc5e1d96156e27ad889d894dec4129e91",
+    "path": "spec_artifacts_iso/skeletons/log.md",
+    "sourceIdentity": "ix://agent-ix/spec-artifacts-iso/skeletons"
+  },
+  "title": "Update Log",
+  "type": "log"
+}

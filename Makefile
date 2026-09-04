@@ -16,6 +16,10 @@ help:
 	@echo "  make lint           - Run linters (ruff + black)"
 	@echo "  make format         - Format code (black + ruff --fix)"
 	@echo "  make build          - Build distribution"
+	@echo "  make semantic-install - npm ci the TypeSpec package (spec_artifacts_iso/semantic)"
+	@echo "  make schemas        - Regenerate the semantic JSON Schemas from TypeSpec (FR-005)"
+	@echo "  make schemas-check  - Fail if the committed schemas differ from a fresh projection"
+	@echo "  make manifest-digests - Rewrite manifest data_schema digests from the shipped schema bytes (FR-006)"
 	@echo "  make clean          - Clean build artifacts"
 	@echo "  make version        - Show computed version"
 	@echo "  make info           - Show git and version info"
@@ -65,6 +69,33 @@ format:
 .PHONY: build
 build:
 	$(POE) build
+
+# =============================================================================
+# Semantic data schemas (FR-005): TypeSpec -> JSON Schema projection
+# =============================================================================
+# The TypeSpec package lives in spec_artifacts_iso/semantic/ (npm, lockfile
+# committed). `make schemas` regenerates spec_artifacts_iso/schemas/<Model>.json
+# and generated/toolchain.json; `make schemas-check` fails on any byte drift.
+
+SEMANTIC_DIR = spec_artifacts_iso/semantic
+
+.PHONY: semantic-install
+semantic-install:
+	cd $(SEMANTIC_DIR) && npm ci
+
+.PHONY: schemas
+schemas:
+	cd $(SEMANTIC_DIR) && npm run --silent generate
+
+.PHONY: schemas-check
+schemas-check:
+	cd $(SEMANTIC_DIR) && npm run --silent check
+
+# FR-006: rewrite every `data_schema.digest` in manifest.yaml from the shipped
+# bytes of the file its `data_schema.schema` names. Run after `make schemas`.
+.PHONY: manifest-digests
+manifest-digests:
+	$(POETRY) run python scripts/manifest_digests.py
 
 .PHONY: build-dist
 build-dist: build

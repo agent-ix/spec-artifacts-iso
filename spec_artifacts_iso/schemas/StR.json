@@ -1,0 +1,80 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.agent-ix.org/agent-ix/spec-artifacts-iso/0.2.0/StR.json",
+  "type": "object",
+  "properties": {
+    "id": {
+      "$ref": "https://schemas.agent-ix.org/agent-ix/spec-artifacts-iso/0.2.0/StRId.json"
+    },
+    "title": {
+      "$ref": "https://schemas.agent-ix.org/agent-ix/spec-artifacts-iso/0.2.0/NonEmptyText.json"
+    },
+    "type": {
+      "type": "string",
+      "const": "StR"
+    },
+    "object": {
+      "$ref": "https://schemas.agent-ix.org/agent-ix/spec-artifacts-iso/0.2.0/ObjectTypeName.json"
+    },
+    "status": {
+      "$ref": "https://schemas.agent-ix.org/agent-ix/spec-artifacts-iso/0.2.0/ArtifactStatus.json"
+    },
+    "relationships": {
+      "type": "array",
+      "items": {
+        "$ref": "https://schemas.agent-ix.org/agent-ix/spec-artifacts-iso/0.2.0/Relationship.json"
+      }
+    },
+    "provenance": {
+      "$ref": "https://schemas.agent-ix.org/agent-ix/spec-artifacts-iso/0.2.0/Provenance.json"
+    },
+    "stakeholderNeed": {
+      "$ref": "https://schemas.agent-ix.org/agent-ix/spec-artifacts-iso/0.2.0/Section.json"
+    },
+    "rationale": {
+      "$ref": "https://schemas.agent-ix.org/agent-ix/spec-artifacts-iso/0.2.0/Section.json"
+    },
+    "validationCriteria": {
+      "type": "array",
+      "items": {
+        "$ref": "https://schemas.agent-ix.org/agent-ix/spec-artifacts-iso/0.2.0/ValidationCriterion.json"
+      },
+      "minItems": 1
+    },
+    "stakeholders": {
+      "$ref": "https://schemas.agent-ix.org/agent-ix/spec-artifacts-iso/0.2.0/Section.json"
+    },
+    "contextAndAssumptions": {
+      "$ref": "https://schemas.agent-ix.org/agent-ix/spec-artifacts-iso/0.2.0/Section.json"
+    },
+    "stakeholderConstraints": {
+      "$ref": "https://schemas.agent-ix.org/agent-ix/spec-artifacts-iso/0.2.0/Section.json"
+    },
+    "dependencies": {
+      "$ref": "https://schemas.agent-ix.org/agent-ix/spec-artifacts-iso/0.2.0/Section.json"
+    },
+    "priorityAndRisk": {
+      "$ref": "https://schemas.agent-ix.org/agent-ix/spec-artifacts-iso/0.2.0/Section.json"
+    },
+    "notes": {
+      "$ref": "https://schemas.agent-ix.org/agent-ix/spec-artifacts-iso/0.2.0/Section.json"
+    },
+    "traceability": {
+      "$ref": "https://schemas.agent-ix.org/agent-ix/spec-artifacts-iso/0.2.0/Section.json"
+    }
+  },
+  "required": [
+    "id",
+    "title",
+    "type",
+    "relationships",
+    "provenance",
+    "stakeholderNeed",
+    "rationale",
+    "validationCriteria"
+  ],
+  "unevaluatedProperties": {
+    "not": {}
+  },
+  "description": "Stakeholder requirement record (archetype `StR`)."
+}

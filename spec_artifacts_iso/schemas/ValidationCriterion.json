@@ -1,0 +1,30 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.agent-ix.org/agent-ix/spec-artifacts-iso/0.2.0/ValidationCriterion.json",
+  "type": "object",
+  "properties": {
+    "id": {
+      "$ref": "https://schemas.agent-ix.org/agent-ix/spec-artifacts-iso/0.2.0/ValidationCriterionId.json"
+    },
+    "criteria": {
+      "$ref": "https://schemas.agent-ix.org/agent-ix/spec-artifacts-iso/0.2.0/NonEmptyText.json",
+      "description": "free text: the criterion statement."
+    },
+    "validation": {
+      "$ref": "https://schemas.agent-ix.org/agent-ix/spec-artifacts-iso/0.2.0/Verification.json"
+    },
+    "line": {
+      "$ref": "https://schemas.agent-ix.org/agent-ix/spec-artifacts-iso/0.2.0/LineNumber.json"
+    }
+  },
+  "required": [
+    "id",
+    "criteria",
+    "validation",
+    "line"
+  ],
+  "unevaluatedProperties": {
+    "not": {}
+  },
+  "description": "One `## Validation Criteria` row of a stakeholder requirement (`ID | Criteria | Validation`)."
+}

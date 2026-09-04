@@ -1,6 +1,6 @@
 manifest_version: 1.0.0
 name: spec-artifacts-iso
-version: 0.1.0
+version: 0.2.0
 description: "Filament Module: ISO-style spec artifacts (FR, NFR, StR, US, IT, TC) — unified-shape archetypes (frontmatter schema + body_extraction asserts) validated by quire-rs; per-archetype authoring skeletons are the source of truth (no render templates); iso-spec-core grammar"
 archetypes:
 - kind: spec
@@ -105,6 +105,9 @@ artifact_types:
 - name: FR
   grammar_ref: iso-spec-core
   frontmatter_schema_ref: schemas/fr-frontmatter.schema.json
+  data_schema:
+    schema: schemas/FR.json
+    digest: sha256:7fc89400e005e2a59dd2032f798cb34c632542e3ec88ee0cac05e9c20fa5cf1d
   defaults:
     id_pattern: FR-{next:03d}
   allowed_links:
@@ -205,9 +208,22 @@ artifact_types:
           required: true
           assert:
             level: 2
+        # FR-006: the optional `## Invariants` section the FR skeleton carries.
+        # Each `### <clauseId>` subsection holds exactly one ```ocl fence; the
+        # clause text is never parsed here — FR-007's `ocl-clause` mapping fills
+        # the FR record's `invariants?: ClauseRef[]`.
+        invariants:
+          from: code_block
+          language: ocl
+          under_section: Invariants
+          required: false
+          multiple: true
 - name: NFR
   grammar_ref: iso-spec-core
   frontmatter_schema_ref: schemas/nfr-frontmatter.schema.json
+  data_schema:
+    schema: schemas/NFR.json
+    digest: sha256:b32f8d6b58a30925f5ce314b39d5a64b5b34cd228124b6238008eef8ba729d50
   defaults:
     id_pattern: NFR-{next:03d}
   allowed_links:
@@ -316,6 +332,9 @@ artifact_types:
 - name: StR
   grammar_ref: iso-spec-core
   frontmatter_schema_ref: schemas/str-frontmatter.schema.json
+  data_schema:
+    schema: schemas/StR.json
+    digest: sha256:87f4705a50b41fc68955ff69e593c25b413e22858414256ca82098cd7e837b2c
   defaults:
     id_pattern: StR-{next:03d}
   allowed_links:
@@ -421,6 +440,9 @@ artifact_types:
 - name: US
   grammar_ref: iso-spec-core
   frontmatter_schema_ref: schemas/us-frontmatter.schema.json
+  data_schema:
+    schema: schemas/US.json
+    digest: sha256:f2b90a60c6427df47795ddd7c693851276ceb200d25411f7e26a8818478fe1cd
   defaults:
     id_pattern: US-{next:03d}
   allowed_links:
@@ -499,6 +521,9 @@ artifact_types:
 - name: IT
   grammar_ref: iso-spec-core
   frontmatter_schema_ref: schemas/it-frontmatter.schema.json
+  data_schema:
+    schema: schemas/IT.json
+    digest: sha256:f08612466bb93dbe4a3f78f1de058961a32c9e7cae4ab7ef736d36b3c3a718ef
   defaults:
     id_pattern: IT-{next:03d}
   allowed_links:
@@ -577,6 +602,9 @@ artifact_types:
 - name: TC
   grammar_ref: iso-spec-core
   frontmatter_schema_ref: schemas/tc-frontmatter.schema.json
+  data_schema:
+    schema: schemas/TC.json
+    digest: sha256:0f82b9516ca9178a070c7c5c7d7d4baf7b78a4d4052f0a4ac1db49a7aab84bd7
   defaults:
     id_pattern: TC-{next:03d}
   allowed_links:
@@ -614,6 +642,9 @@ artifact_types:
 - name: master-requirements
   grammar_ref: iso-spec-core
   frontmatter_schema_ref: schemas/master-requirements-frontmatter.schema.json
+  data_schema:
+    schema: schemas/MasterRequirements.json
+    digest: sha256:c601ce54f4a1d38871342b4bf75395fe6d68a69448d9e722b11f17207ddca86e
   allowed_links:
   - depends_on
   - calls
@@ -687,6 +718,9 @@ artifact_types:
 - name: index
   grammar_ref: iso-spec-core
   frontmatter_schema_ref: schemas/index-frontmatter.schema.json
+  data_schema:
+    schema: schemas/Index.json
+    digest: sha256:04440923c988b6ed27229ce743789cde3630ccbf75599c1e50a343901df3582d
   allowed_links: []
   examples: []
   lint_rules_ref: []
@@ -702,6 +736,9 @@ artifact_types:
 - name: log
   grammar_ref: iso-spec-core
   frontmatter_schema_ref: schemas/log-frontmatter.schema.json
+  data_schema:
+    schema: schemas/Log.json
+    digest: sha256:b0503f605a2777a184807e93a3341d85bc78ff48802ef9fe7c3044c586cb27c3
   allowed_links: []
   examples: []
   lint_rules_ref: []
@@ -720,6 +757,9 @@ artifact_types:
   # object-aware vague-response check as accepted concrete terms.
   grammar_ref: iso-spec-core
   frontmatter_schema_ref: schemas/glossary-frontmatter.schema.json
+  data_schema:
+    schema: schemas/Glossary.json
+    digest: sha256:98c4786af31d97ff407fa6cfa4e49fb8ef32d984347b73291b17f099349f7096
   defaults:
     id_pattern: GLO-{next:03d}
   allowed_links:
@@ -957,3 +997,41 @@ traceability:
     # is unnecessary.
     justified_absence_field: quality_attributes_not_applicable
     check: unowned-quality-characteristic
+
+# ── Semantic module block (FR-006; quoin FR-070 contract 1.0.0) ──────────
+# Nine of the ten admitted keys. `sweep_report` is absent by design: it is
+# required only when `legacy_forms` is promoted to `error`, and `warning` is
+# the value that changes nothing for a module none of whose documents author
+# the legacy `## Properties` forms quoin FR-074 sweeps.
+# `exports` names every artifact type carrying a `data_schema` reference; the
+# emitted schemas are bound by digest on the artifact types themselves.
+semantic:
+  contract_version: 1.0.0
+  semantic_core: 0.1.0
+  package: agent-ix/spec-artifacts-iso
+  exports:
+  - FR
+  - NFR
+  - StR
+  - US
+  - IT
+  - TC
+  - master-requirements
+  - index
+  - log
+  - Glossary
+  imports: {}
+  targets:
+  - json-schema
+  - markdown
+  mappings:
+  - frontmatter
+  - section
+  - table
+  - typed-table
+  - ocl-clause
+  - list
+  - token
+  - provenance
+  compatibility_posture: additive
+  legacy_forms: warning

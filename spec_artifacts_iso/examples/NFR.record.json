@@ -1,0 +1,69 @@
+{
+  "acceptanceCriteria": [
+    {
+      "criteria": "Every benchmark evidence artifact is stored under the packet directory that owns the measurement it supports.",
+      "id": "NFR-001-AC-1",
+      "line": 77,
+      "verification": {
+        "method": "Inspection",
+        "testRefs": []
+      }
+    }
+  ],
+  "dependencies": {
+    "endLine": 82,
+    "startLine": 79,
+    "text": "\n- **Upstream**: [FR-001](../functional/FR-001-verify-checksums.md) checksum verification on import\n- **Downstream**: capacity-planning runbook\n"
+  },
+  "id": "NFR-001",
+  "measurement": [
+    {
+      "line": 57,
+      "method": "Load Benchmark",
+      "metric": "Import throughput",
+      "target": "600 imports/s",
+      "threshold": "500 imports/s"
+    },
+    {
+      "line": 58,
+      "method": "Load Benchmark",
+      "metric": "Import p95 latency",
+      "target": "120 ms",
+      "threshold": "200 ms"
+    }
+  ],
+  "provenance": {
+    "digest": "sha256:36c40384c3b5e22a8d4ad489f5f3beb9ff63108ab379f8bb210b8b5c59649d56",
+    "path": "spec_artifacts_iso/skeletons/nfr.md",
+    "sourceIdentity": "ix://agent-ix/spec-artifacts-iso/skeletons"
+  },
+  "qualityAttribute": "performance_efficiency",
+  "rationale": {
+    "endLine": 52,
+    "startLine": 48,
+    "text": "\nIngestion is on the critical path for downstream indexing; sustained throughput\nbounds the end-to-end freshness SLA committed to consumers.\n\n"
+  },
+  "relationships": [
+    {
+      "target": "ix://agent-ix/example/FR-001",
+      "type": "constrains"
+    }
+  ],
+  "scope": {
+    "endLine": 47,
+    "startLine": 43,
+    "text": "\n- Applies to: the artifact import ingestion path.\n- Operational context: steady-state production load with warm caches.\n\n"
+  },
+  "statement": {
+    "endLine": 42,
+    "startLine": 38,
+    "text": "\nThe system SHALL sustain at least 500 artifact imports per second at p95 latency\nunder or equal to 200 ms during a 10-minute sustained-load window.\n\n"
+  },
+  "title": "Import throughput under sustained load",
+  "type": "NFR",
+  "verification": {
+    "endLine": 64,
+    "startLine": 60,
+    "text": "\nA repeatable load benchmark drives the ingestion path for 10 minutes and asserts\nthe measured throughput and p95 latency stay within threshold.\n\n"
+  }
+}
