@@ -45,7 +45,7 @@ no new table header, renames no heading, and reorders no column. A document
 that validated before FR-005 therefore maps to a record that validates against
 its model, with one stated exception: FR-005 gives every prose cell
 `minLength: 1`, so a document carrying an empty required cell (census
-2026-09-03: 41 `Verification` cells) is rejected. That is a census finding
+2026-09-04: 7 `Verification` cells of 20,881) is rejected. That is a census finding
 about those documents, not a form this module admits, and TC-045 pins it.
 
 **Who builds the record.** Nothing in production builds an ISO record from
@@ -111,7 +111,8 @@ Mapping kinds:
   <iWant>`, and `So that <soThat>`, each optionally wrapped in `**` or `_`
   emphasis and optionally followed by `:`, matched case-insensitively at the
   start of a line, with the captured text trimmed and its surrounding emphasis
-  markers removed (census: 896 bold, 142 plain, 8 neither).
+  markers removed (census 2026-09-04: 908 bold, 149 plain, 0 neither over
+  1,057 `US` documents — the grammar matches every story in the corpus).
 - A `table` mapping SHALL name a section and a column list equal to the
   `assert.columns` of the corresponding locator, and fill an array with one
   object per data row in authored order, cells trimmed, with the row's line.

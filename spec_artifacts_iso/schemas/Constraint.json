@@ -1,0 +1,35 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.agent-ix.org/agent-ix/spec-artifacts-iso/0.2.0/Constraint.json",
+  "type": "object",
+  "properties": {
+    "id": {
+      "$ref": "https://schemas.agent-ix.org/agent-ix/spec-artifacts-iso/0.2.0/ConstraintId.json"
+    },
+    "constraint": {
+      "$ref": "https://schemas.agent-ix.org/agent-ix/spec-artifacts-iso/0.2.0/NonEmptyText.json",
+      "description": "free text: the constraint statement."
+    },
+    "type": {
+      "$ref": "https://schemas.agent-ix.org/agent-ix/spec-artifacts-iso/0.2.0/NonEmptyText.json",
+      "description": "free text: the constraint category; the census counts 334 distinct categories over 3,924 constraint rows and no rule owns the vocabulary."
+    },
+    "validation": {
+      "$ref": "https://schemas.agent-ix.org/agent-ix/spec-artifacts-iso/0.2.0/Verification.json"
+    },
+    "line": {
+      "$ref": "https://schemas.agent-ix.org/agent-ix/spec-artifacts-iso/0.2.0/LineNumber.json"
+    }
+  },
+  "required": [
+    "id",
+    "constraint",
+    "type",
+    "validation",
+    "line"
+  ],
+  "unevaluatedProperties": {
+    "not": {}
+  },
+  "description": "One `## Constraints` row (`ID | Constraint | Type | Validation`)."
+}

@@ -131,14 +131,22 @@ bytes.
   one export. quire-rs FR-069's prose says "object types"; the loader's
   behaviour is the evidence this requirement relies on, and the wording gap is
   filed as agent-ix/quire-rs#393 with the record-kind question above.
-- Evidence, not obligation — quoin: quoin at 3e842ce (`readSemanticBlock`)
-  checks `semantic.exports` against `object_types` names and builds
-  `dataSchemas` from `object_types` only, so `quoin module install
-  path:<module root>` on this manifest emits, per exported artifact type,
-  `semantic.unknown-export` and `semantic.export-without-schema` and refuses
-  the install. The gap is filed as agent-ix/quoin#336; the manifest keeps
-  `exports` and the references as specified rather than bend to it, because the
-  FR-070 amendment is quoin's to make.
+- Evidence, not obligation — quoin, as published: `quoin module install
+  path:<module root>` on the published CLI (quoin 0.23.1) **succeeds** and
+  installs the module, because that CLI carries no semantic-block reader at
+  all. Run on 2026-09-03 against this manifest; exit 0, an install record for
+  `spec-artifacts-iso`, no diagnostic. The block is inert to every quoin a user
+  can install today, which is the practical form of CON-1.
+- Evidence, not obligation — quoin, on main: quoin at 3e842ce
+  (`readSemanticBlock`, `src/semantic/manifest.ts:175-186,258`) checks
+  `semantic.exports` against `object_types` names and builds `dataSchemas` from
+  `object_types` only, so once that code ships the same install will emit, per
+  exported artifact type, `semantic.unknown-export` and
+  `semantic.export-without-schema` and refuse. That is a reading of the source,
+  not an executed run — no quoin carrying it is published — and the gap is filed
+  as agent-ix/quoin#336. The manifest keeps `exports` and the references as
+  specified rather than bend to it, because the FR-070 amendment is quoin's to
+  make.
 
 ## Constraints
 
@@ -156,7 +164,8 @@ bytes.
 | FR-006-AC-3 | At the published floor (quire ≥ 0.33.0), `quire.Registry.load_from` over the module's parent directory lists all eleven archetypes with the `semantic` block and the ten `data_schema` references present, and `validate_document` passes every skeleton — adding the block breaks no consumer. | Test (TC-048) |
 | FR-006-AC-4 | The bundled FR-035 schema rejects `semantic: {…, foo: 1}` naming `foo`, rejects `data_schema: {schema: x.json, digest: sha256:…, type: object}`, rejects `package: ix://agent-ix/x`, and rejects `targets: [go]`; its `semantic` property and `ObjectTypeEntry.data_schema` equal the a77f31e originals byte-for-byte after JSON canonicalization. | Test (TC-049) |
 | FR-006-AC-5 | A one-byte edit to any emitted schema without a digest update fails the suite naming the artifact type and both digests. | Test (TC-047) |
-| FR-006-AC-6 | `quoin module install path:<module root>` on quoin 0.23.1 (main ≥ 3e842ce) refuses the install with `semantic.unknown-export` and `semantic.export-without-schema` for each of the ten exports and no other diagnostic; the verbatim output is recorded against agent-ix/quoin#336, and the previously installed registry version of this module is restored afterwards. | Demonstration (TC-055) |
+| FR-006-AC-6 | `quoin module install path:<module root>` on the published quoin (0.23.1) installs the module with no diagnostic, so the block is inert to every quoin a user can install today; the verbatim output is recorded, and the previously installed registry version of this module is restored afterwards. | Demonstration (TC-055) |
+| FR-006-AC-9 | On a quoin carrying FR-070 (main ≥ 3e842ce, unpublished), the same install is refused with `semantic.unknown-export` and `semantic.export-without-schema` for each of the ten exports and no other diagnostic. Discharged by source reading against `src/semantic/manifest.ts` until such a quoin is published; tracked by agent-ix/quoin#336. | Analysis (TC-064) |
 | FR-006-AC-7 | The legacy-manifest fixture (no `semantic` block, no `data_schema`) validates under the bundled FR-035 schema and loads under quire with the same eleven archetypes. | Test (TC-046) |
 | FR-006-AC-8 | On a wheel carrying quire-rs FR-069, a copy of the module with one `data_schema.digest` altered by one hex digit is refused at load — the digest binding is real, not a no-op. Recorded as a strict expected failure naming agent-ix/quire-rs#388 until such a wheel is published. | Test (TC-063) |
 

@@ -1,0 +1,1004 @@
+# FR-006 legacy-manifest fixture — GENERATED, do not hand-edit.
+#
+# spec_artifacts_iso/manifest.yaml with the `semantic` block and every
+# `data_schema` reference removed: the form a consumer that predates the
+# FR-006 additions reads. FR-006-CON-1 and FR-006-AC-7 use it to prove the
+# additions break nothing — it validates under the same bundled FR-035
+# schema and loads under quire with the same eleven archetypes.
+#
+# Regenerate with:
+#   poetry run python scripts/manifest_digests.py --write-legacy-fixture
+# tests/test_semantic_manifest.py fails if this file drifts from the real
+# manifest, so it is never a second hand-maintained copy.
+manifest_version: 1.0.0
+name: spec-artifacts-iso
+version: 0.2.0
+description: 'Filament Module: ISO-style spec artifacts (FR, NFR, StR, US, IT, TC) — unified-shape archetypes (frontmatter schema + body_extraction asserts) validated by quire-rs; per-archetype authoring skeletons are the source of truth (no render templates); iso-spec-core grammar'
+archetypes:
+- kind: spec
+  name: Spec
+  description: Container holding ISO-style requirement artifacts
+  doc_backed: true
+  supports_membership: true
+  composition:
+    expected_artifacts:
+    - StR
+    - FR
+    - NFR
+    - US
+    - IT
+    - TC
+grammars:
+- name: iso-spec-core
+  version: 0.1.0
+  description: ISO-style requirements spec grammar
+  doc_kinds:
+  - spec
+grammar_severity:
+  ac:vacuous-outcome: error
+  ac:non-singular: error
+property_idioms:
+  lossless:
+    definition: An operation asserted to preserve its input exactly, so composing it with its inverse recovers the original.
+    shape: round-trip
+  parse-then-serialize:
+    definition: The composition of a parse with the serialization of its result, asserted against the original text.
+    shape: round-trip
+  idempotent:
+    definition: Applying the operation a second time yields the result of the first.
+    shape: idempotence
+  idempotently:
+    definition: 'Adverbial form of `idempotent`: the operation is performed such that a repeat application changes nothing.'
+    shape: idempotence
+  idempotence:
+    definition: The property that a repeat application of an operation yields the first result.
+    shape: idempotence
+  idempotency:
+    definition: Nominal form of `idempotence`, the spelling used in service and API criteria.
+    shape: idempotence
+  total order:
+    definition: Every pair of elements is comparable, so the ordering is complete and not merely partial.
+    shape: ordering
+artifact_types:
+- name: FR
+  grammar_ref: iso-spec-core
+  frontmatter_schema_ref: schemas/fr-frontmatter.schema.json
+  defaults:
+    id_pattern: FR-{next:03d}
+  allowed_links:
+  - calls
+  - publishes
+  - consumes
+  - triggers
+  - reads
+  - writes
+  - requires
+  - implements
+  - depends_on
+  - contains
+  - transitions_to
+  - references
+  - constrains
+  - supersedes
+  - extends
+  - specifies
+  - governs
+  - supports
+  - traces_to
+  - represents
+  - derives_from
+  - migrated_from
+  - uses
+  - projection_of
+  - delegates_to
+  - manages
+  examples: []
+  lint_rules_ref: []
+  body_extraction:
+    yield_pattern:
+      match:
+        description:
+          from: section_body
+          after_heading: Description
+          required: true
+          assert:
+            level: 2
+        inputs:
+          from: section_body
+          after_heading: Inputs
+          required: false
+          assert:
+            level: 2
+        outputs:
+          from: section_body
+          after_heading: Outputs
+          required: false
+          assert:
+            level: 2
+        behavior:
+          from: section_body
+          after_heading: Behavior
+          required: false
+          assert:
+            level: 2
+        constraints_table:
+          from: table_row
+          under_section: Constraints
+          required: false
+          assert:
+            columns:
+            - ID
+            - Constraint
+            - Type
+            - Validation
+            min_rows: 1
+            id_column: ID
+            id_pattern: ^{id}-CON-\d+$
+        acceptance_criteria:
+          from: section_body
+          after_heading: Acceptance Criteria
+          required: true
+          assert:
+            level: 2
+        acceptance_criteria_table:
+          from: table_row
+          under_section: Acceptance Criteria
+          required: true
+          assert:
+            columns:
+            - ID
+            - Criteria
+            - Verification
+            min_rows: 1
+            id_column: ID
+            id_pattern: ^{id}-AC-\d+$
+        dependencies:
+          from: section_body
+          after_heading: Dependencies
+          required: true
+          assert:
+            level: 2
+        invariants:
+          from: code_block
+          language: ocl
+          under_section: Invariants
+          required: false
+          multiple: true
+- name: NFR
+  grammar_ref: iso-spec-core
+  frontmatter_schema_ref: schemas/nfr-frontmatter.schema.json
+  defaults:
+    id_pattern: NFR-{next:03d}
+  allowed_links:
+  - constrains
+  - references
+  - depends_on
+  - traces_to
+  - verifies
+  - supersedes
+  - extends
+  - uses
+  - derives_from
+  examples: []
+  lint_rules_ref: []
+  body_extraction:
+    yield_pattern:
+      match:
+        quality_attribute:
+          from: frontmatter_field
+          path:
+          - quality_attribute
+          required: false
+        statement:
+          from: section_body
+          after_heading: Statement
+          required: true
+          assert:
+            level: 2
+        scope:
+          from: section_body
+          after_heading: Scope
+          required: false
+          assert:
+            level: 2
+        rationale:
+          from: section_body
+          after_heading: Rationale
+          required: false
+          assert:
+            level: 2
+        measurement_and_evaluation:
+          from: section_body
+          after_heading: Measurement and Evaluation
+          required: true
+          assert:
+            level: 2
+        measurement_table:
+          from: table_row
+          under_section: Measurement and Evaluation
+          required: true
+          assert:
+            columns:
+            - Metric
+            - Target
+            - Threshold
+            - Method
+            min_rows: 1
+        verification:
+          from: section_body
+          after_heading: Verification
+          required: true
+          assert:
+            level: 2
+        acceptance_criteria:
+          from: section_body
+          after_heading: Acceptance Criteria
+          required: false
+          assert:
+            level: 2
+            matches: (?m)^\s*\|\s*ID\s*\|\s*Criteria\s*\|\s*Verification\s*\|
+        acceptance_criteria_table:
+          from: table_row
+          under_section: Acceptance Criteria
+          required: false
+          assert:
+            columns:
+            - ID
+            - Criteria
+            - Verification
+            min_rows: 1
+            id_column: ID
+            id_pattern: ^{id}-AC-\d+$
+        dependencies:
+          from: section_body
+          after_heading: Dependencies
+          required: false
+          assert:
+            level: 2
+- name: StR
+  grammar_ref: iso-spec-core
+  frontmatter_schema_ref: schemas/str-frontmatter.schema.json
+  defaults:
+    id_pattern: StR-{next:03d}
+  allowed_links:
+  - satisfied_by
+  - depends_on
+  - references
+  - supersedes
+  - traces_to
+  - extends
+  - represents
+  examples: []
+  lint_rules_ref: []
+  body_extraction:
+    yield_pattern:
+      match:
+        stakeholder_need:
+          from: section_body
+          after_heading: Stakeholder Need
+          required: true
+          assert:
+            level: 2
+        rationale:
+          from: section_body
+          after_heading: Rationale
+          required: true
+          assert:
+            level: 2
+        validation_criteria:
+          from: section_body
+          after_heading: Validation Criteria
+          required: true
+          assert:
+            level: 2
+        validation_criteria_table:
+          from: table_row
+          under_section: Validation Criteria
+          required: true
+          assert:
+            columns:
+            - ID
+            - Criteria
+            - Validation
+            min_rows: 1
+            id_column: ID
+            id_pattern: ^{id}-VC-\d+$
+        stakeholders:
+          from: section_body
+          after_heading: Stakeholders
+          required: false
+          assert:
+            level: 2
+        context_and_assumptions:
+          from: section_body
+          after_heading: Context and Assumptions
+          required: false
+          assert:
+            level: 2
+        stakeholder_constraints:
+          from: section_body
+          after_heading: Stakeholder Constraints (Contextual)
+          required: false
+          assert:
+            level: 2
+        dependencies:
+          from: section_body
+          after_heading: Dependencies
+          required: false
+          assert:
+            level: 2
+        priority_and_risk:
+          from: section_body
+          after_heading: Priority and Risk (Informative)
+          required: false
+          assert:
+            level: 2
+        notes:
+          from: section_body
+          after_heading: Notes (Informative)
+          required: false
+          assert:
+            level: 2
+        traceability:
+          from: section_body
+          after_heading: Traceability
+          required: false
+          assert:
+            level: 2
+- name: US
+  grammar_ref: iso-spec-core
+  frontmatter_schema_ref: schemas/us-frontmatter.schema.json
+  defaults:
+    id_pattern: US-{next:03d}
+  allowed_links:
+  - satisfied_by
+  - traces_to
+  - references
+  - implements
+  - exercises
+  - depends_on
+  - derives_from
+  - migrated_from
+  examples: []
+  lint_rules_ref: []
+  body_extraction:
+    yield_pattern:
+      match:
+        story:
+          from: section_body
+          after_heading: Story
+          required: true
+          assert:
+            level: 2
+            matches: (?is)\bas an?\b.+\bi want\b.+\bso that\b
+        context:
+          from: section_body
+          after_heading: Context
+          required: false
+          assert:
+            level: 2
+        acceptance_examples:
+          from: section_body
+          after_heading: Acceptance Examples (Illustrative)
+          required: false
+          assert:
+            level: 2
+        options:
+          from: section_body
+          after_heading: Options (Exploratory)
+          required: false
+          assert:
+            level: 2
+        constraints:
+          from: section_body
+          after_heading: Constraints (Contextual)
+          required: false
+          assert:
+            level: 2
+        dependencies:
+          from: section_body
+          after_heading: Dependencies (Contextual)
+          required: false
+          assert:
+            level: 2
+        priority_and_risk:
+          from: section_body
+          after_heading: Priority and Risk (Informative)
+          required: false
+          assert:
+            level: 2
+        notes:
+          from: section_body
+          after_heading: Notes (Informative)
+          required: false
+          assert:
+            level: 2
+        traceability:
+          from: section_body
+          after_heading: Traceability (Informative)
+          required: false
+          assert:
+            level: 2
+- name: IT
+  grammar_ref: iso-spec-core
+  frontmatter_schema_ref: schemas/it-frontmatter.schema.json
+  defaults:
+    id_pattern: IT-{next:03d}
+  allowed_links:
+  - verifies
+  - depends_on
+  - references
+  examples: []
+  lint_rules_ref: []
+  body_extraction:
+    yield_pattern:
+      match:
+        objective:
+          from: section_body
+          after_heading: Objective
+          required: true
+          assert:
+            level: 2
+        target_integration:
+          from: section_body
+          after_heading: Target Integration
+          required: true
+          assert:
+            level: 2
+        preconditions:
+          from: section_body
+          after_heading: Preconditions
+          required: true
+          assert:
+            level: 2
+        inputs:
+          from: section_body
+          after_heading: Inputs
+          required: true
+          assert:
+            level: 2
+        test_procedure:
+          from: section_body
+          after_heading: Test Procedure
+          required: true
+          assert:
+            level: 2
+        expected_results:
+          from: section_body
+          after_heading: Expected Results
+          required: true
+          assert:
+            level: 2
+        metadata:
+          from: section_body
+          after_heading: Metadata
+          required: false
+          assert:
+            level: 2
+        dependencies:
+          from: section_body
+          after_heading: Dependencies
+          required: false
+          assert:
+            level: 2
+        notes:
+          from: section_body
+          after_heading: Notes
+          required: false
+          assert:
+            level: 2
+        traceability:
+          from: section_body
+          after_heading: Traceability
+          required: false
+          assert:
+            level: 2
+- name: TC
+  grammar_ref: iso-spec-core
+  frontmatter_schema_ref: schemas/tc-frontmatter.schema.json
+  defaults:
+    id_pattern: TC-{next:03d}
+  allowed_links:
+  - verifies
+  - references
+  examples: []
+  lint_rules_ref: []
+  body_extraction:
+    yield_pattern:
+      match:
+        description:
+          from: section_body
+          after_heading: Description
+          required: true
+          assert:
+            level: 2
+        test_procedure:
+          from: section_body
+          after_heading: Test Procedure
+          required: true
+          assert:
+            level: 2
+        expected_results:
+          from: section_body
+          after_heading: Expected Results
+          required: true
+          assert:
+            level: 2
+- name: master-requirements
+  grammar_ref: iso-spec-core
+  frontmatter_schema_ref: schemas/master-requirements-frontmatter.schema.json
+  allowed_links:
+  - depends_on
+  - calls
+  - publishes
+  - consumes
+  - reads
+  - writes
+  - triggers
+  - requires
+  - implements
+  - references
+  - supersedes
+  - peer
+  - contained_by
+  - contains
+  - deploys
+  - uses
+  - imports
+  - generated_from
+  - aggregates
+  examples: []
+  lint_rules_ref: []
+  body_extraction:
+    yield_pattern:
+      match:
+        title:
+          from: heading
+          level: 1
+          regex: ^Master Requirements Specification$
+          required: true
+          assert:
+            level: 1
+        purpose:
+          from: section_body
+          after_heading: Purpose
+          required: true
+          assert:
+            level: 2
+        scope:
+          from: heading
+          level: 2
+          regex: ^Scope$
+          required: true
+          assert:
+            level: 2
+        system_overview:
+          from: heading
+          level: 2
+          regex: ^System Overview$
+          required: true
+          assert:
+            level: 2
+        requirements_architecture:
+          from: heading
+          level: 2
+          regex: ^Requirements Architecture$
+          required: true
+          assert:
+            level: 2
+        references:
+          from: section_body
+          after_heading: References
+          required: true
+          assert:
+            level: 2
+- name: index
+  grammar_ref: iso-spec-core
+  frontmatter_schema_ref: schemas/index-frontmatter.schema.json
+  allowed_links: []
+  examples: []
+  lint_rules_ref: []
+  body_extraction:
+    yield_pattern:
+      match:
+        contents:
+          from: section_body
+          after_heading: Contents
+          required: true
+          assert:
+            level: 2
+- name: log
+  grammar_ref: iso-spec-core
+  frontmatter_schema_ref: schemas/log-frontmatter.schema.json
+  allowed_links: []
+  examples: []
+  lint_rules_ref: []
+  body_extraction:
+    yield_pattern:
+      match:
+        history:
+          from: section_body
+          after_heading: History
+          required: true
+          assert:
+            level: 2
+- name: Glossary
+  grammar_ref: iso-spec-core
+  frontmatter_schema_ref: schemas/glossary-frontmatter.schema.json
+  defaults:
+    id_pattern: GLO-{next:03d}
+  allowed_links:
+  - references
+  - depends_on
+  examples: []
+  lint_rules_ref: []
+  body_extraction:
+    yield_pattern:
+      match:
+        terms:
+          from: section_body
+          after_heading: Terms
+          required: true
+          assert:
+            level: 2
+        terms_table:
+          from: table_row
+          under_section: Terms
+          required: true
+          assert:
+            columns:
+            - Term
+            - Definition
+            min_rows: 1
+doc_kinds:
+- spec
+object_types: []
+lint_rules:
+- type: table_column_values
+  id: ac-verification-method
+  archetypes:
+  - FR
+  - NFR
+  section: Acceptance Criteria
+  column: Verification
+  allowed:
+  - Inspection
+  - Analysis
+  - Demonstration
+  - Test
+  annotation_pattern: \(TC-\d+(,\s*TC-\d+)*\)
+  severity: warning
+- type: forbidden_section
+  id: us-acceptance-criteria-drift
+  archetypes:
+  - US
+  section: Acceptance Criteria
+  message: a US carries `## Acceptance Examples (Illustrative)` — nothing on a user story is binding or verification criteria. Move this content there, or promote it to an FR if it is genuinely binding.
+  severity: warning
+- type: table_column_values
+  id: vc-validation-method
+  archetypes:
+  - StR
+  section: Validation Criteria
+  column: Validation
+  allowed:
+  - Inspection
+  - Analysis
+  - Demonstration
+  - Test
+  annotation_pattern: \(TC-\d+(,\s*TC-\d+)*\)
+  severity: warning
+- type: section_body_pattern
+  id: fr-shall-language
+  archetypes:
+  - FR
+  section: Description
+  pattern: (?i)\b(shall|must|require)
+  message: FR Description should use normative language (shall/must) per ISO/IEC/IEEE 29148.
+  severity: warning
+- type: section_body_pattern
+  id: nfr-shall-language
+  archetypes:
+  - NFR
+  section: Statement
+  pattern: (?i)\b(shall|must|require)
+  message: NFR Statement should use normative language (shall/must) per ISO/IEC/IEEE 29148.
+  severity: warning
+- type: section_body_pattern
+  id: str-shall-language
+  archetypes:
+  - StR
+  section: Stakeholder Need
+  pattern: (?i)\b(shall|must|require)
+  message: Stakeholder Need should state a normative expectation (shall/must/require) per ISO/IEC/IEEE 29148.
+  severity: warning
+- type: section_body_pattern
+  id: it-success-criteria
+  archetypes:
+  - IT
+  section: Test Procedure
+  pattern: \bIT-\d+-SC-\d+
+  message: Integration Test Procedure should declare per-step success criteria (IT-XXX-SC-NN).
+  severity: warning
+edge_types:
+  contains:
+    description: Composition; the source owns the target's lifecycle.
+    category: structural
+    inverse: part_of
+  aggregates:
+    description: Aggregate root owns member entities.
+    category: structural
+    inverse: part_of
+  composes:
+    description: Value object composed of other value objects/enums.
+    category: structural
+    inverse: composed_by
+  contained_by:
+    description: This spec/requirement is a child of a parent bundle's master-requirements.
+    category: structural
+    inverse: contains
+  calls:
+    description: Synchronous invocation.
+    category: behavioral
+    inverse: called_by
+  triggers:
+    description: Initiates a process or action.
+    category: behavioral
+    inverse: triggered_by
+  transitions_to:
+    description: State-machine flow to another state.
+    category: behavioral
+  raises:
+    description: State machine raises a domain event.
+    category: behavioral
+  guards:
+    description: Permission/policy guards access to a surface.
+    category: behavioral
+  reads:
+    description: Non-mutating data access.
+    category: dataflow
+  writes:
+    description: Mutating data access.
+    category: dataflow
+  publishes:
+    description: Asynchronous emission to a channel.
+    category: dataflow
+    inverse: consumed_by
+  consumes:
+    description: Asynchronous reception from a channel.
+    category: dataflow
+  emits:
+    description: Source produces the target domain event.
+    category: dataflow
+    inverse: emitted_by
+  carries:
+    description: Channel/event carries a payload type.
+    category: dataflow
+  renders:
+    description: UI component renders a data type.
+    category: dataflow
+    inverse: rendered_by
+  serializes:
+    description: Binary format serializes a data schema.
+    category: dataflow
+  depends_on:
+    description: Requires the target to exist/function.
+    category: dependency
+  requires:
+    description: Security/configuration precondition.
+    category: dependency
+    inverse: required_by
+  implements:
+    description: 'Fulfils an interface/contract. NOT requirement lineage: an artifact answering a stakeholder requirement uses `satisfies` (inverse `satisfied_by`).'
+    category: dependency
+    inverse: implemented_by
+  extends:
+    description: Extends an interface/extension point.
+    category: dependency
+  conforms_to:
+    description: Conforms to an external contract.
+    category: dependency
+  persists:
+    description: Repository persists an aggregate/entity.
+    category: dependency
+  owns:
+    description: Entity owns a state machine.
+    category: dependency
+  represents:
+    description: A concrete artifact represents/mirrors another (DTO↔domain object, or a parallel spec).
+    category: realization
+  exposes:
+    description: Technical surface for a domain object/operation.
+    category: realization
+    inverse: exposed_by
+  operates_on:
+    description: Process/endpoint manipulates a domain object.
+    category: realization
+  realizes:
+    description: Realizes an enterprise capability/intent.
+    category: realization
+  decomposes:
+    description: Capability decomposes into sub-capabilities.
+    category: realization
+  supports:
+    description: Supports a value stream / higher objective.
+    category: realization
+  classifies:
+    description: Assigns a data classification to a target.
+    category: governance
+  protects:
+    description: Control protects an asset/surface.
+    category: governance
+  governs:
+    description: Principle/policy governs a target.
+    category: governance
+  measures:
+    description: SLI/SLO/KPI measures a target.
+    category: governance
+  deploys:
+    description: Deployment deploys a runtime component.
+    category: governance
+  configures:
+    description: Configuration configures a target.
+    category: governance
+  migrates:
+    description: Migration evolves a data schema.
+    category: governance
+  throttles:
+    description: Rate limit throttles a surface.
+    category: governance
+  grants:
+    description: Role/permission grants a scope/permission.
+    category: governance
+  encrypts:
+    description: Encryption key encrypts a secret/classification.
+    category: governance
+  mitigates:
+    description: Control mitigates a threat/risk/vulnerability.
+    category: governance
+  threatens:
+    description: Threat endangers an asset/attack surface.
+    category: governance
+  exploits:
+    description: Threat exploits a vulnerability.
+    category: governance
+  affects:
+    description: Vulnerability affects an asset/attack surface.
+    category: governance
+  arises_from:
+    description: Risk arises from a threat/vulnerability.
+    category: governance
+  escalates_to:
+    description: Alert escalates to an incident.
+    category: governance
+  remediates:
+    description: Runbook remediates an incident/alert.
+    category: governance
+  correlates:
+    description: Incident correlates with an alert.
+    category: governance
+  breaches:
+    description: Incident breaches an SLO.
+    category: governance
+  references:
+    description: Loose, untyped linkage.
+    category: traceability
+  constrains:
+    description: Imposes a constraint on the target.
+    category: traceability
+    inverse: constrained_by
+  supersedes:
+    description: Replaces a prior artifact.
+    category: traceability
+    inverse: superseded_by
+  specifies:
+    description: Object FR specifies a behavioral FR.
+    category: traceability
+  satisfied_by:
+    description: 'The generic stakeholder-requirement-to-artifact relationship: this StR is answered by the target. Authorable from either end — the artifact may declare `satisfies` instead.'
+    category: traceability
+    inverse: satisfies
+  traces_to:
+    description: Traceability link (matrix/coverage).
+    category: traceability
+  verifies:
+    description: Test/integration artifact verifies a requirement.
+    category: traceability
+  exercises:
+    description: User story exercises a functional requirement.
+    category: traceability
+  peer:
+    description: Lateral sibling linkage between peer specs/bundles.
+    category: traceability
+  delegates_to:
+    description: Source delegates behaviour/handling to the target.
+    category: behavioral
+  uses:
+    description: Source uses the target capability/module.
+    category: dependency
+    inverse: used_by
+  imports:
+    description: Source imports definitions/models from the target.
+    category: dependency
+  blocks:
+    description: Source blocks progress on or resolution of the target.
+    category: dependency
+    inverse: blocked_by
+  projection_of:
+    description: Source is a projection/view of the target.
+    category: realization
+    inverse: projected_by
+  manages:
+    description: Source manages the lifecycle of the target.
+    category: governance
+    inverse: managed_by
+  issues:
+    description: Source issues the target credential/token.
+    category: governance
+    inverse: issued_by
+  revokes:
+    description: Source revokes the target credential/grant.
+    category: governance
+    inverse: revoked_by
+  rotates:
+    description: Source rotates the target key/secret.
+    category: governance
+    inverse: rotated_by
+  signs:
+    description: Source signs the target artifact/token.
+    category: governance
+    inverse: signed_by
+  advertises:
+    description: Source advertises the target capability/endpoint.
+    category: governance
+    inverse: advertised_by
+  derives_from:
+    description: Source is derived/refined from the target (decomposition lineage).
+    category: traceability
+    inverse: derives_into
+  migrated_from:
+    description: Source was carried over from the target during a migration.
+    category: traceability
+  generated_from:
+    description: Source was generated from the target by a tool/source.
+    category: traceability
+  reviews:
+    description: A review assesses the target artifact.
+    category: traceability
+    inverse: reviewed_by
+  relates_to:
+    description: Loose associative link between decisions/records.
+    category: traceability
+  found_in:
+    description: A finding was identified in the target.
+    category: traceability
+  covers:
+    description: A test/matrix covers the target requirement.
+    category: traceability
+    inverse: covered_by
+roles:
+  domain-object:
+    description: A business-model type (entity, value object, aggregate, nested entity).
+  persistable:
+    description: May be stored by a repository.
+  event-like:
+    description: A domain or audit event.
+  externally-exposed:
+    description: A surface reachable from outside the system.
+  deployable:
+    description: A runtime component that is deployed.
+  measurable:
+    description: A target whose health/value is measured.
+  configurable:
+    description: A target driven by configuration.
+  business-intent:
+    description: An enterprise capability/function/value-stream the system realizes.
+  sensitive:
+    description: Carries secret or otherwise sensitive material.
+traceability:
+  vocabulary_coverage:
+  - name: quality-characteristics
+    from: NFR
+    field: quality_attribute
+    justified_absence_field: quality_attributes_not_applicable
+    check: unowned-quality-characteristic

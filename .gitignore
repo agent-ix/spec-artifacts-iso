@@ -16,4 +16,7 @@ report.json
 /manifest.yaml
 /schemas/
 /skeletons/
+/mappings.yaml
+/examples/
+/semantic/
 *.tgz

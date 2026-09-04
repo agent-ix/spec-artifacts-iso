@@ -1,0 +1,20 @@
+{
+  "name": "@agent-ix/spec-artifacts-iso-semantic",
+  "version": "0.0.0-managed",
+  "private": true,
+  "description": "TypeSpec source of the spec-artifacts-iso semantic data models (FR-005). Emits spec_artifacts_iso/schemas/<Model>.json; never published on its own.",
+  "license": "AGPL-3.0-or-later",
+  "type": "module",
+  "tspMain": "main.tsp",
+  "scripts": {
+    "generate": "node scripts/generate.mjs",
+    "check": "node scripts/generate.mjs --check"
+  },
+  "dependencies": {
+    "@agent-ix/semantic-core": "0.1.0"
+  },
+  "devDependencies": {
+    "@typespec/compiler": "1.15.0",
+    "@typespec/json-schema": "1.15.0"
+  }
+}

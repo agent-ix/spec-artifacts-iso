@@ -6,13 +6,22 @@
 // IS the module root (manifest.yaml at the top, schema refs resolve relative to
 // it). The inner dir remains the single source of truth; the staged copies are
 // gitignored. Runs automatically via the `prepack` script before `npm pack` /
-// `npm publish`. Node built-ins only, zero dependencies.
+// `npm publish`, and `--unstage` (the `postpack` script) removes the copies
+// again.
+//
+// The cleanup is not cosmetic. A `manifest.yaml` at the repo root makes quire
+// treat the root as a module root, which shadows archetype discovery and makes
+// `quire validate` fail on documents whose archetype comes from another
+// module. Leaving the staged copies behind after a pack breaks the repo's own
+// spec gate, so packing always unstages.
+// Node built-ins only, zero dependencies.
 import {
   existsSync,
   readdirSync,
   statSync,
   rmSync,
   cpSync,
+  mkdirSync,
   readFileSync,
   writeFileSync,
 } from "node:fs";
@@ -33,14 +42,42 @@ if (!inner) {
   process.exit(1);
 }
 
-const PAYLOAD = ["manifest.yaml", "schemas", "skeletons"];
+const unstage = process.argv.includes("--unstage");
+
+const PAYLOAD = [
+  "manifest.yaml",
+  "module-manifest.schema.json",
+  "schemas",
+  "skeletons",
+  "mappings.yaml",
+  "mappings.schema.json",
+  "examples",
+  "semantic/main.tsp",
+  "semantic/generated",
+];
 for (const item of PAYLOAD) {
+  const to = join(root, item);
+  if (unstage) {
+    if (existsSync(to)) {
+      rmSync(to, { recursive: true, force: true });
+      console.log(`stage-npm: unstaged ${item}`);
+    }
+    continue;
+  }
   const from = join(root, inner, item);
   if (!existsSync(from)) continue;
-  const to = join(root, item);
   rmSync(to, { recursive: true, force: true });
+  mkdirSync(dirname(to), { recursive: true });
   cpSync(from, to, { recursive: true });
   console.log(`stage-npm: ${inner}/${item} -> ${item}`);
+}
+if (unstage) {
+  // `semantic/main.tsp` and `semantic/generated` leave an empty `semantic/`.
+  const leftover = join(root, "semantic");
+  if (existsSync(leftover) && readdirSync(leftover).length === 0) {
+    rmSync(leftover, { recursive: true, force: true });
+  }
+  process.exit(0);
 }
 
 // Version sync: when packing from a CI tag (vX.Y.Z), stamp package.json so the

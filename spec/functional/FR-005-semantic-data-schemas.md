@@ -23,8 +23,18 @@ relationships:
 > as the criterion cells; the export-name to model map, the CRLF rule, the
 > empty-table rule, and the engine floor are stated; the frontmatter
 > projection rule (sealed models drop undeclared keys, by policy) moves to
-> FR-007. The census figures quoted here are recorded in
-> `scripts/corpus_census.py` and the 2026-09-03 log entry.
+> FR-007.
+>
+> **Census re-measured 2026-09-04** with `scripts/corpus_census.py --json`,
+> which is now a committed, tested script rather than a scratch file. Six
+> figures changed materially and are corrected below. The constraint-category
+> count was a display limit (the old scratch script printed `most_common(30)`),
+> not a measurement: the true distinct count is 334. Verification-method
+> spellings are 1,141, not "more than thirty". Empty verification cells are 7,
+> not 41. `status` is declared on 863 documents, not 973. `US` stories matching
+> neither form are 0, not 8. `log` undated entries are 104 across 9
+> repositories, not ~30 across 4. No constraint changes as a result — every
+> correction makes the free-text argument stronger.
 
 The module SHALL declare one semantic data model per ISO artifact type — `FR`,
 `NFR`, `StR`, `US`, `IT`, `TC`, `MasterRequirements`, `Index`, `Log`, and
@@ -51,10 +61,14 @@ and the outcome of executing it is not a field of any model.
 - `@typespec/compiler` 1.15.0 and `@typespec/json-schema` 1.15.0 as
   devDependencies of the TypeSpec package, with a committed `package-lock.json`.
 - The existing `body_extraction` locators of `spec_artifacts_iso/manifest.yaml`.
-- The corpus census of 2026-09-03 (`scripts/corpus_census.py` and the 2026-09-03 log entry: 7,119
-  documents in 266 `~/dev/*/spec` bundles, counted by document) that fixes the
-  id, status, cardinality, verification-cell, and constraint-type populations
-  the constraints below admit.
+- The corpus census of 2026-09-04 (`scripts/corpus_census.py --json` over
+  `~/dev/*/spec`: 7,209 ISO artifact documents in 269 bundles, counted by
+  document) that fixes the id, status, cardinality, verification-cell, and
+  constraint-type populations the constraints below admit. Per type: `FR`
+  2,851, `index` 1,168, `US` 1,057, `NFR` 811, `StR` 542, `log` 282,
+  `master-requirements` 248, `IT` 183, `TC` 67, `Glossary` 0 — the `Glossary`
+  model is authored against its frontmatter schema and skeleton, because the
+  corpus carries no instance of it yet.
 
 ## Outputs
 
@@ -128,7 +142,7 @@ Identity, relationships, status, provenance:
 - The `MasterRequirements` model SHALL carry `type` (`master-requirements`),
   `name`, `org`, `componentType` (`^[a-z][a-z0-9-]*$`), and the optional
   `title`, `implementationLanguage` (non-empty string or `null`), `tags`,
-  `dependsOn` (bare module names; census: 143 string lists, 65 empty),
+  `dependsOn` (bare module names; census: 143 non-empty string lists, 66 empty),
   `standardsAlignment`, and `securityCritical` the frontmatter schema declares.
 - The `Index` model SHALL carry `type` (`index`) and the optional `title`,
   `description`, and `okfVersion`; the `Log` model SHALL carry `type` (`log`)
@@ -137,8 +151,9 @@ Identity, relationships, status, provenance:
 - The `id` scalar of each model SHALL be the artifact type's own prefix:
   `^FR-[0-9]+$`, `^NFR-[0-9]+$`, `^StR-[0-9]+$`, `^US-[0-9]+$`, `^IT-[0-9]+$`,
   `^TC-[0-9]+$`, and `^[A-Z][A-Za-z]{1,3}-[0-9]+$` for `Glossary` (`GLO-001`).
-  The census population is every one of the 5,427 identified requirement and
-  test documents.
+  The census population is every one of the 5,511 identified requirement and
+  test documents (`FR-N` 2,851, `US-N` 1,057, `NFR-N` 811, `StR-N` 542, `IT-N`
+  183, `TC-N` 67 — six patterns, no other spelling).
 - Every model SHALL carry `provenance: Provenance` — the document's
   corpus-relative `path`, its optional `sourceIdentity` (a semantic-core
   `SemanticId`), and a `sha256:<64 hex>` digest over the document bytes as
@@ -147,8 +162,9 @@ Identity, relationships, status, provenance:
   `relationships: Relationship[]` with `target` (`^ix://`), `type` (an edge verb,
   `^[a-z][a-z0-9_]*$`), and an optional `cardinality` matching
   `^[0-9A-Za-z*]+(\.\.[0-9A-Za-z*]+)?(:[0-9A-Za-z*]+(\.\.[0-9A-Za-z*]+)?)?$`
-  (census population: `1:1`, `1:N`, `N:1`, `n:1`, `1`, `0:1`, `many:1`,
-  `1..1`, `0..1`).
+  (census: 11 forms over 2,923 relationship entries — `1:1` 1,708, `1:N` 545,
+  `N:1` 536, `n:1` 57, `1` 55, `0:1` 9, `1:n` 5, `many:1` 4, `1..1` 2, `0..1`
+  1, `1:m` 1).
 - The `Relationship` model SHALL declare exactly `target`, `type`, and the
   optional `cardinality`.
 - The generator SHALL seal `Relationship` as it seals every other model. FR-003
@@ -156,17 +172,32 @@ Identity, relationships, status, provenance:
   `endpoints`), so those keys cannot reach the record; they are dropped under
   the FR-007 frontmatter drop policy and listed there as dropped keys, which is
   a declared loss rather than a silent one.
-- Every model SHALL carry an optional `status: ArtifactStatus`, a string
-  matching `^[A-Za-z][A-Za-z_-]*$`. The value set stays open by design: the
-  census counts 16 spellings across 973 documents, and closing it is a
+- Every model whose frontmatter schema declares `status` — every model except
+  `Index` and `Log`, whose OKF reserved frontmatter has no such key — SHALL
+  carry an optional `status: ArtifactStatus`, a string matching
+  `^[A-Za-z][A-Za-z_-]*$`. The value set stays open by design: the
+  census counts 16 spellings across the 863 documents that declare one
+  (`APPROVED` 448, `IMPLEMENTED` 147, `DRAFT` 118, `PROPOSED` 77, `SUPERSEDED`
+  20, eleven minor forms), and closing it is a
   vocabulary change owned by a later sweep-and-report (see spec.md Out of
   Scope).
 - The `FR`, `NFR`, `StR`, `US`, `IT`, and `TC` models SHALL carry the optional
   `object` (`^[a-z][a-z0-9_]*$`, the frontmatter `object:` key; census: 888
   FR documents).
-- Record field names SHALL be the camelCase form of the frontmatter key or
-  locator name (`quality_attribute` → `qualityAttribute`,
-  `acceptance_criteria_table` → `acceptanceCriteria`).
+- Record property names SHALL be the camelCase form of the frontmatter key or
+  locator name with a trailing `_table` dropped (`quality_attribute` →
+  `qualityAttribute`, `acceptance_criteria_table` → `acceptanceCriteria`).
+- Where one section carries both a `section_body` locator and a `table_row`
+  locator — `Acceptance Criteria` on `FR` and `NFR`, `Validation Criteria` on
+  `StR`, `Measurement and Evaluation` on `NFR`, `Terms` on `Glossary` — the
+  models SHALL carry the typed rows under that name.
+- The models SHALL NOT also carry the section body of such a section. The rows
+  are that section's record form, and carrying both would put the same bytes in
+  the record twice.
+- The one locator whose property name is not derived from it is `index`
+  `contents`, which fills `entries`: the property is the list the section
+  carries, not the section. `mappings.yaml` records the pair, and it is the
+  only such rename.
 
 Sections and tables:
 
@@ -204,30 +235,33 @@ Sections and tables:
   `ValidationCriterion` as `Verification`, whose own `method` carries that
   `minLength: 1`, so `validation` is not one of the plain-string cells above.
   `type` (census:
-  30 distinct constraint categories), `Verification.method` (census: more than
-  thirty spellings, of which the advisory lint rule `ac-verification-method`
-  admits four), and `target` and `threshold` (census: prose quantities such as
+  334 distinct categories over 3,924 constraint rows),
+  `Verification.method` (census: 1,141 distinct spellings over 20,881 cells, of
+  which the four the advisory lint rule `ac-verification-method` admits account
+  for 13,258), and `target` and `threshold` (census: prose quantities such as
   `600 imports/s`) are free text because their vocabularies are owned by
   advisory lint rules or by no rule at all, and a schema that closed them would
-  reject the corpus it describes. An empty cell (census: 41 verification cells)
+  reject the corpus it describes. An empty cell (census: 7 of 20,881
+  verification cells)
   fails `minLength: 1`; such a document is a census finding, not a form this
   module admits.
 - The model SHALL declare `constraints`, `acceptanceCriteria` (on `NFR`),
   `validationCriteria`, `measurement`, `terms`, and `history` with
   `minItems: 1` where the locator asserts `min_rows: 1`; an optional table
-  whose section is present but holds no table (census: 82 FR documents with a
+  whose section is present but holds no table (census: 74 FR documents with a
   prose `## Constraints`) maps to an absent field, never to `[]`.
 - The `US` model SHALL declare `story: Story { asA, iWant, soThat, section }`,
-  filled by the FR-007 story grammar (census: 896 bold, 142 plain, 8 neither).
+  filled by the FR-007 story grammar (census: 908 bold, 149 plain, 0 neither
+  over 1,057 `US` documents — the grammar matches every story in the corpus).
 - The `IT` model SHALL declare `successCriteria: SuccessCriterion { id:
   ^IT-[0-9]+-SC-[0-9]+$, text, line }[]`, one per `IT-XXX-SC-NN` token in
   `## Test Procedure` with `text` the trimmed remainder of the token's line
   after an optional `:`; the array MAY be empty (the `it-success-criteria`
-  lint rule is advisory; census: 156 of 182 IT documents carry tokens).
+  lint rule is advisory; census: 157 of 183 IT documents carry tokens).
 - The `Index` model SHALL declare `entries: IndexEntry { title, href, summary?,
   line }[]`, one per `* [title](href) - summary` or `- [title](href)` line
-  under `## Contents` (census: 6,242 link lines, 709 with `-` bullets, 5,184
-  without a summary), where `href` is a relative path
+  under `## Contents` (census: 6,274 link lines over 1,168 index documents, 736
+  with `-` bullets, 5,163 without a summary), where `href` is a relative path
   (`^(\./|\.\./)*[^:/][^:]*$`, never a scheme), because index links are local
   navigation and not knowledge-graph edges. A line under `## Contents` that
   matches neither form (prose, a nested bullet, a blank line) is not an entry
@@ -237,8 +271,8 @@ Sections and tables:
   ^[0-9]{4}-[0-9]{2}-[0-9]{2}$, text, line }[]`, one per
   `* **YYYY-MM-DD** — text` entry under `## History`, where the bullet is `*`
   or `-`, the dash separator is optional, and the entry extends to the next
-  bullet at the same indentation (census: 756 dated entries, ~30 undated in 4
-  repositories, which the mapping rejects naming the line).
+  bullet at the same indentation (census: 770 dated entries, 104 undated across
+  9 repositories, which the mapping rejects naming the line).
 - The `FR` model SHALL declare `invariants?: ClauseRef[]` (semantic-core,
   `minItems: 1`), filled by the FR-007 `ocl-clause` mapping from an optional
   `## Invariants` section; the clause text is never parsed.

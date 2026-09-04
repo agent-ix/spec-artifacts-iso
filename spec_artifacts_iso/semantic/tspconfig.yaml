@@ -1,0 +1,9 @@
+emit:
+  - "@typespec/json-schema"
+options:
+  "@typespec/json-schema":
+    file-type: json
+    emitAllModels: true
+    emitAllRefs: true
+    seal-object-schemas: true
+    emitter-output-dir: "{project-root}/generated/json-schema"

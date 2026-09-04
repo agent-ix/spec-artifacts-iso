@@ -2,7 +2,7 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://agent-ix.dev/schemas/filament/module-manifest/1.0.0.json",
   "title": "Filament Module Manifest",
-  "description": "Normative schema for filament-core-service modules.manifest payload (FR-035).",
+  "description": "Normative schema for filament-core-service modules.manifest payload (FR-035). CR-012 (2026-09-03): optional top-level `semantic` block and the `data_schema` reference form, copied from filament-core-service FR-035 CR-003 (agent-ix/filament-core-service#21, revision a77f31e as vendored by quoin 3e842ce; quoin FR-070/FR-073); no new required key.",
   "type": "object",
   "required": [
     "manifest_version",
@@ -210,6 +210,103 @@
     "traceability": {
       "$ref": "#/$defs/TraceabilityModel",
       "description": "FR-001 CR-002 (quire-rs FR-050/FR-051): the declarative traceability model — which archetypes mint trace ids, which columns reference them, the status vocabulary, the trace-tag grammar, and the column vocabularies a matrix contract and its coverage rollup must agree on. Absent means undeclared; malformed fails module load like any other manifest shape error."
+    },
+    "semantic": {
+      "type": "object",
+      "description": "Optional semantic-module block (quoin FR-070, agent-ix/quoin#293; this repository owns the schema per agent-ix/filament-core-service#21). Versioned independently of manifest_version. Install-time rejections are Quoin's; artifact-time diagnostics are Quire's.",
+      "required": [
+        "contract_version",
+        "semantic_core",
+        "package"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "contract_version": {
+          "type": "string",
+          "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$",
+          "description": "Semantic-module contract version; 1.0.0 for quoin FR-070."
+        },
+        "semantic_core": {
+          "type": "string",
+          "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$",
+          "description": "Exact @agent-ix/semantic-core version the module compiles against."
+        },
+        "package": {
+          "type": "string",
+          "pattern": "^[a-z0-9][a-z0-9._-]*/[a-z0-9][a-z0-9._-]*$",
+          "description": "IR packageIdentity (<org>/<repo>), never a URL or ix:// identity."
+        },
+        "exports": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "uniqueItems": true,
+          "description": "Object-type names published as semantic types; each must be declared in object_types."
+        },
+        "imports": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "string",
+            "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$"
+          },
+          "description": "Imported semantic packages (<org>/<repo>) at exact versions."
+        },
+        "targets": {
+          "type": "array",
+          "items": {
+            "enum": [
+              "json-schema",
+              "rust",
+              "typescript",
+              "python-pydantic-v2",
+              "python-dataclass",
+              "markdown",
+              "json",
+              "postgresql",
+              "protobuf",
+              "avro",
+              "arrow",
+              "parquet",
+              "csv",
+              "tsv"
+            ]
+          },
+          "uniqueItems": true,
+          "description": "Values from the filament-core-data declared target registry (generated targets and representation formats)."
+        },
+        "mappings": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "uniqueItems": true,
+          "description": "Named representation mappings (quoin FR-071..073)."
+        },
+        "compatibility_posture": {
+          "enum": [
+            "strict",
+            "additive",
+            "declared-lossy"
+          ],
+          "default": "additive"
+        },
+        "legacy_forms": {
+          "enum": [
+            "warning",
+            "error"
+          ],
+          "default": "warning",
+          "description": "Severity of legacy Properties forms (quoin FR-074); error requires sweep_report."
+        },
+        "sweep_report": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Module-relative path to the quoin semantic sweep report that justifies legacy_forms: error."
+        }
+      }
     }
   },
   "$defs": {
@@ -284,8 +381,45 @@
           "description": "Locator DSL (FR-035 CR-002). Each locator MAY carry an `assert` facet driving structural validation in quire-rs validate_document. Supersedes required_sections."
         },
         "data_schema": {
-          "type": "object",
-          "description": "JSON Schema validating the EXTRACTED record (distinct from frontmatter_schema_ref, which validates frontmatter)."
+          "description": "JSON Schema validating the EXTRACTED record (distinct from frontmatter_schema_ref, which validates frontmatter): an inline object, or (quoin FR-073) a reference to the module's emitted schema by module-relative path and sha256 digest. An object carrying schema/digest together with any other key is ambiguous and rejected by the consumer.",
+          "oneOf": [
+            {
+              "type": "object",
+              "not": {
+                "anyOf": [
+                  {
+                    "required": [
+                      "schema"
+                    ]
+                  },
+                  {
+                    "required": [
+                      "digest"
+                    ]
+                  }
+                ]
+              }
+            },
+            {
+              "type": "object",
+              "required": [
+                "schema",
+                "digest"
+              ],
+              "additionalProperties": false,
+              "properties": {
+                "schema": {
+                  "type": "string",
+                  "minLength": 1,
+                  "pattern": "^(?!/)(?!.*\\.\\.)[^\\u0000]+\\.json$"
+                },
+                "digest": {
+                  "type": "string",
+                  "pattern": "^sha256:[0-9a-f]{64}$"
+                }
+              }
+            }
+          ]
         },
         "defaults": {
           "type": "object",
@@ -339,7 +473,45 @@
           "type": "string"
         },
         "data_schema": {
-          "type": "object"
+          "description": "Inline JSON Schema object, or (quoin FR-073) a reference to the module's emitted schema by module-relative path and sha256 digest. An object carrying schema/digest together with any other key is ambiguous and rejected by the consumer.",
+          "oneOf": [
+            {
+              "type": "object",
+              "not": {
+                "anyOf": [
+                  {
+                    "required": [
+                      "schema"
+                    ]
+                  },
+                  {
+                    "required": [
+                      "digest"
+                    ]
+                  }
+                ]
+              }
+            },
+            {
+              "type": "object",
+              "required": [
+                "schema",
+                "digest"
+              ],
+              "additionalProperties": false,
+              "properties": {
+                "schema": {
+                  "type": "string",
+                  "minLength": 1,
+                  "pattern": "^(?!/)(?!.*\\.\\.)[^\\u0000]+\\.json$"
+                },
+                "digest": {
+                  "type": "string",
+                  "pattern": "^sha256:[0-9a-f]{64}$"
+                }
+              }
+            }
+          ]
         },
         "body_extraction": {
           "$ref": "#/$defs/BodyExtraction"

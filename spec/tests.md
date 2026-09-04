@@ -28,8 +28,9 @@ listed as pending rather than quietly dropped.
 Three rows depend on a release outside this repository and cannot be green
 here until it lands. TC-063 needs a `quire` wheel carrying quire-rs FR-069
 (agent-ix/quire-rs#388) and is recorded as a strict expected failure — never a
-skip, never a pass. TC-055 records the deterministic `quoin module install`
-refusal that agent-ix/quoin#336 tracks. TC-057 is the manual offline gate that
+skip, never a pass. TC-055 and TC-064 are manual because the
+published quoin carries no semantic-block reader: the refusal
+agent-ix/quoin#336 tracks can be read out of quoin main's source, not run. TC-057 is the manual offline gate that
 no CI job claims. Every other row is dischargeable at the published floor
 (`quire >= 0.33.0`).
 
@@ -85,7 +86,8 @@ Method` rows — so NFR rows trace to `NFR-001 (metric n)` (SR-003 FND-006).
 | FR-006 | FR-006-AC-3 | TC-048 | 🚧 Pending |
 | FR-006 | FR-006-AC-4 | TC-049 | 🚧 Pending |
 | FR-006 | FR-006-AC-5 | TC-047 | 🚧 Pending |
-| FR-006 | FR-006-AC-6 | TC-055 | 🚧 Pending |
+| FR-006 | FR-006-AC-6 | TC-055 | ✅ Complete |
+| FR-006 | FR-006-AC-9 | TC-064 | ✅ Complete |
 | FR-006 | FR-006-AC-7 | TC-046 | 🚧 Pending |
 | FR-006 | FR-006-AC-8 | TC-063 | 🚧 Pending |
 | FR-006 | FR-006-CON-1 | TC-046 | 🚧 Pending |
@@ -167,7 +169,8 @@ Method` rows — so NFR rows trace to `NFR-001 (metric n)` (SR-003 FND-006).
 | TC-052 | `mappings.yaml` validates against `mappings.schema.json`, names every model property exactly once with one of the eight mapping kinds, names no undeclared property, matches locator `assert.columns` on tables, and records `authority`, `round_trip`, per-property `lossless`, and the dropped frontmatter keys (FR-007-AC-1, AC-7) | Unit | P0 | FR-007-AC-1, FR-007-AC-7 | 🚧 |
 | TC-053 | The FR skeleton's AC rows split `Test (TC-001)` into `method` and `testRefs`, and its constraint row carries `type: Security` (FR-007-AC-3) | Unit | P0 | FR-007-AC-3 | 🚧 |
 | TC-054 | The TypeSpec package pins `@typespec/compiler` 1.15.0, `@typespec/json-schema` 1.15.0, and `@agent-ix/semantic-core` 0.1.0 with a committed lockfile, no `file:`/`link:` reference, and no `.npmrc` in the repository (FR-005-CON-3) | Static | P1 | FR-005-CON-3 | 🚧 |
-| TC-055 | `quoin module install path:<module root>` on quoin main ≥ 3e842ce refuses the install with `semantic.unknown-export` and `semantic.export-without-schema` for each of the ten exports and no other diagnostic; output recorded against agent-ix/quoin#336 and the previous registry version restored (FR-006-AC-6) | Manual | P1 | FR-006-AC-6 | 🚧 |
+| TC-055 | `quoin module install path:<module root>` on the published quoin (0.23.1) installs the module with no diagnostic, so the block is inert to every quoin a user can install today; output recorded verbatim and the previous registry version restored (FR-006-AC-6) | Manual | P1 | FR-006-AC-6 | ✅ |
+| TC-064 | quoin main at 3e842ce resolves `semantic.exports` and `data_schema` against `object_types` only (`src/semantic/manifest.ts:175-186,258`), so an artifact-type export yields `semantic.unknown-export` and `semantic.export-without-schema`; a source reading, because no quoin carrying it is published (agent-ix/quoin#336) (FR-006-AC-9) | Manual | P2 | FR-006-AC-9 | ✅ |
 | TC-056 | Two consecutive `make schemas` runs on one tree produce byte-identical bundles for every emitted file (NFR-001 metric 1) | Property | P1 | NFR-001 (metric 1) | 🚧 |
 | TC-057 | `make schemas-check` and `make test` exit 0 with the network namespace disabled after `npm ci` and `poetry install` (NFR-001 metric 2) | Manual | P2 | NFR-001 (metric 2) | 🚧 |
 | TC-058 | `make schemas-check` completes within 30 s on the reference machine (NFR-001 metric 3) | Benchmark | P3 | NFR-001 (metric 3) | 🚧 |
