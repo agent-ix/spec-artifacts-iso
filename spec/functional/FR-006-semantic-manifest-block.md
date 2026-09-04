@@ -58,10 +58,10 @@ bytes.
   filament-core-service FR-035 CR-003 (agent-ix/filament-core-service#21,
   revision a77f31e, SHA-256 `69cf9738…dcbbc`, as vendored by quoin 3e842ce).
 - The quire wheel the suite runs against: `>= 0.33.0`, the published floor of
-  the internal package index. Every criterion of this requirement except AC-3's
-  digest-refusal half is discharged at that floor, because a consumer that
-  ignores the `semantic` block loads the module unchanged (CON-1).
-- The digest-refusal half of AC-3 needs quire-rs FR-069, which is on `quire-rs`
+  the internal package index. Every criterion of this requirement except AC-8
+  is discharged at that floor, because a consumer that ignores the `semantic`
+  block loads the module unchanged (CON-1).
+- AC-8, the digest refusal, needs quire-rs FR-069, which is on `quire-rs`
   main (engine 0.46.0) and in no published wheel (agent-ix/quire-rs#388). The
   suite SHALL record that assertion as a strict expected failure naming
   agent-ix/quire-rs#388 — never a skip and never a pass. A skip reports green
@@ -76,8 +76,8 @@ bytes.
   that carries a `data_schema` reference (`FR`, `NFR`, `StR`, `US`, `IT`, `TC`,
   `master-requirements`, `index`, `log`, `Glossary`), `imports: {}`,
   `targets: [json-schema, markdown]`, `mappings: [frontmatter, section, table,
-  typed-table, ocl-clause, list, token, provenance]`, `compatibility_posture: additive`, and
-  `legacy_forms: warning`. `sweep_report` is absent because `legacy_forms` is
+  typed-table, ocl-clause, list, token, provenance]`,
+  `compatibility_posture: additive`, and `legacy_forms: warning`. `sweep_report` is absent because `legacy_forms` is
   `warning`; nine of the ten admitted keys are present. `legacy_forms` governs
   the legacy `## Properties` forms quoin FR-074 sweeps — a form none of this
   module's own documents author — so `warning` is the value that changes

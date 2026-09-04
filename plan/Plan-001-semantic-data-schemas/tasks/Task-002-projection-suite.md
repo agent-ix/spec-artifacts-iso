@@ -2,7 +2,7 @@
 id: Task-002
 title: "FR-005 — the schema-projection test suite"
 type: Task
-status: not_started
+status: done
 track: A
 priority: P0
 relationships:

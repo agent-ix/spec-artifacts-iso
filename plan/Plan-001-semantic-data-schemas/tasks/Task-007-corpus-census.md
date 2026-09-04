@@ -2,7 +2,7 @@
 id: Task-007
 title: "FR-005 — the corpus census the constraints are drawn from"
 type: Task
-status: not_started
+status: done
 track: B
 priority: P2
 relationships:

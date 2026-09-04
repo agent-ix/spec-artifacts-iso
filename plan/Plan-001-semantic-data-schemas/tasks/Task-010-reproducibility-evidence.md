@@ -2,7 +2,7 @@
 id: Task-010
 title: "NFR-001 — reproducibility, offline resolution, and the blocked gates"
 type: Task
-status: not_started
+status: done
 track: C
 priority: P1
 relationships:

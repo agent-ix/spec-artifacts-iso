@@ -2,7 +2,7 @@
 id: Task-001
 title: "FR-005 — TypeSpec models realigned with the reviewed requirement"
 type: Task
-status: not_started
+status: done
 track: A
 priority: P0
 relationships:

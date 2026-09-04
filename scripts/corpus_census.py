@@ -1,14 +1,15 @@
 #!/usr/bin/env python3
 """Corpus census over ISO spec bundles — the measurement FR-005 is drawn from.
 
-FR-005 cites this script as the record of the 2026-09-03 census: it is the
+FR-005 cites this script as the record of its census (re-measured 2026-09-04,
+which corrected six figures the earlier hand count got wrong): it is the
 source of every population the requirement's constraints admit (the status
 spellings, the cardinality forms, the constraint categories, the empty
 verification cells, the index link lines, and the rest). It therefore has to
 be reproducible by someone who is not the author, so:
 
 * the corpus root is an argument (``--root``), defaulting to the ``~/dev/*/spec``
-  glob the 2026-09-03 run used, rather than one developer's absolute path;
+  glob the recorded runs used, rather than one developer's absolute path;
 * every number states its **unit**, its **population**, and its **method** —
   whether it was counted by document, by line, by table row, by relationship
   entry, or by directory — so a figure quoted in the spec can be traced back to
@@ -40,7 +41,7 @@ from typing import Any
 
 import yaml
 
-# The glob the 2026-09-03 census ran over. Kept as the *default* only; the
+# The glob the recorded censuses ran over. Kept as the *default* only; the
 # logic below never assumes it.
 DEFAULT_ROOT_GLOB = "~/dev/*/spec"
 

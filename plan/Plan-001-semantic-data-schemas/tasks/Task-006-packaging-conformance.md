@@ -2,7 +2,7 @@
 id: Task-006
 title: "FR-005 — packaging and toolchain conformance"
 type: Task
-status: not_started
+status: done
 track: B
 priority: P1
 relationships:

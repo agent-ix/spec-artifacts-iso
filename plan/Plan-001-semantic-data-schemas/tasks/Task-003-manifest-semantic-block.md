@@ -2,7 +2,7 @@
 id: Task-003
 title: "FR-006 — the manifest semantic block and digest references"
 type: Task
-status: not_started
+status: done
 track: A
 priority: P0
 relationships:
