@@ -5,6 +5,11 @@ title: "Test Matrix"
 ---
 # Test Matrix
 
+Reference status-column amendment (quire-rs#409): TC-064 checks omitted/nonblank
+overrides and blank/non-string refusal; TC-065 checks that removing only the
+new property recovers the exact parent schema. Both trace FR-001-AC-1 and are
+planned until their native schema controls run.
+
 ## Overview
 
 Maps every acceptance criterion to the test that backs it.
