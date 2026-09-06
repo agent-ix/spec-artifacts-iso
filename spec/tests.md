@@ -5,10 +5,8 @@ title: "Test Matrix"
 ---
 # Test Matrix
 
-Reference status-column amendment (quire-rs#409): TC-064 checks omitted/nonblank
-overrides and blank/non-string refusal; TC-065 checks that removing only the
-new property recovers the exact parent schema. Both trace FR-001-AC-1 and are
-planned until their native schema controls run.
+The quire-rs#409 status-column schema amendment has local native controls
+(TC-064/TC-065); exact engine/declaration stack integration remains separate.
 
 ## Overview
 
@@ -120,6 +118,8 @@ Method` rows — so NFR rows trace to `NFR-001 (metric n)` (SR-003 FND-006).
 
 | Test ID | Title | Type | Priority | Traces To | Status |
 |---------|-------|------|----------|-----------|--------|
+| TC-064 | Optional nonblank reference status columns validate; blank and non-string values fail without adding a required key or default | Unit | P0 | FR-001-AC-1 | ✅ |
+| TC-065 | Removing only the new status_column property recovers the exact canonical parent schema bytes | Unit | P0 | FR-001-AC-1 | ✅ |
 | TC-001 | the manifest validates against the FR-035 schema. FR-001 CR-002: neither the missing-library nor the missing-schema branch skips any more. A gate that reports "passed" because it could not run is the failure mode this whole ticket (`test_manifest_validates_against_fr035_schema`) | Unit | P0 | FR-001-AC-1 | ✅ |
 | TC-002 | the bundled FR-035 schema must REJECT ``template_ref`` on an ArtifactTypeEntry (render is gone; additionalProperties:false → error) (`test_fr002_schema_rejects_template_ref_on_artifact_type`) | Unit | P0 | FR-002-AC-1 | ✅ |
 | TC-003 | a ``master-requirements`` artifact_type is declared with a frontmatter_schema_ref and a body_extraction carrying assert facets (`test_fr003_ac1_master_requirements_archetype_registered`) | Unit | P0 | FR-003-AC-1 | ✅ |

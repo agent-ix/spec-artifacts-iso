@@ -1237,6 +1237,11 @@
           "type": "string",
           "minLength": 1
         },
+        "status_column": {
+          "type": "string",
+          "pattern": "\\S",
+          "description": "quire-rs#409: optional exact status-column override; omission inherits traceability.status.column. The engine requires a declared global status vocabulary."
+        },
         "pattern": {
           "type": "string",
           "minLength": 1
