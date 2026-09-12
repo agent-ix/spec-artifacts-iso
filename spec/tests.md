@@ -41,7 +41,7 @@ Method` rows — so NFR rows trace to `NFR-001 (metric n)` (SR-003 FND-006).
 
 ### Functional Requirement Coverage
 
-| Functional Req | Acceptance Criteria | Test Cases | Coverage Status |
+| Functional Req | Acceptance Criteria | Test Cases | Status |
 |----------------|---------------------|------------|-----------------|
 | FR-001 | FR-001-AC-1 | TC-001, TC-022, TC-023, TC-024, TC-025, TC-026, TC-027, TC-028, TC-029, TC-030, TC-031, TC-032, TC-033, TC-034, TC-035, TC-036, TC-037, TC-038 | ✅ Complete |
 | FR-001 | FR-001-AC-2 | — | 🚧 Pending |
