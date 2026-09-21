@@ -142,7 +142,18 @@ quire-rs FR-058's upward-trace relations follow this decision: they accept `sati
 | FR-004-AC-2 | Every `inverse` label is a non-empty identifier, and the set of labels declared by more than one verb is exactly the recorded set — so a **new** collision, which FR-041-AC-3 resolves first-wins and would silently change which forward verb the label normalizes onto, fails rather than passing quietly. | Test (TC-018) |
 | FR-004-AC-3 | An inverse label is **not** required to be a declared `edge_types` key: FR-041-AC-2 type-allows it regardless, and requiring it would double the vocabulary with entries no author writes. The recorded count of labels that are not forward verbs is asserted, so a change in that ratio is visible. | Test (TC-019) |
 | FR-004-AC-4 | Every entry in `roles` carries a non-empty `description`. | Test (TC-020) |
-| FR-004-AC-5 | The manifest loads under the module-manifest schema with the vocabulary present, and a malformed entry (missing `category`, unknown key) fails module load rather than loading partially. | Test (TC-021) |
+| FR-004-AC-5 | The manifest declares both registries, and an `edge_types` entry that loses its `category` costs the module every archetype at load — a broken entry does not load partially. Asserted against the engine that reads the vocabulary, with an unmutated control proving the load is real. | Test (TC-021) |
+
+**[RAN] What FR-004-AC-5 no longer claims.** Until PLAT-902 this criterion was
+verified by validating the manifest against a copy of the FR-035 module-manifest
+schema this package shipped, and it asserted that an entry with an *unknown key*
+also fails module load. Measured against the declared engine floor (quire
+0.33.0), it does not: an `edge_types` entry gaining an undeclared key loads all
+eleven archetypes. Removing both registries outright also loads. So the
+criterion now states only what is observed — the declaration (also covered by
+AC-1 and AC-4) and the `category` refusal, which empties the registry. The
+unknown-key obligation belongs to whatever applies the FR-035 schema, and is not
+asserted here rather than being asserted against a copy.
 
 ## Constraints
 

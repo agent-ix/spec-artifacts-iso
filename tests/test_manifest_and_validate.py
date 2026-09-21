@@ -18,9 +18,11 @@ enforces structure with no render step. These tests therefore cover:
 
 from __future__ import annotations
 
+import copy
 import json
 import pathlib
 import re
+import shutil
 
 import pytest
 import yaml
@@ -700,12 +702,54 @@ def test_fr004_ac4_every_role_has_a_description() -> None:
         assert entry.get("description", "").strip(), f"{role}: has a description"
 
 
-def test_fr004_ac5_the_manifest_declares_the_vocabulary_registries() -> None:
+def _module_tree(parent: pathlib.Path, manifest: dict) -> pathlib.Path:
+    """A throwaway copy of the module carrying `manifest`, for the loader.
+
+    Only the payload quire reads at load time is copied. Returns the *search
+    path* the loader walks, not the module directory.
+    """
+    module = parent / PKG_ROOT.name
+    module.mkdir(parents=True, exist_ok=True)
+    (module / "manifest.yaml").write_text(yaml.safe_dump(manifest, sort_keys=False))
+    for sub in ("schemas", "skeletons", "examples"):
+        if (PKG_ROOT / sub).is_dir():
+            shutil.copytree(PKG_ROOT / sub, module / sub, dirs_exist_ok=True)
+    for extra in ("mappings.yaml", "mappings.schema.json"):
+        if (PKG_ROOT / extra).is_file():
+            shutil.copy2(PKG_ROOT / extra, module / extra)
+    return parent
+
+
+def test_fr004_ac5_the_vocabulary_is_declared_and_a_broken_entry_is_refused(
+    tmp_path: pathlib.Path,
+) -> None:
     """TC-021: (FR-004-AC-5).
 
-    The declaration is asserted here; that a consumer accepts it is asserted
-    where a consumer reads it, by loading the module through quire (TC-048).
+    Two halves, both over the engine that reads the vocabulary rather than over
+    a schema document. The registries are declared; and an ``edge_types`` entry
+    that loses its ``category`` costs the module every archetype, so a broken
+    entry cannot load partially. An unmutated control proves the load is real —
+    without it the refusal half passes on any copy that fails to load at all.
+
+    Measured against the declared floor (quire 0.33.0): an ``edge_types`` entry
+    gaining an *unknown key* loads all eleven archetypes, so that half of the
+    old criterion is not asserted here and FR-004-AC-5 no longer claims it.
     """
+    import quire
+
     manifest = yaml.safe_load(MANIFEST_PATH.read_text())
     assert manifest.get("edge_types"), "the manifest declares edge_types"
     assert manifest.get("roles"), "the manifest declares roles"
+
+    control = _module_tree(tmp_path / "control", copy.deepcopy(manifest))
+    assert quire.Registry.load_from(
+        [str(control)]
+    ).archetype_names(), "the unmutated copy does not load; the control is broken"
+
+    broken = copy.deepcopy(manifest)
+    verb = next(iter(broken["edge_types"]))
+    broken["edge_types"][verb].pop("category", None)
+    loaded = quire.Registry.load_from(
+        [str(_module_tree(tmp_path / "no-category", broken))]
+    ).archetype_names()
+    assert not loaded, f"{verb} without a category loaded anyway: {sorted(loaded)}"

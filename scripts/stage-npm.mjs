@@ -62,6 +62,12 @@ const PAYLOAD = [
   "semantic/main.tsp",
   "semantic/generated",
 ];
+// A record naming a path no longer in PAYLOAD — one left by a failed pack on an
+// older revision, e.g. the `module-manifest.schema.json` removed under PLAT-902
+// — makes `--unstage` refuse and exit, so entries after it in the record stay
+// staged. `manifest.yaml` is staged first and so is removed first, which is the
+// leftover that matters (a repo-root manifest shadows archetype discovery); the
+// rest are gitignored and the next stage rewrites the record.
 // The record of what THIS run staged, one payload path per line. `--unstage`
 // removes only what the record names, so a repo-root path that legitimately
 // carries a payload name — one this script never copied — is never deleted by
