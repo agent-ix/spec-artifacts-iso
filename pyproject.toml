@@ -11,7 +11,6 @@ authors = ["Agent IX <agents@agent-ix.dev>"]
 packages = [{ include = "spec_artifacts_iso" }]
 include = [
     { path = "spec_artifacts_iso/manifest.yaml", format = ["sdist", "wheel"] },
-    { path = "spec_artifacts_iso/module-manifest.schema.json", format = ["sdist", "wheel"] },
     { path = "spec_artifacts_iso/schemas/**/*.json", format = ["sdist", "wheel"] },
     { path = "spec_artifacts_iso/skeletons/**/*.md", format = ["sdist", "wheel"] },
     { path = "spec_artifacts_iso/mappings.yaml", format = ["sdist", "wheel"] },

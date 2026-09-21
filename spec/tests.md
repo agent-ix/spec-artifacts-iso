@@ -43,11 +43,10 @@ Method` rows — so NFR rows trace to `NFR-001 (metric n)` (SR-003 FND-006).
 
 | Functional Req | Acceptance Criteria | Test Cases | Status |
 |----------------|---------------------|------------|-----------------|
-| FR-001 | FR-001-AC-1 | TC-001, TC-022, TC-023, TC-024, TC-025, TC-026, TC-027, TC-028, TC-029, TC-030, TC-031, TC-032, TC-033, TC-034, TC-035, TC-036, TC-037, TC-038 | ✅ Complete |
 | FR-001 | FR-001-AC-2 | — | 🚧 Pending |
 | FR-001 | FR-001-AC-3 | — | 🚧 Pending |
 | FR-001 | FR-001-AC-4 | — | 🚧 Pending |
-| FR-002 | FR-002-AC-1 | TC-002, TC-005, TC-006, TC-014, TC-015, TC-016 | ✅ Complete |
+| FR-002 | FR-002-AC-1 | TC-005, TC-006, TC-014, TC-015, TC-016 | ✅ Complete |
 | FR-002 | FR-002-AC-2 | TC-013 | ✅ Complete |
 | FR-002 | FR-002-AC-3 | — | 🚧 Pending |
 | FR-002 | FR-002-AC-4 | TC-007 | ✅ Complete |
@@ -84,7 +83,6 @@ Method` rows — so NFR rows trace to `NFR-001 (metric n)` (SR-003 FND-006).
 | FR-006 | FR-006-AC-1 | TC-046 | ✅ Complete |
 | FR-006 | FR-006-AC-2 | TC-047 | ✅ Complete |
 | FR-006 | FR-006-AC-3 | TC-048 | ✅ Complete |
-| FR-006 | FR-006-AC-4 | TC-049 | ✅ Complete |
 | FR-006 | FR-006-AC-5 | TC-047 | ✅ Complete |
 | FR-006 | FR-006-AC-6 | TC-055 | ✅ Complete |
 | FR-006 | FR-006-AC-9 | TC-064 | ✅ Complete |
@@ -115,8 +113,6 @@ Method` rows — so NFR rows trace to `NFR-001 (metric n)` (SR-003 FND-006).
 
 | Test ID | Title | Type | Priority | Traces To | Status |
 |---------|-------|------|----------|-----------|--------|
-| TC-001 | the manifest validates against the FR-035 schema. FR-001 CR-002: neither the missing-library nor the missing-schema branch skips any more. A gate that reports "passed" because it could not run is the failure mode this whole ticket (`test_manifest_validates_against_fr035_schema`) | Unit | P0 | FR-001-AC-1 | ✅ |
-| TC-002 | the bundled FR-035 schema must REJECT ``template_ref`` on an ArtifactTypeEntry (render is gone; additionalProperties:false → error) (`test_fr002_schema_rejects_template_ref_on_artifact_type`) | Unit | P0 | FR-002-AC-1 | ✅ |
 | TC-003 | a ``master-requirements`` artifact_type is declared with a frontmatter_schema_ref and a body_extraction carrying assert facets (`test_fr003_ac1_master_requirements_archetype_registered`) | Unit | P0 | FR-003-AC-1 | ✅ |
 | TC-004 | TC-004): the master-requirements frontmatter schema requires type/name/org/component_type, does NOT require id/title, and constrains component_type to kebab-case ``^[a-z][a-z0-9-]*$`` (`test_fr003_ac2_master_requirements_frontmatter_schema_shape`) | Unit | P0 | FR-003-AC-2 | ✅ |
 | TC-005 | every archetype declares ``body_extraction`` with asserts and declares none of ``template_ref`` / ``required_sections`` / ``variants`` (`test_fr002_ac1_unified_shape_no_retired_fields`) | Unit | P0 | FR-002-AC-1 | ✅ |
@@ -135,24 +131,7 @@ Method` rows — so NFR rows trace to `NFR-001 (metric n)` (SR-003 FND-006).
 | TC-018 | . An inverse label declared by two forward verbs resolves first-wins with a diagnostic (quire-rs FR-041-AC-3), so which verb it normalizes onto depends on declaration order. That is designed. What is *not* designed is a new collis (`test_fr004_ac2_shared_inverse_labels_are_the_recorded_set`) | Unit | P0 | FR-004-AC-2 | ✅ |
 | TC-019 | . Deliberately the opposite of the invariant it is tempting to assert. quire-rs FR-041-AC-2 type-allows an edge whose verb is a declared inverse label "even when the label is absent from ``edge_types``" — so requiring every invers (`test_fr004_ac3_inverse_labels_need_not_be_declared_verbs`) | Unit | P0 | FR-004-AC-3 | ✅ |
 | TC-020 |  (`test_fr004_ac4_every_role_has_a_description`) | Unit | P0 | FR-004-AC-4 | ✅ |
-| TC-021 | . The FR-035 gate covers the whole manifest; this asserts the vocabulary is *present* when it passes, so a future edit that drops `edge_types` entirely cannot slip through a green schema run (`test_fr004_ac5_vocabulary_validates_under_the_module_manifest_schema`) | Unit | P0 | FR-004-AC-5 | ✅ |
-| TC-022 | a well-formed `required_relations` and `acyclic_edges` declaration validates (`test_tc_schema_014_required_relations_is_accepted`) | Unit | P0 | FR-001-AC-1 | ✅ |
-| TC-023 | a declaration that cannot be executed is rejected by the schema, not discovered as a corpus-wide false alarm (`test_tc_schema_015_unexecutable_relations_are_rejected`) | Unit | P0 | FR-001-AC-1 | ✅ |
-| TC-024 | `to` is the one field where empty carries meaning rather than being a defect (`test_tc_schema_016_empty_to_means_any_target`) | Unit | P0 | FR-001-AC-1 | ✅ |
-| TC-025 | a blank verb in `acyclic_edges` is rejected (`test_tc_schema_017_blank_acyclic_verb_is_rejected`) | Unit | P0 | FR-001-AC-1 | ✅ |
-| TC-026 | a well-formed declaration validates (`test_tc_schema_018_vocabulary_coverage_is_accepted`) | Unit | P0 | FR-001-AC-1 | ✅ |
-| TC-027 | the vocabulary cannot be restated here (`test_tc_schema_019_the_schema_declares_no_values_key`) | Unit | P0 | FR-001-AC-1 | ✅ |
-| TC-028 | a declaration that cannot run is rejected (`test_tc_schema_020_malformed_coverage_is_rejected`) | Unit | P0 | FR-001-AC-1 | ✅ |
-| TC-029 | a well-formed declaration validates (`test_tc_schema_021_combinatorial_source_is_accepted`) | Unit | P0 | FR-001-AC-1 | ✅ |
-| TC-030 | `strength: 0` cannot be declared (`test_tc_schema_022_zero_strength_is_rejected`) | Unit | P0 | FR-001-AC-1 | ✅ |
-| TC-031 | a malformed declaration fails at load (`test_tc_schema_023_malformed_combinatorial_is_rejected`) | Unit | P0 | FR-001-AC-1 | ✅ |
-| TC-032 | a well-formed declaration validates (`test_tc_schema_024_implements_marker_forms_are_accepted`) | Unit | P0 | FR-001-AC-1 | ✅ |
-| TC-033 | scope and evidence cannot be one list (`test_tc_schema_025_implements_is_a_separate_list`) | Unit | P0 | FR-001-AC-1 | ✅ |
-| TC-034 | a malformed form fails at load (`test_tc_schema_026_malformed_implements_marker_is_rejected`) | Unit | P0 | FR-001-AC-1 | ✅ |
-| TC-035 | `traceability.source_exclude` is accepted as a list of non-empty globs and rejects an empty string and a bare string (`test_tc_schema_027_source_exclude_is_accepted`) | Unit | P0 | FR-001-AC-1 | ✅ |
-| TC-036 | `source_exclude` coexists with `exclude` as a distinct key — declaring both is legal and neither aliases the other (`test_tc_schema_028_source_exclude_is_not_exclude`) | Unit | P0 | FR-001-AC-1 | ✅ |
-| TC-037 | the anchored globs modules actually declare stay legal under the CR-011 value constraints — `tests/fixtures/**`, `tests_integration/fixtures/**`, `fixtures/**` (the exact spec-artifacts-process list) plus the depth-anchored `tests/**/fixtures/**`, which a literal later segment re-anchors (`test_tc_schema_029_anchored_source_exclude_globs_stay_legal`) | Unit | P0 | FR-001-AC-1 | ✅ |
-| TC-038 | an evidence-deleting `source_exclude` glob is a schema error, not a prose violation — bare `**`, wildcard-leading `*/fixtures/**`, and every `tests`-tree form with no literal anchor after it (`tests`, `tests/`, `tests/**`, `tests/**/*.py`, `tests/x*`, `tests/f*/**`, `tests//**`) are rejected (`test_tc_schema_030_evidence_deleting_source_exclude_is_rejected`) | Unit | P0 | FR-001-AC-1 | ✅ |
+| TC-021 | the manifest declares both vocabulary registries, and an `edge_types` entry that loses its `category` costs the module every archetype under `Registry.load_from`, with an unmutated control proving the load is real (`test_fr004_ac5_the_vocabulary_is_declared_and_a_broken_entry_is_refused`) | Unit | P0 | FR-004-AC-5 | ✅ |
 | TC-039 | Every locator output of every artifact type is a property of its model, and every model property traces to a locator, a frontmatter key, or a `mappings.yaml` entry (FR-005-CON-1) | Unit | P0 | FR-005-CON-1 | ✅ |
 | TC-040 | Every property of every emitted object schema is typed and constrained, or its description carries `free text:` and a reason (FR-005-AC-3) | Unit | P0 | FR-005-AC-3, FR-005-CON-1 | ✅ |
 | TC-041 | The ten exported schemas exist with the 2020-12 `$schema` and the versioned `$id`; every `$ref` in the bundle resolves to a shipped sibling or to the semantic-core 0.1.0 bundle vendored by the quire wheel, offline (FR-005-AC-1, AC-2) | Unit | P0 | FR-005-AC-1, FR-005-AC-2, FR-005-CON-2 | ✅ |
@@ -160,10 +139,9 @@ Method` rows — so NFR rows trace to `NFR-001 (metric n)` (SR-003 FND-006).
 | TC-043 | No emitted property is an execution-result field and the `TC` model's description says results are not modelled (FR-005-AC-6) | Static | P1 | FR-005-AC-6, FR-005-CON-4 | ✅ |
 | TC-044 | For each of the ten skeletons the reference mapping yields the committed `examples/<type>.record.json` and the record validates against `schemas/<Model>.json` (FR-005-AC-4, FR-007-AC-2) | Snapshot | P0 | FR-005-AC-4, FR-007-AC-2 | ✅ |
 | TC-045 | An extra property, a wrong-prefix row id, a removed required section, a duplicated H2, a malformed `## Story`, a typed table with a header and zero rows (`minItems` boundary), a `line: 0` (`minimum` boundary), a CRLF document, an empty `Verification` cell, and a `status` outside its pattern, and a row id repeated within one table each fail — the schema naming the path, the mapping naming the line, every failure in a document reported together, and no partial record (FR-005-AC-4, FR-007-AC-6; SR-003 FND-002/003) | Unit | P0 | FR-005-AC-4, FR-007-AC-6 | ✅ |
-| TC-046 | The manifest validates under the bundled FR-035 schema with the `semantic` block, whose key set is exactly the nine declared keys, the block adds no required key, and the legacy-manifest fixture (block and references removed) validates under the same schema and loads under quire with the same eleven archetypes (FR-006-AC-1, AC-7) | Unit | P0 | FR-006-AC-1, FR-006-AC-7, FR-006-CON-1 | ✅ |
+| TC-046 | The manifest's `semantic` block key set is exactly the nine declared keys with the declared values; the block and the `data_schema` references add no required key at the manifest root or on an `ArtifactTypeEntry`; and the legacy-manifest fixture (block and references removed) is this manifest with exactly those removals and loads under quire with the same eleven archetypes (FR-006-AC-1, AC-7) | Unit | P0 | FR-006-AC-1, FR-006-AC-7, FR-006-CON-1 | ✅ |
 | TC-047 | Every exported artifact type carries a `{schema, digest}` reference to an existing file whose SHA-256 equals the digest; `exports` equals the referencing set; no inline `data_schema` remains; a one-byte schema edit fails naming the type and both digests (FR-006-AC-2, AC-5) | Unit | P0 | FR-006-AC-2, FR-006-AC-5, FR-006-CON-2 | ✅ |
 | TC-048 | On `quire >= 0.33.0`, `Registry.load_from` lists all eleven archetypes with the `semantic` block and the ten `data_schema` references present, and `validate_document` passes every skeleton — the block breaks no consumer (FR-006-AC-3) | Integration | P0 | FR-006-AC-3 | ✅ |
-| TC-049 | The bundled FR-035 schema rejects an unknown `semantic` key naming it, an ambiguous `data_schema`, and a non-`<org>/<repo>` package (FR-006-AC-4) | Unit | P0 | FR-006-AC-4 | ✅ |
 | TC-050 | Each pre-change skeleton committed at 3d87196 maps to a record that validates against the new schema; no table header, heading, or column order changed (FR-007-AC-5) | Snapshot | P0 | FR-007-AC-5, FR-007-CON-1 | ✅ |
 | TC-051 | The FR skeleton's `## Invariants` clause maps to a `ClauseRef` with `language: ocl` and the heading as `clauseId`; `sourceSpan` is present with a caller `sourceIdentity` and absent without one; the `invariantsText` entry equals the fence body byte-for-byte; a non-identifier heading, a `tla` fence, a second fence under one heading, a repeated `clauseId`, and an unowned fence each fail naming the line; a prose `## Invariants` leaves `invariants` absent without failing; no module code parses the clause (FR-007-AC-4) | Unit | P0 | FR-007-AC-4, FR-007-CON-2 | ✅ |
 | TC-052 | `mappings.yaml` validates against `mappings.schema.json`, names every model property exactly once with one of the eight mapping kinds, names no undeclared property, matches locator `assert.columns` on tables, and records `authority`, `round_trip`, per-property `lossless`, and the dropped frontmatter keys (FR-007-AC-1, AC-7) | Unit | P0 | FR-007-AC-1, FR-007-AC-7 | ✅ |

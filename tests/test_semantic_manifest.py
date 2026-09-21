@@ -1,11 +1,14 @@
 """The manifest ``semantic`` block and its ``data_schema`` digest references (FR-006).
 
-Covers TC-046, TC-047, TC-048 and TC-049 of the FR-006 test matrix:
+Covers TC-046, TC-047 and TC-048 of the FR-006 test matrix:
 
-* TC-046 — the block validates under the bundled FR-035 schema, carries exactly
-  the nine declared keys, adds no required key, and the legacy-manifest fixture
-  (block and references removed) validates under the same schema and loads
-  under quire with the same eleven archetypes (FR-006-AC-1, AC-7, CON-1);
+* TC-046 — the block carries exactly the nine declared keys, and the
+  legacy-manifest fixture (block and references removed) is this manifest with
+  exactly those removals and loads under quire with the same eleven archetypes
+  (FR-006-AC-1, AC-7, CON-1). CON-1's "adds no required key" is now carried by
+  that load rather than by reading the schema's ``required`` lists: a manifest
+  with neither addition loading unchanged is the consumer-facing fact the
+  constraint is about;
 * TC-047 — every exported artifact type carries a ``{schema, digest}`` reference
   to an existing file whose SHA-256 equals the digest, ``exports`` equals the
   referencing set, no inline ``data_schema`` remains, and a one-byte schema edit
@@ -13,9 +16,14 @@ Covers TC-046, TC-047, TC-048 and TC-049 of the FR-006 test matrix:
 * TC-048 — on the published quire floor, ``Registry.load_from`` lists all eleven
   archetypes with the block and the ten references present, and
   ``validate_document`` passes every skeleton (FR-006-AC-3);
-* TC-049 — the bundled FR-035 schema rejects an unknown ``semantic`` key naming
-  it, an ambiguous ``data_schema``, a non-``<org>/<repo>`` package, and a target
-  outside the registry (FR-006-AC-4).
+
+FR-006-AC-4 — refusal of a malformed ``semantic`` block — is verified nowhere
+here. It used to be, against a copy of the FR-035 schema this package shipped;
+the copy is removed (PLAT-902) and the criterion is retired rather than
+restated over the loader, because at the declared floor (quire 0.33.0) the
+loader ignores the block and every such mutation still loads all eleven
+archetypes. FR-006 Behavior records the measurement and the engine that does
+refuse.
 
 Nothing here hand-computes a digest as an expected value: the digests are
 produced by ``make manifest-digests`` (``scripts/manifest_digests.py``) and the
@@ -35,9 +43,6 @@ import shutil
 
 import pytest
 import yaml
-from jsonschema import Draft202012Validator
-
-from spec_artifacts_iso import module_manifest_schema
 
 REPO_ROOT = pathlib.Path(__file__).resolve().parent.parent
 PKG_ROOT = REPO_ROOT / "spec_artifacts_iso"
@@ -112,14 +117,6 @@ def _object_types(manifest: dict) -> dict[str, dict]:
     }
 
 
-def _schema_errors(manifest: dict) -> list[str]:
-    validator = Draft202012Validator(module_manifest_schema())
-    return [
-        f"{'.'.join(str(p) for p in e.absolute_path)}: {e.message}"
-        for e in validator.iter_errors(manifest)
-    ]
-
-
 def _derive_legacy(manifest: dict) -> dict:
     """Return the manifest with the ``semantic`` block and every ref removed.
 
@@ -178,11 +175,7 @@ def _module_tree(parent: pathlib.Path, manifest_text: str) -> pathlib.Path:
         src = PKG_ROOT / sub
         if src.is_dir():
             shutil.copytree(src, module / sub, dirs_exist_ok=True)
-    for extra in (
-        "module-manifest.schema.json",
-        "mappings.yaml",
-        "mappings.schema.json",
-    ):
+    for extra in ("mappings.yaml", "mappings.schema.json"):
         src = PKG_ROOT / extra
         if src.is_file():
             shutil.copy2(src, module / extra)
@@ -199,12 +192,10 @@ def _registry_archetypes(parent: pathlib.Path) -> set[str]:
 # ─── TC-046: the block, its key set, and the legacy fixture ──────────────
 
 
-def test_tc046_manifest_validates_with_semantic_block() -> None:
-    """TC-046: FR-006-AC-1: the manifest validates against the bundled FR-035
-    schema with the ``semantic`` block present."""
+def test_tc046_manifest_carries_a_semantic_block() -> None:
+    """TC-046: FR-006-AC-1: the manifest declares a ``semantic`` block."""
     manifest = _manifest()
     assert "semantic" in manifest, "manifest declares no semantic block"
-    assert not _schema_errors(manifest), _schema_errors(manifest)
 
 
 def test_tc046_semantic_block_key_set_and_values() -> None:
@@ -231,16 +222,6 @@ def test_tc046_semantic_block_key_set_and_values() -> None:
     ]
     assert semantic["compatibility_posture"] == "additive"
     assert semantic["legacy_forms"] == "warning"
-
-
-def test_tc046_block_adds_no_required_key() -> None:
-    """TC-046: FR-006-CON-1: neither ``semantic`` at the manifest root nor
-    ``data_schema`` on an ArtifactTypeEntry is a required key, so a consumer
-    that ignores the block reads the same contract as before."""
-    schema = module_manifest_schema()
-    assert "semantic" not in set(schema.get("required", []))
-    entry = schema["$defs"]["ArtifactTypeEntry"]
-    assert "data_schema" not in set(entry.get("required", []))
 
 
 def test_tc046_legacy_fixture_is_in_sync_with_the_manifest() -> None:
@@ -273,13 +254,6 @@ def test_tc046_legacy_fixture_carries_neither_addition() -> None:
     assert typed, "the fixture declares no type at all; the walk proves nothing"
     for name, entry in typed.items():
         assert "data_schema" not in entry, f"{name} still carries a data_schema"
-
-
-def test_tc046_legacy_fixture_validates_under_the_fr035_schema() -> None:
-    """TC-046: FR-006-AC-7: the legacy fixture validates under the same bundled
-    FR-035 schema as the current manifest."""
-    fixture = yaml.safe_load(LEGACY_FIXTURE.read_text())
-    assert not _schema_errors(fixture), _schema_errors(fixture)
 
 
 def test_tc046_legacy_fixture_loads_under_quire(tmp_path: pathlib.Path) -> None:
@@ -388,47 +362,3 @@ def test_tc048_validate_document_passes_every_skeleton(name: str) -> None:
     text = (SKELETONS_DIR / f"{_SKELETON_FILE[name]}.md").read_text()
     result = quire.validate_document(name, str(PKG_ROOT), text)
     assert result["is_valid"], result["errors"]
-
-
-# ─── TC-049: what the bundled FR-035 schema refuses ──────────────────────
-
-
-def test_tc049_schema_rejects_an_unknown_semantic_key_naming_it() -> None:
-    """TC-049: FR-006-AC-4: the bundled FR-035 schema rejects a ``semantic`` key
-    outside the admitted ten, and the error names the key."""
-    manifest = _manifest()
-    manifest["semantic"] = manifest["semantic"] | {"foo": 1}
-    errors = _schema_errors(manifest)
-    assert errors, "schema accepted an undeclared semantic key"
-    assert any("foo" in e for e in errors), errors
-
-
-def test_tc049_schema_rejects_an_ambiguous_data_schema() -> None:
-    """TC-049: FR-006-AC-4: a ``data_schema`` mixing ``schema``/``digest`` with
-    any other key is ambiguous and is rejected."""
-    manifest = _manifest()
-    types = _artifact_types(manifest)
-    ref = dict(types["FR"]["data_schema"])
-    ref["type"] = "object"
-    types["FR"]["data_schema"] = ref
-    assert _schema_errors(manifest), "schema accepted an ambiguous data_schema"
-
-
-def test_tc049_schema_rejects_a_non_org_repo_package() -> None:
-    """TC-049: FR-006-AC-4: ``package`` is an IR package identity
-    (``<org>/<repo>``), never a URL or an ``ix://`` identity."""
-    manifest = _manifest()
-    manifest["semantic"] = manifest["semantic"] | {"package": "ix://agent-ix/x"}
-    errors = _schema_errors(manifest)
-    assert errors, "schema accepted an ix:// package identity"
-    assert any("package" in e for e in errors), errors
-
-
-def test_tc049_schema_rejects_a_target_outside_the_registry() -> None:
-    """TC-049: FR-006-AC-4: ``targets`` values come from the filament-core-data
-    target registry; ``go`` is not one of them."""
-    manifest = _manifest()
-    manifest["semantic"] = manifest["semantic"] | {"targets": ["go"]}
-    errors = _schema_errors(manifest)
-    assert errors, "schema accepted an unregistered target"
-    assert any("targets" in e for e in errors), errors

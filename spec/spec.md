@@ -49,6 +49,21 @@ and no render step.
 
 - The `quire-rs` validation engine itself (`validate_document`, extraction); this
   Module declares the archetypes, the engine enforces them.
+- Distributing filament-core-service's FR-035 module-manifest schema. This
+  package used to ship a copy as public package data, reachable as
+  `spec_artifacts_iso.module_manifest_schema()`, and four sibling repositories
+  gated their manifests on it. That is removed (PLAT-902). Redistributing a
+  schema is still copying it: what shipped was this repository's fork, carrying
+  the original's `$id`, so every suite that validated against it was comparing
+  a manifest to bytes maintained here. A module proves FR-035 conformance by
+  activating against the service that applies the schema.
+- Applying the FR-035 schema to this Module's own manifest as a document, for
+  the same reason. Conformance to it is **observable** at activation
+  (FR-001-AC-2), which this repository does not exercise — FR-001's criteria are
+  all `🚧 Pending`, so FR-035 conformance is verified nowhere here. What a
+  consumer accepts is observed at the consumer, and is narrower:
+  `quire.Registry.load_from` (FR-006-AC-3) and `quoin module install`
+  (FR-006-AC-6).
 - Render templates and `template_ref`; these were removed (render removal,
   2026-06-04) and are not part of this Module.
 - Generated-language fixtures — the Rust, TypeScript, and Python projections of

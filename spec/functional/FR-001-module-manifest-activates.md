@@ -10,6 +10,16 @@ relationships:
 
 ## Description
 
+> **RETIRED HISTORY (PLAT-902, 2026-09-20).** The change records below run
+> newest first, and every one from CR-011 down to CR-002 amends
+> `spec_artifacts_iso/module-manifest.schema.json` — a copy of
+> `filament-core-service`'s FR-035 schema that this package shipped as public
+> package data. **That file and the API that exposed it are deleted, and none of
+> these records describes a standing arrangement.** They are kept because they
+> record what was decided and when, not because anything below is to be acted
+> on. Nothing in this repository is to be changed to make the schema reachable
+> again; a module proves FR-035 conformance by activating.
+
 > **CR-011 (source-exclusion value constraints — 2026-08-21):** the
 > `source_exclude` items gain value constraints; CR-010's "`tests/**` MUST
 > NEVER appear here" moves from the description string, which validates
@@ -210,6 +220,16 @@ relationships:
 > rules and interprets none of them (FR-054-CON-2) — a schema that enumerated
 > the axes would close a set the engine deliberately left open.
 
+> **CR-002 is retired (PLAT-902, 2026-09-20).** The record below is kept as
+> history and is not a standing arrangement: this package no longer ships the
+> FR-035 schema as package data, `spec_artifacts_iso.module_manifest_schema()`
+> is gone, and the four sibling repositories that validated their manifests
+> against it no longer do. Redistributing the schema from here did not make it
+> one source — it made this repository's fork of it the thing four suites
+> compared against, under an `$id` belonging to the original. Nothing in this
+> repository is to be changed to keep a copy reachable; a module proves FR-035
+> conformance by activating.
+>
 > **CR-002 (schema fixture refresh + single-source packaging — 2026-08-17):**
 > the bundled FR-035 fixture is refreshed to the shipped engine surface, and it
 > moves from `tests/` to **package data** at
@@ -289,13 +309,23 @@ The system **SHALL** publish a Filament Module manifest (`spec_artifacts_iso/man
 
 ## Behavior
 
-The manifest **SHALL** validate against `module-manifest.schema.json` v1.0.0. Re-activation **SHALL** be a no-op (idempotent by content hash per FR-026-AC-1).
+The manifest **SHALL** conform to the FR-035 module-manifest schema
+`filament-core-service` applies at activation, and re-activation **SHALL** be a
+no-op (idempotent by content hash per FR-026-AC-1). This repository ships no copy
+of that schema and states no criterion over it as a document (PLAT-902).
+
+**Conformance to FR-035 is verified nowhere in this repository**, and this
+requirement claims no otherwise. It is observable where the schema is applied, at
+`POST /api/v1/modules/activate` — FR-001-AC-2 through AC-4, every one of which is
+`🚧 Pending` with no test case, so FR-001 now has no covered criterion at all.
+What is executed here is narrower and stands in for none of it: the module and
+its `semantic` block load under quire (FR-006-AC-3, TC-048), and `quoin module
+install` accepts it (FR-006-AC-6, TC-055, a Demonstration).
 
 ## Acceptance Criteria
 
 | ID | Criteria | Verification |
 |----|----------|--------------|
-| FR-001-AC-1 | Manifest validates against FR-035 JSON Schema | Schema Test |
 | FR-001-AC-2 | Activation against clean filament-core succeeds with 200 | Integration Test |
 | FR-001-AC-3 | Re-activation returns no-op (same content hash) | Integration Test |
 | FR-001-AC-4 | Each declared archetype/object_type/artifact_type appears in the corresponding filament-core table after activation | Integration Test |
