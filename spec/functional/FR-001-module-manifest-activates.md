@@ -210,6 +210,16 @@ relationships:
 > rules and interprets none of them (FR-054-CON-2) — a schema that enumerated
 > the axes would close a set the engine deliberately left open.
 
+> **CR-002 is retired (PLAT-902, 2026-09-20).** The record below is kept as
+> history and is not a standing arrangement: this package no longer ships the
+> FR-035 schema as package data, `spec_artifacts_iso.module_manifest_schema()`
+> is gone, and the four sibling repositories that validated their manifests
+> against it no longer do. Redistributing the schema from here did not make it
+> one source — it made this repository's fork of it the thing four suites
+> compared against, under an `$id` belonging to the original. Nothing in this
+> repository is to be changed to keep a copy reachable; a module proves FR-035
+> conformance by activating.
+>
 > **CR-002 (schema fixture refresh + single-source packaging — 2026-08-17):**
 > the bundled FR-035 fixture is refreshed to the shipped engine surface, and it
 > moves from `tests/` to **package data** at
@@ -289,13 +299,17 @@ The system **SHALL** publish a Filament Module manifest (`spec_artifacts_iso/man
 
 ## Behavior
 
-The manifest **SHALL** validate against `module-manifest.schema.json` v1.0.0. Re-activation **SHALL** be a no-op (idempotent by content hash per FR-026-AC-1).
+The manifest **SHALL** conform to the FR-035 module-manifest schema
+`filament-core-service` applies at activation. Conformance is observed where
+that schema is applied — at `POST /api/v1/modules/activate` (FR-001-AC-2). This
+repository ships no copy of that schema and states no criterion over it as a
+document (PLAT-902). Re-activation **SHALL** be a no-op (idempotent by content
+hash per FR-026-AC-1).
 
 ## Acceptance Criteria
 
 | ID | Criteria | Verification |
 |----|----------|--------------|
-| FR-001-AC-1 | Manifest validates against FR-035 JSON Schema | Schema Test |
 | FR-001-AC-2 | Activation against clean filament-core succeeds with 200 | Integration Test |
 | FR-001-AC-3 | Re-activation returns no-op (same content hash) | Integration Test |
 | FR-001-AC-4 | Each declared archetype/object_type/artifact_type appears in the corresponding filament-core table after activation | Integration Test |

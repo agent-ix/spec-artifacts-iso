@@ -7,7 +7,7 @@ mint a trace the row does not claim.
 
 Two payloads leave this repository — a Python sdist/wheel and an npm tarball —
 and FR-005 Outputs requires them to carry the same module: ``schemas/``,
-``skeletons/``, ``manifest.yaml``, ``module-manifest.schema.json``,
+``skeletons/``, ``manifest.yaml``,
 ``mappings.yaml``, ``mappings.schema.json``, ``examples/``,
 ``semantic/main.tsp`` and ``semantic/generated/toolchain.json``, and none of the
 TypeSpec toolchain (``node_modules``, ``package.json``, ``package-lock.json``,
@@ -47,7 +47,6 @@ PAYLOAD_ENTRIES = (
     "schemas/",
     "skeletons/",
     "manifest.yaml",
-    "module-manifest.schema.json",
     "mappings.yaml",
     "mappings.schema.json",
     "examples/",

@@ -54,7 +54,6 @@ const unstage = process.argv.includes("--unstage");
 
 const PAYLOAD = [
   "manifest.yaml",
-  "module-manifest.schema.json",
   "schemas",
   "skeletons",
   "mappings.yaml",

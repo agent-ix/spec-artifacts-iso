@@ -94,7 +94,7 @@ and the outcome of executing it is not a field of any model.
   and are outside both targets.
 - The shipped payload of the module — identical in the sdist, the wheel, and
   the npm tarball — SHALL carry `schemas/`, `skeletons/`, `manifest.yaml`,
-  `module-manifest.schema.json`, `mappings.yaml`, `mappings.schema.json`,
+  `mappings.yaml`, `mappings.schema.json`,
   `examples/`, `semantic/main.tsp`, and `semantic/generated/toolchain.json`.
   The TypeSpec toolchain itself (`node_modules`, `package.json`,
   `package-lock.json`, `tspconfig.yaml`, `scripts/`) is a build input and SHALL
