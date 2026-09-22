@@ -26,13 +26,15 @@ The emitted bundle SHALL validate and resolve with no network read.
 - Operational context: a clean clone with `npm ci` in the TypeSpec package and
   the quire wheel installed; the only network access is the package install
   itself.
-- npm-configuration precondition: `@agent-ix/semantic-core` 0.3.0 resolves only
-  from the registry the developer's npm configuration routes the `@agent-ix`
-  scope to — today the local npm.ix registry; the public publish is tracked by
-  agent-ix/filament-core-data#11. The repository carries no `.npmrc`
-  (FR-005-CON-3), so the scope routing is the machine's and not the
-  repository's, and a machine whose npm configuration does not route the scope
-  cannot reproduce the bundle at all.
+- npm-configuration precondition: `@agent-ix/semantic-core` 0.3.0 resolves from
+  GitHub Packages (`npm.pkg.github.com`), the registry the `@agent-ix` scope is
+  configured against; the dev-only `npm.ix` mirror is not reachable from CI and
+  is no longer part of this module's resolution path (PLAT-974). The public
+  publish is tracked by agent-ix/filament-core-data#11. The repository carries
+  no `.npmrc` (FR-005-CON-3), so the scope routing is the machine's (or CI
+  job's) npm configuration and not the repository's, and a machine whose npm
+  configuration does not route the scope, or authenticate against GitHub
+  Packages, cannot reproduce the bundle at all.
 - Engine floor: the suite runs against `quire >= 0.33.0` installed from the
   internal package index. The engine work that would validate an artifact-type
   record against `data_schema` (quire-rs FR-069) is in no published wheel, so

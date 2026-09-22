@@ -932,17 +932,17 @@ files = [
 
 [[package]]
 name = "quire"
-version = "0.33.0"
+version = "0.47.1"
 description = "Python bindings for quire-rs: parse, corpus load, and whole-spec queries (FR-023)."
 optional = false
 python-versions = ">=3.9"
 groups = ["dev"]
 files = [
-    {file = "quire-0.33.0-cp39-abi3-macosx_10_12_x86_64.whl", hash = "sha256:f2b17847c1a92a8e4d118bb639f0afb3963624356b45ec640390652bed99ea0c"},
-    {file = "quire-0.33.0-cp39-abi3-macosx_11_0_arm64.whl", hash = "sha256:4bd350d7862e18332019561e65e25a472da776a8d6f998513ad9966ecf0e0fb4"},
-    {file = "quire-0.33.0-cp39-abi3-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:3c45a1341e07fd0c65e1d370a5973c4b7875034f82cd5f1889fb49c7198df472"},
-    {file = "quire-0.33.0-cp39-abi3-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:5d9391d9a51b5160f3ccbd527baa66d3af626b8852711f133d716f08db275592"},
-    {file = "quire-0.33.0-cp39-abi3-win_amd64.whl", hash = "sha256:41503d1d8561c4d73fbb32ea907d5956a6e2d15310609697f73e2a24fe1abd8d"},
+    {file = "quire-0.47.1-cp39-abi3-macosx_10_12_x86_64.whl", hash = "sha256:f82602101f6b5518b5cdd409b6f458b5bad4dd95668f864a3801d477efc75beb"},
+    {file = "quire-0.47.1-cp39-abi3-macosx_11_0_arm64.whl", hash = "sha256:579cea32466844b20fdca5e0474a8eec0435b37a3190ca6c1033fe71fd523331"},
+    {file = "quire-0.47.1-cp39-abi3-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:09e017ff603f6c88ff8a4eeafc64a0bccca938a3e46e119b8f6fef56544f8d4e"},
+    {file = "quire-0.47.1-cp39-abi3-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:79011aa703fb9715c1e4ef306a111da265b77a999597cf67bb2d33a71ab4a48f"},
+    {file = "quire-0.47.1-cp39-abi3-win_amd64.whl", hash = "sha256:d81ec619d76a2e9c9ceb248dde1eb929f5c76bbb923f859c9b8b84ad0f2fce58"},
 ]
 
 [package.source]
@@ -1157,4 +1157,4 @@ files = [
 [metadata]
 lock-version = "2.1"
 python-versions = ">=3.13,<3.14"
-content-hash = "947988c6bb09477d9fd18f42e48ef819e397b27b0035b03daf061c2d846f1dd8"
+content-hash = "bd17c5a49266c738e1f0ea236b41b3bbdcee4c04f3e2a4532dc07dcb76ade8ec"

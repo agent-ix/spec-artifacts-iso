@@ -54,9 +54,10 @@ and the outcome of executing it is not a field of any model.
 - `spec_artifacts_iso/semantic/main.tsp`: the TypeSpec source (namespace
   `AgentIx.SpecArtifactsIso`, `@jsonSchema` base
   `https://schemas.agent-ix.org/agent-ix/spec-artifacts-iso/<manifest version>/`).
-- `@agent-ix/semantic-core` 0.3.0, resolved from the registry the developer's
-  npm configuration routes the `@agent-ix` scope to (today the local npm.ix
-  registry; the public publish is agent-ix/filament-core-data#11), pinned
+- `@agent-ix/semantic-core` 0.3.0, resolved from GitHub Packages
+  (`npm.pkg.github.com`), the registry the `@agent-ix` scope is configured
+  against — CI authenticates directly rather than through the dev-only
+  `npm.ix` mirror (PLAT-974; the public publish is agent-ix/filament-core-data#11), pinned
   exactly, for `SemanticId`, `ClauseRef`, and `SourceLocus`.
 - `@typespec/compiler` 1.15.0 and `@typespec/json-schema` 1.15.0 as
   devDependencies of the TypeSpec package, with a committed `package-lock.json`.

@@ -159,16 +159,20 @@ bytes.
   applied. The retired FR-006-AC-4 verified it here by mutating this manifest
   and validating the result against a copy of the schema this repository
   shipped, which reports on the copy. It is not restated over quire's loader,
-  because **measured** at this requirement's declared floor (quire 0.33.0, the
-  published floor of the internal index) the loader ignores the block entirely:
-  all four mutations above still load all eleven archetypes. Only quire 0.46.0
-  refuses them — the unknown key, the non-`<org>/<repo>` package and the
-  unregistered target each empty the registry, and the ambiguous `data_schema`
-  drops that one artifact type. 0.46.0 is in no published wheel
-  (agent-ix/quire-rs#392, and #388 for the digest binding), so a loader-based
-  criterion at the declared floor would pass by not running — the failure mode
-  FR-001 CR-002 exists to close. The criterion becomes observable here when a
-  wheel carrying that engine is published.
+  because **measured** at this requirement's originally declared floor (quire
+  0.33.0, then the published floor of the internal index) the loader ignored
+  the block entirely: all four mutations above loaded all eleven archetypes.
+  quire 0.47.1 — published to `internal-pypi` and, since PLAT-974, the
+  module's committed dev dependency (agent-ix/quire-rs#392, the wheel-publish
+  blocker, is resolved) — refuses them: the unknown key, the
+  non-`<org>/<repo>` package and the unregistered target each empty the
+  registry, and the ambiguous `data_schema` drops that one artifact type (each
+  reconfirmed against the installed 0.47.1 wheel on 2026-09-22). FR-006-AC-4
+  stays retired rather than restated (PLAT-902) — this paragraph is historical
+  explanation, not a live criterion — and only the digest-binding half of a
+  loader-based check (quire-rs FR-069) remains blocked, on `quire-rs` main
+  only and in no published wheel: agent-ix/quire-rs#388, tracked separately as
+  FR-006-AC-8's strict expected failure.
 
 ## Constraints
 
