@@ -76,7 +76,7 @@ carried into the requirements as a constraint rather than restated as a story.
 
 ## Dependencies (Contextual)
 
-Upstream: `@agent-ix/semantic-core` 0.1.0 (agent-ix/filament-core-data#35) and
+Upstream: `@agent-ix/semantic-core` 0.3.0 (agent-ix/filament-core-data#35) and
 its public publish (agent-ix/filament-core-data#11), without which the package
 resolves only from the registry a developer's npm configuration routes the
 `@agent-ix` scope to; the quoin semantic module contract

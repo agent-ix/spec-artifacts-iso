@@ -38,7 +38,7 @@ relationships:
 
 The module SHALL declare one semantic data model per ISO artifact type — `FR`,
 `NFR`, `StR`, `US`, `IT`, `TC`, `MasterRequirements`, `Index`, `Log`, and
-`Glossary` — as TypeSpec source importing `@agent-ix/semantic-core` 0.1.0.
+`Glossary` — as TypeSpec source importing `@agent-ix/semantic-core` 0.3.0.
 
 The module SHALL ship the JSON Schema 2020-12 projection of each model at
 `spec_artifacts_iso/schemas/<Model>.json`.
@@ -54,7 +54,7 @@ and the outcome of executing it is not a field of any model.
 - `spec_artifacts_iso/semantic/main.tsp`: the TypeSpec source (namespace
   `AgentIx.SpecArtifactsIso`, `@jsonSchema` base
   `https://schemas.agent-ix.org/agent-ix/spec-artifacts-iso/<manifest version>/`).
-- `@agent-ix/semantic-core` 0.1.0, resolved from the registry the developer's
+- `@agent-ix/semantic-core` 0.3.0, resolved from the registry the developer's
   npm configuration routes the `@agent-ix` scope to (today the local npm.ix
   registry; the public publish is agent-ix/filament-core-data#11), pinned
   exactly, for `SemanticId`, `ClauseRef`, and `SourceLocus`.
@@ -116,7 +116,7 @@ Projection:
   where `<manifest version>` equals `version` in `manifest.yaml`.
 - The generator SHALL keep every `$ref` of the shipped bundle inside two bases:
   the module base above and
-  `https://schemas.agent-ix.org/semantic-core/0.1.0/`.
+  `https://schemas.agent-ix.org/semantic-core/0.3.0/`.
 - The generator SHALL exclude from the shipped bundle every file whose `$id`
   starts with `https://schemas.agent-ix.org/semantic-core/`, which the
   emitter produces for the imported semantic-core models (they ship in the
@@ -291,8 +291,8 @@ Sections and tables:
 | ID | Constraint | Type | Validation |
 |----|------------|------|------------|
 | FR-005-CON-1 | The models SHALL declare exactly the fields the locators, the frontmatter schemas, and the FR-007 grammars produce: no field without a Markdown source, no locator output without a field. | Integrity | Test (TC-039, TC-040) |
-| FR-005-CON-2 | The emitted bundle SHALL carry no `$ref` outside the module base and the semantic-core 0.1.0 base, so that a consumer resolves every reference without a network read. | Boundary | Test (TC-041) |
-| FR-005-CON-3 | The TypeSpec package SHALL pin `@typespec/compiler` and `@typespec/json-schema` at 1.15.0 and `@agent-ix/semantic-core` at 0.1.0 with a committed lockfile, no `file:` or `link:` reference, and no `.npmrc` in the repository. | Reproducibility | Test (TC-054) |
+| FR-005-CON-2 | The emitted bundle SHALL carry no `$ref` outside the module base and the semantic-core 0.3.0 base, so that a consumer resolves every reference without a network read. | Boundary | Test (TC-041) |
+| FR-005-CON-3 | The TypeSpec package SHALL pin `@typespec/compiler` and `@typespec/json-schema` at 1.15.0 and `@agent-ix/semantic-core` at 0.3.0 with a committed lockfile, no `file:` or `link:` reference, and no `.npmrc` in the repository. | Reproducibility | Test (TC-054) |
 | FR-005-CON-4 | No model SHALL carry a property named `result`, `outcome`, `passed`, `failed`, `run`, `executedAt`, or `evidence`: requirement definitions and execution results stay distinct. | Scope | Test (TC-043), Inspection |
 
 ## Acceptance Criteria
@@ -300,7 +300,7 @@ Sections and tables:
 | ID | Criteria | Verification |
 |----|----------|--------------|
 | FR-005-AC-1 | `spec_artifacts_iso/schemas/` carries `FR.json`, `NFR.json`, `StR.json`, `US.json`, `IT.json`, `TC.json`, `MasterRequirements.json`, `Index.json`, `Log.json`, and `Glossary.json`, each a JSON Schema 2020-12 document whose `$id` is `https://schemas.agent-ix.org/agent-ix/spec-artifacts-iso/<manifest version>/<Model>.json`, and each `type` `const` equals the archetype name of the map in Outputs. | Test (TC-041) |
-| FR-005-AC-2 | Every `$ref` across the emitted bundle resolves to a shipped sibling or to a file name of the semantic-core 0.1.0 bundle (the file list of filament-core-data `toolchain.json` at the revision quire vendors), with no network read; no `$ref` names another semantic-core version or an unshipped file; no `$id` under the semantic-core base ships. | Test (TC-041) |
+| FR-005-AC-2 | Every `$ref` across the emitted bundle resolves to a shipped sibling or to a file name of the semantic-core 0.3.0 bundle (the file list of filament-core-data `toolchain.json` at the revision quire vendors), with no network read; no `$ref` names another semantic-core version or an unshipped file; no `$id` under the semantic-core base ships. | Test (TC-041) |
 | FR-005-AC-3 | Every property of every emitted object schema is either constrained — its schema, after following `$ref`, carries `pattern`, `minLength`, `minimum`, `enum`, `const`, or `format`, or is an object whose properties are all constrained, or an array of such items, or `boolean`/`null` — or is free text, in which case its description carries `free text:` and a reason and its name is in the closed list the test enumerates (`Section.text`, the prose cells, `detail`, `summary`, `description`, `annotation`). | Test (TC-040) |
 | FR-005-AC-4 | For each of the ten skeletons, the record built by the FR-007 reference mapping validates against the type's schema; a record with one extra property, one required section removed, a `line: 0`, an empty typed table, or a `status` outside its pattern fails schema validation naming the JSON path. A row id with the wrong *document* prefix (`FR-002-CON-1` inside `FR-001`) is not one of these: the row-id scalars are anchored to the artifact type, not to the document, so the schema accepts it by design and the FR-007 mapping rejects it against the locator's `id_pattern`, naming the line (FR-007-AC-6). | Test (TC-044, TC-045) |
 | FR-005-AC-5 | `make schemas-check` exits 0 on the committed tree, and exits non-zero naming the file after any one emitted schema is edited by a single byte. | Test (TC-042) |
@@ -311,5 +311,5 @@ Sections and tables:
 
 ## Dependencies
 
-- **Upstream**: [FR-002](./FR-002-unified-archetype-validation.md) (the locators the models type), [US-001](../usecase/US-001-consume-typed-iso-artifact-records.md), filament-core-data FR-031..FR-033 (`@agent-ix/semantic-core` 0.1.0, agent-ix/filament-core-data#35; the public npm publish that would make the package resolvable without a scope-routed registry is agent-ix/filament-core-data#11), filament-core-data ADR-0005 (TypeSpec as the structural source)
+- **Upstream**: [FR-002](./FR-002-unified-archetype-validation.md) (the locators the models type), [US-001](../usecase/US-001-consume-typed-iso-artifact-records.md), filament-core-data FR-031..FR-033 (`@agent-ix/semantic-core` 0.3.0, agent-ix/filament-core-data#35; the public npm publish that would make the package resolvable without a scope-routed registry is agent-ix/filament-core-data#11), filament-core-data ADR-0005 (TypeSpec as the structural source)
 - **Downstream**: [FR-006](./FR-006-semantic-manifest-block.md) (references the emitted files by digest), [FR-007](./FR-007-markdown-mappings.md) (maps Markdown onto these models), [NFR-001](../non-functional/NFR-001-reproducible-offline-schema-projection.md), agent-ix/filament-core-data#36 and agent-ix/quire-contract-ir#52 (consume the schemas as fixtures)

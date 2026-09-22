@@ -28,9 +28,6 @@
     "prepack": "node scripts/stage-npm.mjs",
     "postpack": "node scripts/stage-npm.mjs --unstage"
   },
-  "devDependencies": {
-    "@agent-ix/semantic-core": "0.3.0"
-  },
   "publishConfig": {
     "registry": "https://registry.npmjs.org/",
     "access": "public"

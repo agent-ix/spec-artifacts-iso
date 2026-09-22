@@ -26,7 +26,7 @@ The emitted bundle SHALL validate and resolve with no network read.
 - Operational context: a clean clone with `npm ci` in the TypeSpec package and
   the quire wheel installed; the only network access is the package install
   itself.
-- npm-configuration precondition: `@agent-ix/semantic-core` 0.1.0 resolves only
+- npm-configuration precondition: `@agent-ix/semantic-core` 0.3.0 resolves only
   from the registry the developer's npm configuration routes the `@agent-ix`
   scope to — today the local npm.ix registry; the public publish is tracked by
   agent-ix/filament-core-data#11. The repository carries no `.npmrc`
