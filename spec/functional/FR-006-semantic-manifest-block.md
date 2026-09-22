@@ -75,7 +75,7 @@ bytes.
 
 ## Outputs
 
-- The `semantic` block: `contract_version: 1.0.0`, `semantic_core: 0.1.0`,
+- The `semantic` block: `contract_version: 1.0.0`, `semantic_core: 0.3.0`,
   `package: agent-ix/spec-artifacts-iso`, `exports` naming every artifact type
   that carries a `data_schema` reference (`FR`, `NFR`, `StR`, `US`, `IT`, `TC`,
   `master-requirements`, `index`, `log`, `Glossary`), `imports: {}`,

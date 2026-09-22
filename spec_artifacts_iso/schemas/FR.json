@@ -57,7 +57,7 @@
     "invariants": {
       "type": "array",
       "items": {
-        "$ref": "https://schemas.agent-ix.org/semantic-core/0.1.0/ClauseRef.json"
+        "$ref": "https://schemas.agent-ix.org/semantic-core/0.3.0/ClauseRef.json"
       },
       "minItems": 1,
       "description": "Formal clauses from an optional `## Invariants` section (`ocl-clause` mapping); clause text is carried beside the record, never parsed."

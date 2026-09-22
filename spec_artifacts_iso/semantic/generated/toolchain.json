@@ -9,8 +9,8 @@
   },
   "semanticCore": {
     "name": "@agent-ix/semantic-core",
-    "version": "0.1.0",
-    "toolchainDigest": "sha256:b296b790394e12d1b0c070bb43c91739e86b0258fbe178d75639c1e7e39de475"
+    "version": "0.3.0",
+    "toolchainDigest": "sha256:f192a69536613b7a18b16aa418a053d464f6e0fd50474753af7daff6f00ec8e5"
   },
   "normalization": {
     "name": "issue-31-absolute-id",
@@ -104,5 +104,5 @@
     "ValidationCriterionId.json",
     "Verification.json"
   ],
-  "digest": "sha256:82029b9cf2731f3ac0dd750c51e05a6cdcc6e29956a23452791c6decefd5aabc"
+  "digest": "sha256:396a6f688d16c73f4d0113c831b49e15c569100a81e91a1bdfe536155e57b26c"
 }

@@ -39,7 +39,7 @@ POETRY_LOCK = REPO_ROOT / "poetry.lock"
 PINNED_VERSIONS = {
     "@typespec/compiler": "1.15.0",
     "@typespec/json-schema": "1.15.0",
-    "@agent-ix/semantic-core": "0.1.0",
+    "@agent-ix/semantic-core": "0.3.0",
 }
 
 #: FR-005 Outputs — the shipped payload, module-root relative.
