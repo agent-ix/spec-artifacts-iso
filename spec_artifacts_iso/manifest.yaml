@@ -107,7 +107,7 @@ artifact_types:
   frontmatter_schema_ref: schemas/fr-frontmatter.schema.json
   data_schema:
     schema: schemas/FR.json
-    digest: sha256:7fc89400e005e2a59dd2032f798cb34c632542e3ec88ee0cac05e9c20fa5cf1d
+    digest: sha256:52f3bddd12319926c7d5423e053fc2ecc0db87b73d92b0db815d2ac5161333ed
   defaults:
     id_pattern: FR-{next:03d}
   allowed_links:
@@ -1007,7 +1007,7 @@ traceability:
 # emitted schemas are bound by digest on the artifact types themselves.
 semantic:
   contract_version: 1.0.0
-  semantic_core: 0.1.0
+  semantic_core: 0.3.0
   package: agent-ix/spec-artifacts-iso
   exports:
   - FR

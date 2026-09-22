@@ -10,7 +10,7 @@ These tests assert the properties a consumer relies on:
 * the ten exported models exist, with the 2020-12 ``$schema`` and the
   version-embedded ``$id`` (TC-041);
 * every ``$ref`` in the bundle resolves offline — to a shipped sibling, or to a
-  file of the semantic-core 0.1.0 bundle (TC-041);
+  file of the semantic-core 0.3.0 bundle (TC-041);
 * every property is constrained, or is declared free text with a reason
   (TC-040), and every locator output has a property and vice versa (TC-039);
 * no property models an execution result (TC-043);
@@ -47,7 +47,7 @@ EXAMPLES_DIR = PKG_ROOT / "examples"
 
 MODULE_BASE = "https://schemas.agent-ix.org/agent-ix/spec-artifacts-iso/"
 SEMANTIC_CORE_BASE = "https://schemas.agent-ix.org/semantic-core/"
-SEMANTIC_CORE_VERSION = "0.1.0"
+SEMANTIC_CORE_VERSION = "0.3.0"
 
 #: FR-005 Outputs: the export name a consumer writes, and the file it maps to.
 EXPORT_TO_FILE = {
@@ -269,7 +269,7 @@ def test_tc041_exported_schemas_exist_with_versioned_ids(
 
 def test_tc041_every_ref_resolves_offline(bundle: dict[str, dict]) -> None:
     """TC-041: FR-005-AC-2, FR-005-CON-2: every `$ref` across the bundle points
-    at a shipped sibling or at a file of the semantic-core 0.1.0 bundle, and no
+    at a shipped sibling or at a file of the semantic-core 0.3.0 bundle, and no
     schema under the semantic-core base ships.
     """
     core_files = _semantic_core_files()
@@ -297,7 +297,7 @@ def test_tc041_every_ref_resolves_offline(bundle: dict[str, dict]) -> None:
             else:
                 pytest.fail(
                     f"{name} carries `$ref` {ref!r}, which is outside the module "
-                    "base and the semantic-core 0.1.0 base — a consumer would "
+                    "base and the semantic-core 0.3.0 base — a consumer would "
                     "have to read the network to resolve it"
                 )
 

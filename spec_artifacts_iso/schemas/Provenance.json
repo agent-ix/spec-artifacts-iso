@@ -8,7 +8,7 @@
       "description": "Corpus-relative path of the document."
     },
     "sourceIdentity": {
-      "$ref": "https://schemas.agent-ix.org/semantic-core/0.1.0/SemanticId.json",
+      "$ref": "https://schemas.agent-ix.org/semantic-core/0.3.0/SemanticId.json",
       "description": "`ix://<org>/<repo>/spec` when the caller supplies it; absent on the `validate_document` surface."
     },
     "digest": {

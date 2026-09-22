@@ -205,7 +205,7 @@ def test_tc046_semantic_block_key_set_and_values() -> None:
     assert set(semantic) == SEMANTIC_KEYS, set(semantic) ^ SEMANTIC_KEYS
     assert "sweep_report" not in semantic
     assert semantic["contract_version"] == "1.0.0"
-    assert semantic["semantic_core"] == "0.1.0"
+    assert semantic["semantic_core"] == "0.3.0"
     assert semantic["package"] == "agent-ix/spec-artifacts-iso"
     assert set(semantic["exports"]) == set(EXPORT_SCHEMA_FILE)
     assert semantic["imports"] == {}

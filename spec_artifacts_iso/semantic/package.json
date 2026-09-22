@@ -11,7 +11,7 @@
     "check": "node scripts/generate.mjs --check"
   },
   "dependencies": {
-    "@agent-ix/semantic-core": "0.1.0"
+    "@agent-ix/semantic-core": "0.3.0"
   },
   "devDependencies": {
     "@typespec/compiler": "1.15.0",
