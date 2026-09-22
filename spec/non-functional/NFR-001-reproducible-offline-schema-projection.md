@@ -35,11 +35,15 @@ The emitted bundle SHALL validate and resolve with no network read.
   job's) npm configuration and not the repository's, and a machine whose npm
   configuration does not route the scope, or authenticate against GitHub
   Packages, cannot reproduce the bundle at all.
-- Engine floor: the suite runs against `quire >= 0.33.0` installed from the
-  internal package index. The engine work that would validate an artifact-type
-  record against `data_schema` (quire-rs FR-069) is in no published wheel, so
-  no engine reproduces this module's record validation offline today; see
-  agent-ix/quire-rs#393 and agent-ix/quire-rs#388.
+- Engine floor: the suite runs against the module's committed `quire ^0.47.1`
+  dev dependency, resolved from `internal-pypi` (PLAT-974). quire-rs FR-069's
+  digest-binding half — a `data_schema.digest` mismatch drops the affected
+  archetype at load (`semantic.data-schema-digest-mismatch`) — shipped in
+  quire-rs v0.47.0/0.47.1 (agent-ix/quire-rs#390) and reproduces offline with
+  no network read (TC-063). The broader engine work that would validate a full
+  artifact-type record against `data_schema` end to end is in no published
+  wheel, so no engine reproduces that broader record validation offline
+  today; see agent-ix/quire-rs#393 and agent-ix/quire-rs#388.
 - Line endings: the repository pins LF line endings via `.gitattributes`
   (`* text=auto eol=lf`), so the emitted bundle, the golden records, and every
   `manifest.yaml` digest are checkout-independent — the digests are computed

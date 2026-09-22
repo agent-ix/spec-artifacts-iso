@@ -13,24 +13,27 @@ Covers TC-046, TC-047 and TC-048 of the FR-006 test matrix:
   to an existing file whose SHA-256 equals the digest, ``exports`` equals the
   referencing set, no inline ``data_schema`` remains, and a one-byte schema edit
   fails naming the type and both digests (FR-006-AC-2, AC-5, CON-2);
-* TC-048 — on the published quire floor, ``Registry.load_from`` lists all eleven
-  archetypes with the block and the ten references present, and
-  ``validate_document`` passes every skeleton (FR-006-AC-3);
+* TC-048 — on the module's committed quire floor (``^0.47.1``),
+  ``Registry.load_from`` lists all eleven archetypes with the block and the
+  ten references present, and ``validate_document`` passes every skeleton
+  (FR-006-AC-3);
 
 FR-006-AC-4 — refusal of a malformed ``semantic`` block — is verified nowhere
 here. It used to be, against a copy of the FR-035 schema this package shipped;
 the copy is removed (PLAT-902) and the criterion is retired rather than
-restated over the loader, because at the declared floor (quire 0.33.0) the
-loader ignores the block and every such mutation still loads all eleven
-archetypes. FR-006 Behavior records the measurement and the engine that does
-refuse.
+restated over the loader. It is not restated because, at this requirement's
+originally declared floor (quire 0.33.0), the loader ignored the block and
+every such mutation still loaded all eleven archetypes; at the module's
+current committed floor (``^0.47.1``) the loader does refuse those mutations
+(FR-006 Behavior records the re-measurement), but FR-006-AC-4 stays retired
+per PLAT-902 rather than being restated over it.
 
 Nothing here hand-computes a digest as an expected value: the digests are
 produced by ``make manifest-digests`` (``scripts/manifest_digests.py``) and the
 suite only ever recomputes them from the shipped bytes and compares.
 
 No check in this module skips. FR-006's Inputs fix the engine floor at
-``quire >= 0.33.0``, which loads this manifest, so a missing or too-old engine
+``quire ^0.47.1``, which loads this manifest, so a missing or too-old engine
 is a failure and not a silent pass.
 """
 
@@ -342,7 +345,7 @@ def test_tc047_one_byte_schema_edit_fails_naming_type_and_digests(
 
 
 def test_tc048_registry_lists_eleven_archetypes_with_the_block_present() -> None:
-    """TC-048: FR-006-AC-3: at the published floor (quire >= 0.33.0),
+    """TC-048: FR-006-AC-3: at the module's committed floor (quire ^0.47.1),
     ``Registry.load_from`` over the module's parent directory lists all eleven
     archetypes with the ``semantic`` block and the ten ``data_schema``
     references present — adding the block breaks no consumer.
