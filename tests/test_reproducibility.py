@@ -3,10 +3,11 @@ and the digest binding at load (FR-006-AC-8).
 
 NFR-001 has three measurements and this module discharges two of them as tests
 (byte reproducibility, wall time) and one as a manual gate (no network read).
-FR-006-AC-8 is the one criterion of this ticket that cannot pass on any
-published wheel, and it is recorded here as a *strict* expected failure rather
-than a skip — see ``test_tc063_...`` for why that distinction is the whole
-point.
+FR-006-AC-8 (quire-rs FR-069, `agent-ix/quire-rs#390`) shipped in quire-rs
+v0.47.0/0.47.1: a `data_schema.digest` mismatch is refused by *dropping* the
+mismatched archetype from the registry rather than raising, so the assertion
+is on `Registry.archetype_names()`, not on an exception — see
+``test_tc063_...`` below.
 """
 
 from __future__ import annotations
@@ -17,7 +18,6 @@ import shutil
 import subprocess
 import time
 
-import pytest
 import yaml
 
 REPO_ROOT = pathlib.Path(__file__).resolve().parent.parent
@@ -193,55 +193,43 @@ def _module_copy_with_broken_digest(destination: pathlib.Path) -> pathlib.Path:
     return destination
 
 
-@pytest.mark.xfail(
-    strict=True,
-    reason=(
-        "quire-rs FR-069 (the loader half that digest-checks a reference-form "
-        "data_schema) is on quire-rs main only and is in no published wheel — "
-        "agent-ix/quire-rs#388. This is recorded as a STRICT expected failure, "
-        "never a skip: a skip would report green for a check that did not run, "
-        "which is the exact failure mode this module's IT-002 history paid for. "
-        "When the wheel lands, strict xfail turns the newly passing assertion "
-        "into a failure, which is the signal to delete this marker."
-    ),
-)
-def test_tc063_a_broken_digest_is_refused_at_load(tmp_path: pathlib.Path) -> None:
+def test_tc063_a_broken_digest_drops_the_archetype_at_load(
+    tmp_path: pathlib.Path,
+) -> None:
     """TC-063: FR-006-AC-8: a copy of the module with one `data_schema.digest`
     altered by one hex digit is refused at load — the digest binding is real,
     not a no-op.
+
+    quire-rs FR-069's loader half (`semantic.data-schema-digest-mismatch`,
+    `src/semantic/resolver.rs`) does not raise on a mismatch: the loader
+    (`src/loader/mod.rs`) records the failure internally and `continue`s past
+    that archetype, so the registry loads with it *missing* rather than
+    refusing to load at all. The `quire.Registry` Python binding exposes no
+    diagnostics accessor — only `load_from`, `from_env`, `archetype_names`,
+    `validate` (checked against the installed 0.47.1 wheel) — so
+    `archetype_names()` is the only observable surface; the diagnostic code
+    itself is not asserted here because nothing in the binding surfaces it.
     """
     import quire
 
     root = _module_copy_with_broken_digest(tmp_path)
-    with pytest.raises(Exception) as refusal:
-        quire.Registry.load_from([str(root)])
-    message = str(refusal.value)
-
-    # The assertion is pinned to the *cause*, not merely to "something was
-    # raised". Everything else about this copy is byte-identical to a module
-    # that loads (the control below proves it), so when the wheel lands the
-    # strict xfail must flip on a refusal that is about the digest binding —
-    # not on an unrelated import, path or parse error that happens to be
-    # raised at the same line and would read as "the binding works".
-    assert "digest" in message.lower() or "FR.json" in message, (
-        "the loader refused the module, but not for the reason FR-006-AC-8 "
-        "names: the refusal mentions neither the digest nor the schema the "
-        f"broken reference points at: {message}"
-    )
-    assert "FR" in message, (
-        "the loader refused the module but did not name the archetype whose "
-        f"digest was wrong: {message}"
+    registry = quire.Registry.load_from([str(root)])
+    assert "FR" not in registry.archetype_names(), (
+        "the loader loaded FR despite its recorded digest not matching the "
+        "shipped schema bytes — the digest binding is a no-op"
     )
 
 
 def test_tc063_control_the_unmodified_module_still_loads(
     tmp_path: pathlib.Path,
 ) -> None:
-    """Control for TC-063: the same copy, with its digests intact, loads.
+    """Control for TC-063: the same copy, with its digests intact, loads with
+    `FR` present.
 
-    Without this the expected failure above would be indistinguishable from a
-    copy that never loaded at all — the strict xfail would then be pinned on
-    the wrong cause and would never flip when the wheel arrives.
+    Without this the assertion above (`FR` absent) would be indistinguishable
+    from a copy that never loaded anything at all — this pins the absence to
+    the digest mismatch specifically, not to some unrelated breakage in the
+    copy.
     """
     import quire
 

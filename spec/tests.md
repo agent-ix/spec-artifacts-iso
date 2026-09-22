@@ -25,14 +25,15 @@ The 10 criteria still pending are the ones whose verification is an
 a document-mutation test — none of which this package's suite runs. They are
 listed as pending rather than quietly dropped.
 
-Three rows depend on a release outside this repository and cannot be green
-here until it lands. TC-063 needs a `quire` wheel carrying quire-rs FR-069
-(agent-ix/quire-rs#388) and is recorded as a strict expected failure — never a
-skip, never a pass. TC-055 and TC-064 are manual because the
+Two rows depend on a release outside this repository and cannot be green
+here until it lands. TC-055 and TC-064 are manual because the
 published quoin carries no semantic-block reader: the refusal
 agent-ix/quoin#336 tracks can be read out of quoin main's source, not run. TC-057 is the manual offline gate that
-no CI job claims. Every other row is dischargeable at the published floor
-(`quire >= 0.33.0`).
+no CI job claims. TC-063 needed a `quire` wheel carrying quire-rs FR-069's
+digest-binding half; that shipped in quire-rs v0.47.0/0.47.1
+(agent-ix/quire-rs#390), so TC-063 is now an ordinary passing test, not an
+expected failure. Every other row is dischargeable at the module's committed
+floor (`quire ^0.47.1`).
 
 An NFR has no `-AC-` ids — its criteria are its `Metric | Target | Threshold |
 Method` rows — so NFR rows trace to `NFR-001 (metric n)` (SR-003 FND-006).
@@ -141,7 +142,7 @@ Method` rows — so NFR rows trace to `NFR-001 (metric n)` (SR-003 FND-006).
 | TC-045 | An extra property, a wrong-prefix row id, a removed required section, a duplicated H2, a malformed `## Story`, a typed table with a header and zero rows (`minItems` boundary), a `line: 0` (`minimum` boundary), a CRLF document, an empty `Verification` cell, and a `status` outside its pattern, and a row id repeated within one table each fail — the schema naming the path, the mapping naming the line, every failure in a document reported together, and no partial record (FR-005-AC-4, FR-007-AC-6; SR-003 FND-002/003) | Unit | P0 | FR-005-AC-4, FR-007-AC-6 | ✅ |
 | TC-046 | The manifest's `semantic` block key set is exactly the nine declared keys with the declared values; the block and the `data_schema` references add no required key at the manifest root or on an `ArtifactTypeEntry`; and the legacy-manifest fixture (block and references removed) is this manifest with exactly those removals and loads under quire with the same eleven archetypes (FR-006-AC-1, AC-7) | Unit | P0 | FR-006-AC-1, FR-006-AC-7, FR-006-CON-1 | ✅ |
 | TC-047 | Every exported artifact type carries a `{schema, digest}` reference to an existing file whose SHA-256 equals the digest; `exports` equals the referencing set; no inline `data_schema` remains; a one-byte schema edit fails naming the type and both digests (FR-006-AC-2, AC-5) | Unit | P0 | FR-006-AC-2, FR-006-AC-5, FR-006-CON-2 | ✅ |
-| TC-048 | On `quire >= 0.33.0`, `Registry.load_from` lists all eleven archetypes with the `semantic` block and the ten `data_schema` references present, and `validate_document` passes every skeleton — the block breaks no consumer (FR-006-AC-3) | Integration | P0 | FR-006-AC-3 | ✅ |
+| TC-048 | On `quire ^0.47.1`, `Registry.load_from` lists all eleven archetypes with the `semantic` block and the ten `data_schema` references present, and `validate_document` passes every skeleton — the block breaks no consumer (FR-006-AC-3) | Integration | P0 | FR-006-AC-3 | ✅ |
 | TC-050 | Each pre-change skeleton committed at 3d87196 maps to a record that validates against the new schema; no table header, heading, or column order changed (FR-007-AC-5) | Snapshot | P0 | FR-007-AC-5, FR-007-CON-1 | ✅ |
 | TC-051 | The FR skeleton's `## Invariants` clause maps to a `ClauseRef` with `language: ocl` and the heading as `clauseId`; `sourceSpan` is present with a caller `sourceIdentity` and absent without one; the `invariantsText` entry equals the fence body byte-for-byte; a non-identifier heading, a `tla` fence, a second fence under one heading, a repeated `clauseId`, and an unowned fence each fail naming the line; a prose `## Invariants` leaves `invariants` absent without failing; no module code parses the clause (FR-007-AC-4) | Unit | P0 | FR-007-AC-4, FR-007-CON-2 | ✅ |
 | TC-052 | `mappings.yaml` validates against `mappings.schema.json`, names every model property exactly once with one of the eight mapping kinds, names no undeclared property, matches locator `assert.columns` on tables, and records `authority`, `round_trip`, per-property `lossless`, and the dropped frontmatter keys (FR-007-AC-1, AC-7) | Unit | P0 | FR-007-AC-1, FR-007-AC-7 | ✅ |
@@ -156,4 +157,4 @@ Method` rows — so NFR rows trace to `NFR-001 (metric n)` (SR-003 FND-006).
 | TC-060 | Every emitted object schema declares its properties inline (no `allOf`/`oneOf`/`anyOf`/`$ref` at the object's top level except a nullable scalar's `anyOf`), and the Python `jsonschema` validator accepts every golden record and rejects every TC-045 mutation (FR-005-AC-8) | Unit | P0 | FR-005-AC-8 | ✅ |
 | TC-061 | The emitted schema file set equals `toolchain.json`'s `files`, and the digest recomputed over those bytes equals the recorded digest, with no toolchain run (FR-005-AC-7) | Unit | P0 | FR-005-AC-7 | ✅ |
 | TC-062 | The sdist/wheel `include` list and the npm `files` list name every shipped payload entry and no TypeSpec toolchain file; a built sdist and a packed npm tarball carry the same payload entry set (FR-005-AC-9) | Integration | P1 | FR-005-AC-9 | ✅ |
-| TC-063 | A copy of the module with one `data_schema.digest` altered by one hex digit is refused at load — strict expected failure until a wheel carrying quire-rs FR-069 is published (agent-ix/quire-rs#388) (FR-006-AC-8) | Integration | P0 | FR-006-AC-8 | ✅ |
+| TC-063 | A copy of the module with one `data_schema.digest` altered by one hex digit loads with that archetype absent from `Registry.archetype_names()` — the digest binding shipped in quire-rs v0.47.0/0.47.1 (agent-ix/quire-rs#390) and drops the archetype rather than raising; a control proves the unmodified copy still loads it (FR-006-AC-8) | Integration | P0 | FR-006-AC-8 | ✅ |

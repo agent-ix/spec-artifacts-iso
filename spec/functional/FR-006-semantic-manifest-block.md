@@ -21,8 +21,9 @@ relationships:
 > **Review pass (2026-09-03, SR-003..SR-010):** obligations on quoin and on
 > "the module author" are removed; this requirement binds the manifest and the
 > module's own suite only. What quoin and quire do with the block is recorded
-> as evidence, not as obligations. The quire engine floor (0.46.0, the wheel
-> carrying quire-rs FR-069) and the FR-035 schema refresh provenance
+> as evidence, not as obligations. The quire engine floor (`^0.47.1`, the
+> committed dev dependency shipping quire-rs FR-069's digest binding,
+> `agent-ix/quire-rs#390`) and the FR-035 schema refresh provenance
 > (filament-core-service CR-003, revision a77f31e, as vendored by quoin
 > 3e842ce) are named. The known quoin contract gap is stated as certain:
 > quoin 3e842ce checks `semantic.exports` and resolves `data_schema` against
@@ -61,17 +62,19 @@ bytes.
   description that contradicts artifact-type exports (agent-ix/quoin#336) — are
   recorded here as upstream's, and are no longer frozen into this repository by
   a byte-identity criterion.
-- The quire wheel the suite runs against: `>= 0.33.0`, the published floor of
-  the internal package index. Every criterion of this requirement except AC-8
-  is discharged at that floor, because a consumer that ignores the `semantic`
-  block loads the module unchanged (CON-1).
-- AC-8, the digest refusal, needs quire-rs FR-069, which is on `quire-rs`
-  main (engine 0.46.0) and in no published wheel (agent-ix/quire-rs#388). The
-  suite SHALL record that assertion as a strict expected failure naming
-  agent-ix/quire-rs#388 — never a skip and never a pass. A skip reports green
-  for a check that did not run, which is the failure mode this module's IT-002
-  history already paid for; a strict expected failure that starts passing fails
-  the suite, so the wheel's arrival is reported by the gate itself.
+- The quire wheel the suite runs against: `^0.47.1`, the module's committed
+  dev dependency, resolved from `internal-pypi` (PLAT-974). Every criterion of
+  this requirement, including AC-8, is discharged at that floor, because a
+  consumer that ignores the `semantic` block loads the module unchanged
+  (CON-1).
+- AC-8, the digest refusal, needs quire-rs FR-069's digest-binding half
+  (`semantic.data-schema-digest-mismatch`), which shipped in quire-rs
+  v0.47.0/0.47.1 (agent-ix/quire-rs#390). It does not raise: the loader drops
+  the mismatched archetype and loads every other one, so the assertion is on
+  `Registry.archetype_names()` lacking the affected archetype, not on an
+  exception. The suite records this as an ordinary passing test (TC-063) — no
+  longer a strict expected failure, since the wheel it needed is published and
+  installed.
 
 ## Outputs
 
@@ -127,7 +130,7 @@ bytes.
   is not `<org>/<repo>`, or a `targets` value outside the registry, then the
   bundled FR-035 schema SHALL reject the manifest naming the key or value.
 - Evidence, not obligation — quire: with the block and the references in
-  place, the quire 0.46.0 loader (`quire.Registry.load_from`) admits
+  place, the quire 0.47.1 loader (`quire.Registry.load_from`) admits
   artifact-type exports because it checks `exports` against every archetype
   (`Manifest::all_archetypes`), resolves each reference-form `data_schema`,
   and refuses the module (`unknown archetype`) on a digest mismatch or an
@@ -159,16 +162,21 @@ bytes.
   applied. The retired FR-006-AC-4 verified it here by mutating this manifest
   and validating the result against a copy of the schema this repository
   shipped, which reports on the copy. It is not restated over quire's loader,
-  because **measured** at this requirement's declared floor (quire 0.33.0, the
-  published floor of the internal index) the loader ignores the block entirely:
-  all four mutations above still load all eleven archetypes. Only quire 0.46.0
-  refuses them — the unknown key, the non-`<org>/<repo>` package and the
-  unregistered target each empty the registry, and the ambiguous `data_schema`
-  drops that one artifact type. 0.46.0 is in no published wheel
-  (agent-ix/quire-rs#392, and #388 for the digest binding), so a loader-based
-  criterion at the declared floor would pass by not running — the failure mode
-  FR-001 CR-002 exists to close. The criterion becomes observable here when a
-  wheel carrying that engine is published.
+  because **measured** at this requirement's originally declared floor (quire
+  0.33.0, then the published floor of the internal index) the loader ignored
+  the block entirely: all four mutations above loaded all eleven archetypes.
+  quire 0.47.1 — published to `internal-pypi` (agent-ix/quire-rs#392) and,
+  since PLAT-974, the module's committed dev dependency — refuses them: the
+  unknown key, the non-`<org>/<repo>` package and the unregistered target
+  each empty the registry, and the ambiguous `data_schema` drops that one
+  artifact type (each reconfirmed against the installed 0.47.1 wheel on
+  2026-09-22). FR-006-AC-4 stays retired rather than restated (PLAT-902) —
+  this paragraph is historical explanation, not a live criterion. The
+  digest-binding half of a loader-based check (quire-rs FR-069) also shipped
+  in the same 0.47.1 wheel (agent-ix/quire-rs#390,
+  `semantic.data-schema-digest-mismatch`) and is exercised directly by
+  FR-006-AC-8 (TC-063), which is now an ordinary passing test rather than a
+  strict expected failure.
 
 ## Constraints
 
@@ -183,15 +191,15 @@ bytes.
 |----|----------|--------------|
 | FR-006-AC-1 | The manifest carries a `semantic` block whose key set equals exactly `{contract_version, semantic_core, package, exports, imports, targets, mappings, compatibility_posture, legacy_forms}` with the values of Outputs. | Test (TC-046) |
 | FR-006-AC-2 | For each of the ten exported artifact types, `data_schema.schema` names an existing file under `spec_artifacts_iso/schemas/` per the FR-005 map, `data_schema.digest` equals `sha256:` plus the hex SHA-256 of that file's bytes, and `exports` equals the set of artifact types carrying a reference. | Test (TC-047) |
-| FR-006-AC-3 | At the published floor (quire ≥ 0.33.0), `quire.Registry.load_from` over the module's parent directory lists all eleven archetypes with the `semantic` block and the ten `data_schema` references present, and `validate_document` passes every skeleton — adding the block breaks no consumer. | Test (TC-048) |
+| FR-006-AC-3 | At the module's committed floor (quire ^0.47.1), `quire.Registry.load_from` over the module's parent directory lists all eleven archetypes with the `semantic` block and the ten `data_schema` references present, and `validate_document` passes every skeleton — adding the block breaks no consumer. | Test (TC-048) |
 | FR-006-AC-5 | A one-byte edit to any emitted schema without a digest update fails the suite naming the artifact type and both digests. | Test (TC-047) |
 | FR-006-AC-6 | `quoin module install path:<module root>` on the published quoin (0.23.1) installs the module with no diagnostic, so the block is inert to every quoin a user can install today; the verbatim output is recorded, and the previously installed registry version of this module is restored afterwards. | Demonstration (TC-055) |
 | FR-006-AC-9 | On a quoin carrying FR-070 (main ≥ 3e842ce, unpublished), the same install is refused with `semantic.unknown-export` and `semantic.export-without-schema` for each of the ten exports and no other diagnostic. Discharged by source reading against `src/semantic/manifest.ts` until such a quoin is published; tracked by agent-ix/quoin#336. | Analysis (TC-064) |
 | FR-006-AC-7 | The legacy-manifest fixture (no `semantic` block, no `data_schema`) is this manifest with exactly those removals, and loads under quire with the same eleven archetypes. | Test (TC-046) |
-| FR-006-AC-8 | On a wheel carrying quire-rs FR-069, a copy of the module with one `data_schema.digest` altered by one hex digit is refused at load — the digest binding is real, not a no-op. Recorded as a strict expected failure naming agent-ix/quire-rs#388 until such a wheel is published. | Test (TC-063) |
+| FR-006-AC-8 | On quire ^0.47.1 (shipping quire-rs FR-069's digest binding, agent-ix/quire-rs#390), a copy of the module with one `data_schema.digest` altered by one hex digit is refused at load — the digest binding is real, not a no-op. The engine drops the mismatched archetype rather than raising, so the criterion is that the archetype is absent from `Registry.archetype_names()`, with a control proving the unmodified copy still loads it. | Test (TC-063) |
 
 ## Dependencies
 
-- **Upstream**: [FR-001](./FR-001-module-manifest-activates.md) (the FR-035 gate), [FR-005](./FR-005-semantic-data-schemas.md) (the referenced files), quoin FR-070 and FR-073 (agent-ix/quoin#293), quire-rs FR-069 (agent-ix/quire-rs#388; wheel 0.46.0), filament-core-service FR-035 CR-003 (agent-ix/filament-core-service#21)
+- **Upstream**: [FR-001](./FR-001-module-manifest-activates.md) (the FR-035 gate), [FR-005](./FR-005-semantic-data-schemas.md) (the referenced files), quoin FR-070 and FR-073 (agent-ix/quoin#293), quire-rs FR-069 (digest binding shipped in wheel 0.47.1, agent-ix/quire-rs#390), filament-core-service FR-035 CR-003 (agent-ix/filament-core-service#21)
 - **Blocked downstream**: quoin FR-075 (derives the package manifest and registry pins from `exports`) cannot consume this module until agent-ix/quoin#336 lands
 - **Downstream**: [NFR-001](../non-functional/NFR-001-reproducible-offline-schema-projection.md), agent-ix/filament-core-data#36

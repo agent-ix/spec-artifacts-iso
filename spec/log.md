@@ -7,6 +7,41 @@ description: "Chronological log of structural changes to this bundle."
 
 ## History
 
+* **2026-09-22** — PLAT-974: CI off dev mirrors. `.github/workflows/ci.yml`'s
+  `ci` job now runs `semantic-module-ci.yml` (was `lib-ci.yml`), which installs
+  `spec_artifacts_iso/semantic`'s npm dependencies before pytest; the gap this
+  closes is PLAT-955 (`@agent-ix/semantic-core` was never installed in CI, so
+  15 of 202 tests failed on the one real dispatch this workflow has had).
+  `quire` moves from `>=0.33.0` to `^0.47.1` in `pyproject.toml` — the 0.47.1
+  wheel FR-006 needed is now published to `internal-pypi`
+  (`agent-ix/quire-rs#392`) — and the `local-pypi` source (`pypi.ix`) is
+  deleted from `pyproject.toml`; `poetry.lock` now names only `internal-pypi`.
+  `@agent-ix/semantic-core` already resolved from GitHub Packages in the
+  committed `package-lock.json`; FR-005 and NFR-001 are corrected to say so
+  instead of naming the dev-only `npm.ix` mirror as today's route. Re-probed
+  against the installed 0.47.1 wheel: the four malformed-`semantic`-block
+  mutations FR-006 Behavior describes for "quire 0.46.0" still hold (three
+  empty the registry, the ambiguous `data_schema` drops one archetype);
+  FR-006-AC-4 stays retired (PLAT-902).
+
+  **TC-063 was a false xfail** (found in review): quire-rs FR-069's
+  digest-binding half shipped in v0.47.0/0.47.1 (`agent-ix/quire-rs#390`,
+  `semantic.data-schema-digest-mismatch` in `src/semantic/resolver.rs`), but it
+  does not raise — the loader (`src/loader/mod.rs`) drops the mismatched
+  archetype and loads everything else, so `pytest.raises(Exception)` could
+  never have passed and the strict xfail was silently masking that. Rewrote
+  TC-063 to assert `"FR" not in registry.archetype_names()` against the
+  broken-digest copy, next to the existing control asserting `"FR" in
+  registry.archetype_names()` on the clean copy; mutation-checked (fails when
+  the digest is left intact). The `quire.Registry` Python binding exposes no
+  diagnostics accessor (`load_from`, `from_env`, `archetype_names`, `validate`
+  only, checked against 0.47.1), so the diagnostic code itself is not
+  asserted. FR-006 (Inputs, Behavior, AC-3, AC-8, Dependencies), NFR-001
+  (Scope), spec/tests.md (TC-048, TC-063) and `tests/test_semantic_manifest.py`
+  are corrected to state the `^0.47.1` floor and that FR-069's digest binding
+  is shipped, not blocked. All four local gates pass with no drift; the
+  strict xfail is gone (deleted, not XPASSed).
+
 * **2026-09-20** — **PLAT-902: this package stops redistributing filament-core-service's FR-035 module-manifest schema.** Deleted `spec_artifacts_iso/module-manifest.schema.json`, the public `module_manifest_schema()` / `MODULE_MANIFEST_SCHEMA_PATH` API, and the schema's entries in the wheel `include`, the npm `files` list and the npm staging payload. **FR-001 CR-002 is retired**, and its record now says so where it is read. CR-002's reasoning was that "a copy per repo is a copy that drifts", and its cure was one copy shipped from here — but redistributing a copy is copying it. What shipped was this repository's fork of the schema, carrying the original's `$id`, so four sibling repositories that gated their manifests on it were comparing a manifest to bytes maintained here, not to filament-core-service's contract. **The trap it set is visible in what had to be written around it**: FR-006-AC-4 required the copy to stay byte-identical to the private revision `a77f31e`, so FR-006's Inputs had to carry, as permanent text, two defects in that revision — an ECMA lookahead the Rust `jsonschema` crate cannot compile (`agent-ix/filament-core-service#24`) and a `semantic.exports` description contradicting this module's own exports (`agent-ix/quoin#336`) — because the criterion forbade fixing them. Downstream, `spec-artifacts-process` had to delete the `semantic` block and the `traceability.trace_targets[].required` key from its manifest before its copy would accept it, and validate the deleted block against a *second* copy.
 
   **Nineteen test cases go with it** — TC-001, TC-002 and TC-022..TC-038 — because every one of them asserted a property of the copy rather than of this module: that the schema accepts `required_relations`, that it rejects a zero `strength`, that it rejects an unanchored `source_exclude` glob. Those are assertions about `filament-core-service`'s contract, written here and run against a file this repository edits; `test_tc_schema_014`'s own docstring stated the assumption they all rest on — *"the shipped schema is the one quire-rs FR-058 reads against"* — which nothing here could check. FR-001-AC-1 and FR-006-AC-4 are retired; FR-004-AC-5 keeps its declaration half and drops its schema half; FR-006-CON-1's "adds no required key" is now carried by the legacy fixture loading under quire, which is the consumer-facing fact the constraint was always about.
