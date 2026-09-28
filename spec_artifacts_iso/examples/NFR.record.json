@@ -33,7 +33,7 @@
     }
   ],
   "provenance": {
-    "digest": "sha256:36c40384c3b5e22a8d4ad489f5f3beb9ff63108ab379f8bb210b8b5c59649d56",
+    "digest": "sha256:3687ace071b9da154fccb8de06f5806309686e355fddbd6ea886fdee30970884",
     "path": "spec_artifacts_iso/skeletons/nfr.md",
     "sourceIdentity": "ix://agent-ix/spec-artifacts-iso/skeletons"
   },

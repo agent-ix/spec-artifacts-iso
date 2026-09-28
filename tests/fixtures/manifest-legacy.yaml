@@ -654,20 +654,6 @@ doc_kinds:
 - spec
 object_types: []
 lint_rules:
-- type: table_column_values
-  id: ac-verification-method
-  archetypes:
-  - FR
-  - NFR
-  section: Acceptance Criteria
-  column: Verification
-  allowed:
-  - Inspection
-  - Analysis
-  - Demonstration
-  - Test
-  annotation_pattern: \(TC-\d+(,\s*TC-\d+)*\)
-  severity: warning
 - type: forbidden_section
   id: us-acceptance-criteria-drift
   archetypes:
@@ -686,7 +672,6 @@ lint_rules:
   - Analysis
   - Demonstration
   - Test
-  annotation_pattern: \(TC-\d+(,\s*TC-\d+)*\)
   severity: warning
 - type: section_body_pattern
   id: fr-shall-language

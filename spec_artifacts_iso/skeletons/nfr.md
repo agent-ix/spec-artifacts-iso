@@ -23,8 +23,8 @@ relationships:
        compliance checks don't reduce to metrics.
      - When the optional Acceptance Criteria section IS present, its table
        headers MUST be exactly ID | Criteria | Verification with >=1 data
-       row and ids `NFR-NNN-AC-N` — the same shape as FR, checked by the
-       same `ac-verification-method` lint advisory. Either omit the section
+       row and ids `NFR-NNN-AC-N` — the same shape as FR, whose Verification
+       vocabulary spec-artifacts-process owns. Either omit the section
        or author the table; unstructured prose is no longer accepted.
      - The Statement SHOULD follow EARS (advisory grammar `iso-spec-core`,
        FR-042): one `shall`, a named subject, a concrete response. NFRs are

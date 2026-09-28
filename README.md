@@ -87,9 +87,10 @@ See https://github.com/agent-ix/quire-cli#usage-instructions.
 - **NFR body**: required = `## Statement` + `## Measurement and Evaluation`
   (`Metric|Target|Threshold|Method` table) + `## Verification`;
   `quality_attribute` is a frontmatter enum (ISO 25010), not a section.
-- **AC Verification cells** use the ISO 29148 methods — `Inspection`,
-  `Analysis`, `Demonstration`, `Test` — optionally annotated `Test (TC-035)`.
-  Checked by the module's `ac-verification-method` lint rule (`quire lint`).
+- **AC Verification cells** (FR/NFR) are owned by spec-artifacts-process:
+  its lint rule allows the ISO 29148 methods — `Inspection`, `Analysis`,
+  `Demonstration`, `Test` — plus every method id in its catalog. Tests bind
+  to acceptance criteria by criterion id, not a cell annotation.
 - **Relationships**: author the explicit `relationships:` array (typed verbs,
   incl. `specifies` for object FR → behavioral FR). Bare-ID sugar fields
   (`depends_on:` etc.) are read-side ingestion tolerance only — except in

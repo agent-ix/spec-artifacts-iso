@@ -21,7 +21,7 @@
     "text": "\nBusiness value is high because the guarantee underpins trust in the catalog;\nurgency is high given known transfer corruption; risk if unmet is acceptance of\ntampered artifacts. Used for planning and sequencing only.\n\n"
   },
   "provenance": {
-    "digest": "sha256:6b70b42360ab329b2018db7b9188ed00fbcc2fed56a425bd4421262284873dd0",
+    "digest": "sha256:63084fd37b5812d44e381ab09161d6a819e95169557604f51ca28b55bc8dab94",
     "path": "spec_artifacts_iso/skeletons/str.md",
     "sourceIdentity": "ix://agent-ix/spec-artifacts-iso/skeletons"
   },

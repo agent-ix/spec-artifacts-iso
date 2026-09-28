@@ -18,8 +18,8 @@ relationships:
        validates a stakeholder requirement against the stakeholder's real
        need, and verifies a system requirement against the spec. The method
        vocabulary is the same four
-       (Inspection | Analysis | Demonstration | Test, optionally annotated
-       `(TC-035)`) — a `vc-validation-method` lint advisory checks it — but
+       (Inspection | Analysis | Demonstration | Test) — a
+       `vc-validation-method` lint advisory checks it — but
        expect `Demonstration` to dominate, because a stakeholder need is
        confirmed in an operational context rather than quantified over an
        input domain. That is correct, not a quality failure, and downstream

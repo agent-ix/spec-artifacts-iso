@@ -789,25 +789,17 @@ doc_kinds:
 - spec
 object_types: []
 # Advisory lint rules (quire-rs FR-036; format-walkthrough decision #14):
-# AC Verification cells use the ISO 29148 verification methods, optionally
-# annotated with test-case references — `Test (TC-035)`. Evaluated by
-# `quire lint`; never blocks validation/extraction/sync.
+# FR/NFR Verification cells are owned by spec-artifacts-process, which lints
+# the method catalog and allows both the ISO 29148 classes and its catalog
+# method ids. Evaluated by `quire lint`; never blocks validation/extraction/sync.
 lint_rules:
-- type: table_column_values
-  id: ac-verification-method
-  archetypes: [FR, NFR]
-  section: Acceptance Criteria
-  column: Verification
-  allowed: [Inspection, Analysis, Demonstration, Test]
-  annotation_pattern: '\(TC-\d+(,\s*TC-\d+)*\)'
-  severity: warning
-# StR's sibling. ISO/IEC/IEEE 15288 and 29148 apply **one** method taxonomy to
-# both verification and validation — what differs is the reference you check
-# against, not the technique — so the vocabulary and annotation pattern are
-# reused unchanged and only the column name differs. Expect StR rows to skew to
-# `Demonstration`, since a stakeholder need is usually confirmed in an
-# operational context; `Test` stays legitimate (operational test and
-# evaluation) and is not excluded.
+# StR's Validation column. ISO/IEC/IEEE 15288 and 29148 apply **one** method
+# taxonomy to both verification and validation — what differs is the reference
+# you check against, not the technique — so the vocabulary is reused unchanged
+# and only the column name differs. Expect StR rows to skew to `Demonstration`,
+# since a stakeholder need is usually confirmed in an operational context;
+# `Test` stays legitimate (operational test and evaluation) and is not
+# excluded.
 # US drift. A user story carries `## Acceptance Examples (Illustrative)` and its
 # skeleton says outright that nothing in it is binding or verification criteria.
 # Repos that authored `## Acceptance Criteria` on a US invented a heading no
@@ -828,7 +820,6 @@ lint_rules:
   section: Validation Criteria
   column: Validation
   allowed: [Inspection, Analysis, Demonstration, Test]
-  annotation_pattern: '\(TC-\d+(,\s*TC-\d+)*\)'
   severity: warning
 # ISO-standard (2026-06-16): normative-language + per-step success-criteria
 # advisories (quire-rs FR-036 `section_body_pattern`). The body of the named

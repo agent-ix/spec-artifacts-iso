@@ -82,8 +82,8 @@ LOG_BULLET_RE = re.compile(r"^\s*(?P<bullet>[*-])\s+(?P<body>\S.*)$")
 LOG_DATE_RE = re.compile(r"^\*\*(?P<date>\d{4}-\d{2}-\d{2})\*\*")
 HEADING_RE = re.compile(r"^(?P<hashes>#{1,6})\s+(?P<text>.*?)\s*$")
 
-#: The four verification methods the advisory ``ac-verification-method`` lint
-#: rule admits. Every other spelling in the corpus is free text.
+#: The four ISO 29148 verification/validation method classes. Every other
+#: spelling in the corpus is free text.
 LINT_ADMITTED_METHODS = ("Test", "Analysis", "Inspection", "Demonstration")
 
 #: The heading level ISO artifact sections are authored at. ``section_lines``
