@@ -72,7 +72,9 @@ scalar ValidationCriterionId extends string;
 @pattern("^IT-[0-9]+-SC-[0-9]+$")
 scalar SuccessCriterionId extends string;
 
-/** A test-case reference annotated in a verification cell, `Test (TC-035)`. */
+/** A test-case reference the split extracts from an annotated verification
+ * cell, e.g. `TC-035` out of `Test (TC-035)` — a cell shape no skeleton
+ * authors, kept for a caller that still annotates one. */
 @pattern("^TC-[0-9]+$")
 scalar TestCaseRef extends string;
 
@@ -189,12 +191,14 @@ model Relationship {
 }
 
 /**
- * A verification or validation cell split by the `typed-table` mapping.
- * `Test (TC-035, TC-036)` is `method: Test`, `annotation: "TC-035, TC-036"`,
- * `testRefs: [TC-035, TC-036]`. `annotation` carries the text between the first
- * `(` and the last `)` verbatim, so no byte of the authored cell is dropped; a
- * cell without parentheses is `method` alone with `testRefs: []` and no
- * `annotation`.
+ * A verification or validation cell split by the `typed-table` mapping. The
+ * skeletons author a plain cell — `Test` is `method: Test`, `testRefs: []`,
+ * no `annotation`. A cell still carrying parentheses splits into `method`,
+ * `annotation` (the text between the first `(` and the last `)` verbatim, so
+ * no byte of the authored cell is dropped), and `testRefs` (the `TC-nnn`
+ * tokens found in `annotation`). The split keeps parsing that shape for a
+ * caller that still authors one, but a criterion binds to its tests by
+ * criterion id, not a cell annotation.
  */
 model Verification {
   /** free text: on FR/NFR this is the Verification cell, owned by spec-artifacts-process's lint rule (ISO 29148 methods plus its catalog method ids); on StR this is the Validation cell, owned by this module's advisory `vc-validation-method` rule (the four ISO 29148 methods). The census counts 1,144 distinct spellings over 21,181 cells, of which those admitted spellings are the large majority, and a schema that closed the vocabulary would reject the corpus it describes. */

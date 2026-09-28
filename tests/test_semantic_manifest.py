@@ -365,3 +365,32 @@ def test_tc048_validate_document_passes_every_skeleton(name: str) -> None:
     text = (SKELETONS_DIR / f"{_SKELETON_FILE[name]}.md").read_text()
     result = quire.validate_document(name, str(PKG_ROOT), text)
     assert result["is_valid"], result["errors"]
+
+
+# ─── PLAT-1085: the FR/NFR Verification lint rule stays gone ─────────────
+
+
+def _lint_rule(manifest: dict, rule_id: str) -> dict | None:
+    for rule in manifest.get("lint_rules") or []:
+        if rule.get("id") == rule_id:
+            return rule
+    return None
+
+
+def test_manifest_declares_no_ac_verification_method_rule() -> None:
+    """PLAT-1085: `ac-verification-method` is deleted, not merely disabled —
+    spec-artifacts-process now owns the FR/NFR Verification column vocabulary,
+    and the registry merging both modules' rules on that column is the defect
+    this pins against. Fails on the pre-PLAT-1085 manifest, which declares it."""
+    assert _lint_rule(_manifest(), "ac-verification-method") is None
+
+
+def test_vc_validation_method_rule_carries_no_annotation_pattern() -> None:
+    """PLAT-1085: the StR sibling keeps its four-class vocabulary but drops the
+    `(TC-nnn)` `annotation_pattern` — TC ids are retired epic-wide; a test
+    binds to its acceptance criterion by criterion id, not a cell annotation.
+    Fails on the pre-PLAT-1085 manifest, which carries the pattern."""
+    rule = _lint_rule(_manifest(), "vc-validation-method")
+    assert rule is not None, "vc-validation-method rule is missing entirely"
+    assert "annotation_pattern" not in rule
+    assert rule["allowed"] == ["Inspection", "Analysis", "Demonstration", "Test"]

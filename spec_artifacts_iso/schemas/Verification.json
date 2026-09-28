@@ -25,5 +25,5 @@
   "unevaluatedProperties": {
     "not": {}
   },
-  "description": "A verification or validation cell split by the `typed-table` mapping.\n`Test (TC-035, TC-036)` is `method: Test`, `annotation: \"TC-035, TC-036\"`,\n`testRefs: [TC-035, TC-036]`. `annotation` carries the text between the first\n`(` and the last `)` verbatim, so no byte of the authored cell is dropped; a\ncell without parentheses is `method` alone with `testRefs: []` and no\n`annotation`."
+  "description": "A verification or validation cell split by the `typed-table` mapping. The\nskeletons author a plain cell — `Test` is `method: Test`, `testRefs: []`,\nno `annotation`. A cell still carrying parentheses splits into `method`,\n`annotation` (the text between the first `(` and the last `)` verbatim, so\nno byte of the authored cell is dropped), and `testRefs` (the `TC-nnn`\ntokens found in `annotation`). The split keeps parsing that shape for a\ncaller that still authors one, but a criterion binds to its tests by\ncriterion id, not a cell annotation."
 }

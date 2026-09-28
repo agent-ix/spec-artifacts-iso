@@ -25,6 +25,21 @@ description: "Chronological log of structural changes to this bundle."
   not by an annotation on the Verification cell. Ships together with
   spec-artifacts-process's PLAT-1079 release.
 
+  **Fix round (review SR-013/SR-014, FND-001/002/003).** FR-007-AC-3 and the
+  `spec/tests.md` TC-053 row still described the retired `Test (TC-001)`
+  split; both are corrected to the plain-method cell the rewritten TC-053
+  test now asserts, and to say the split still parses an annotated cell for
+  a caller that authors one. `test_manifest_no_ac_verification_method_rule`
+  is added, asserting the manifest declares no `ac-verification-method` rule
+  and that `vc-validation-method` carries no `annotation_pattern`; it fails
+  against the pre-change manifest. `main.tsp`'s `TestCaseRef` and
+  `Verification` doc comments drop the `Test (TC-035)`-style example cell in
+  favor of a plain method example; `schemas/TestCaseRef.json`,
+  `schemas/Verification.json` and `semantic/generated/toolchain.json` are
+  regenerated. `TestCaseRef` itself is unchanged — it exists only to carry a
+  `TC-nnn` id inside an annotation the split still parses, which is a
+  narrower but still real purpose than authoring one in a skeleton.
+
 * **2026-09-22** — PLAT-974: CI off dev mirrors. `.github/workflows/ci.yml`'s
   `ci` job now runs `semantic-module-ci.yml` (was `lib-ci.yml`), which installs
   `spec_artifacts_iso/semantic`'s npm dependencies before pytest; the gap this
