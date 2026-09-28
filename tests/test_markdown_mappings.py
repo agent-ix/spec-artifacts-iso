@@ -475,21 +475,20 @@ def test_tc053_acceptance_rows_split_the_verification_cell(
     declaration: dict,
 ) -> None:
     """TC-053: FR-007-AC-3: the FR skeleton's `## Acceptance Criteria` rows map
-    to `AcceptanceCriterion` objects whose `verification` splits `Test (TC-001)`
-    into `method: Test`, `annotation: TC-001`, and `testRefs: [TC-001]`.
+    to `AcceptanceCriterion` objects whose `verification` is a plain method cell
+    with no annotation and no `testRefs` — criteria bind to tests by criterion
+    id, not by an annotation on the Verification cell.
     """
     record = _build("FR", declaration).record
     criteria = record["acceptanceCriteria"]
     assert [row["id"] for row in criteria] == ["FR-001-AC-1", "FR-001-AC-2"]
     assert criteria[0]["verification"] == {
         "method": "Test",
-        "annotation": "TC-001",
-        "testRefs": ["TC-001"],
+        "testRefs": [],
     }
     assert criteria[1]["verification"] == {
-        "method": "Test",
-        "annotation": "TC-002",
-        "testRefs": ["TC-002"],
+        "method": "Inspection",
+        "testRefs": [],
     }
     assert criteria[0]["line"] < criteria[1]["line"], "rows are in authored order"
 

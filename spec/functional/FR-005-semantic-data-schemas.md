@@ -243,8 +243,9 @@ Sections and tables:
   `type` (census:
   335 distinct categories over 3,960 constraint rows),
   `Verification.method` (census: 1,144 distinct spellings over 21,181 cells, of
-  which the four the advisory lint rule `ac-verification-method` admits are the
-  large majority), and `target` and `threshold` (census: prose quantities such as
+  which the four ISO 29148 classes and the spec-artifacts-process catalog
+  method ids admit the large majority), and `target` and `threshold`
+  (census: prose quantities such as
   `600 imports/s`) are free text because their vocabularies are owned by
   advisory lint rules or by no rule at all, and a schema that closed them would
   reject the corpus it describes. An empty cell (census: 7 of 21,181

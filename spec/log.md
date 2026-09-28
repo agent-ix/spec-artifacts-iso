@@ -7,6 +7,24 @@ description: "Chronological log of structural changes to this bundle."
 
 ## History
 
+* **2026-09-27** — PLAT-1085: the FR/NFR Verification vocabulary moves to
+  spec-artifacts-process (spec-artifacts-process#105, FR-004 CR-066). This
+  module's `ac-verification-method` lint rule is deleted from
+  `manifest.yaml`, and the `vc-validation-method` StR sibling (Validation
+  column) drops its `(TC-nnn)` `annotation_pattern` and keeps only the
+  four-class vocabulary — spec-artifacts-process's rule allows the four ISO
+  29148 classes plus every catalog method id and rejects `TC-…`/`IT-…`
+  annotations at warning severity, and the registry merging two rules on the
+  same column contradicted it. `skeletons/fr.md` and `skeletons/nfr.md` no
+  longer show a `Test (TC-…)` example cell; their golden records
+  (`examples/FR.record.json`, `examples/NFR.record.json`) and
+  `examples/StR.record.json` are regenerated from the edited skeletons.
+  `main.tsp`'s `Verification.method` doc comment and the projected
+  `schemas/Verification.json` no longer cite the retired rule id. TC ids are
+  being retired epic-wide: tests bind to acceptance criteria by criterion id,
+  not by an annotation on the Verification cell. Ships together with
+  spec-artifacts-process's PLAT-1079 release.
+
 * **2026-09-22** — PLAT-974: CI off dev mirrors. `.github/workflows/ci.yml`'s
   `ci` job now runs `semantic-module-ci.yml` (was `lib-ci.yml`), which installs
   `spec_artifacts_iso/semantic`'s npm dependencies before pytest; the gap this

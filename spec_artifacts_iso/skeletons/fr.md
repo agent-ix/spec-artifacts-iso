@@ -31,8 +31,9 @@ relationships:
        an AC needing block content MAY add a `### FR-XXX-AC-N`
        subsection that SUPPLEMENTS its row (structure + prose).
      - Verification cells use the ISO 29148 methods — Inspection |
-       Analysis | Demonstration | Test — optionally annotated with test
-       refs, e.g. `Test (TC-035)` (lint rule `ac-verification-method`).
+       Analysis | Demonstration | Test — or a spec-artifacts-process
+       catalog method id, e.g. `property-based-testing`. Tests bind to
+       acceptance criteria by criterion id, not a cell annotation.
      - Relationships: author the explicit `relationships:` array (the
        only form carrying a typed verb, incl. `specifies` for object FR
        → behavioral FR); bare-ID sugar fields like `depends_on:` are
@@ -104,8 +105,8 @@ inv digest_matches_declared:
 
 | ID | Criteria | Verification |
 |----|----------|--------------|
-| FR-001-AC-1 | Given a matching digest, the artifact is persisted | Test (TC-001) |
-| FR-001-AC-2 | Given a mismatched digest, the import is rejected | Test (TC-002) |
+| FR-001-AC-1 | Given a matching digest, the artifact is persisted | Test |
+| FR-001-AC-2 | Given a mismatched digest, the import is rejected | Inspection |
 
 ## Dependencies
 

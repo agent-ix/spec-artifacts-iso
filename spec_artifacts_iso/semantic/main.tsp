@@ -197,7 +197,7 @@ model Relationship {
  * `annotation`.
  */
 model Verification {
-  /** free text: the method vocabulary is owned by the advisory lint rules `ac-verification-method` / `vc-validation-method` (four ISO 29148 methods); the census counts 1,144 distinct spellings over 21,181 cells, of which the four the lint rule admits are the large majority, and a schema that closed them would reject the corpus it describes. */
+  /** free text: on FR/NFR this is the Verification cell, owned by spec-artifacts-process's lint rule (ISO 29148 methods plus its catalog method ids); on StR this is the Validation cell, owned by this module's advisory `vc-validation-method` rule (the four ISO 29148 methods). The census counts 1,144 distinct spellings over 21,181 cells, of which those admitted spellings are the large majority, and a schema that closed the vocabulary would reject the corpus it describes. */
   method: NonEmptyText;
   testRefs: TestCaseRef[];
   /** free text: the parenthesized remainder of the cell, verbatim, so the split loses nothing the author wrote. */
