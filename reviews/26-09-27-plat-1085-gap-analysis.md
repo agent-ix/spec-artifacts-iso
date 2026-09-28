@@ -36,3 +36,9 @@ gap is the stale FR-007-AC-3 / TC-053 text recorded in SR-013 FND-001.
 | ID | Severity | Summary | Refs |
 | --- | --- | --- | --- |
 | FND-001 | medium | FR-007-AC-3 (and tests.md TC-053) still specify the `Test (TC-001)` split on the FR skeleton; the skeleton and TC-053 no longer carry it. Same defect as SR-013 FND-001, recorded here as the trace gap. | spec/functional/FR-007-markdown-mappings.md:216, spec/tests.md:149 |
+
+## Dispositions
+
+| FND | outcome | sha/reason |
+| --- | --- | --- |
+| FND-001 | fixed | 4e8fe49 |

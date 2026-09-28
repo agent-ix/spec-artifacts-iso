@@ -51,3 +51,18 @@ Lows are informational.
 | FND-002 | low | No test asserts the rule change itself: nothing fails if `ac-verification-method` is re-added or `annotation_pattern` restored on `vc-validation-method` (the legacy fixture is derived from the manifest, so it tracks either state). | spec_artifacts_iso/manifest.yaml:795-823 |
 | FND-003 | low | Shipped schema text still uses `Test (TC-035)` / `Test (TC-035, TC-036)` as the canonical example of a verification cell, while the skeletons and README now say tests bind by criterion id. The split still parses legacy cells, so this is description drift, not a defect. | spec_artifacts_iso/schemas/TestCaseRef.json:6, spec_artifacts_iso/schemas/Verification.json:28, spec_artifacts_iso/semantic/main.tsp:75,193 |
 | FND-004 | low | Ticket item "Release; bump the iso pin in quoin default-modules.yaml" is not in this PR; it must happen with the PLAT-1079 release so the two contracts never coexist in a released default module set. | PLAT-1085 Change list |
+
+## New findings (disposition pass 1)
+
+| ID | Severity | Summary | Refs |
+| --- | --- | --- | --- |
+| FND-005 | low | The fix-round `spec/log.md` entry names the new test `test_manifest_no_ac_verification_method_rule`, but no such test exists. The fix added two tests, `test_manifest_declares_no_ac_verification_method_rule` and `test_vc_validation_method_rule_carries_no_annotation_pattern`. Changelog prose only; the tests themselves are correct. | spec/log.md:32-35 |
+
+## Dispositions
+
+| FND | outcome | sha/reason |
+| --- | --- | --- |
+| FND-001 | fixed | 4e8fe49 |
+| FND-002 | fixed | 4e8fe49 |
+| FND-003 | fixed | 4e8fe49 |
+| FND-004 | deferred | leader post-merge release step |

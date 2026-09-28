@@ -29,9 +29,11 @@ description: "Chronological log of structural changes to this bundle."
   `spec/tests.md` TC-053 row still described the retired `Test (TC-001)`
   split; both are corrected to the plain-method cell the rewritten TC-053
   test now asserts, and to say the split still parses an annotated cell for
-  a caller that authors one. `test_manifest_no_ac_verification_method_rule`
-  is added, asserting the manifest declares no `ac-verification-method` rule
-  and that `vc-validation-method` carries no `annotation_pattern`; it fails
+  a caller that authors one.
+  `test_manifest_declares_no_ac_verification_method_rule` and
+  `test_vc_validation_method_rule_carries_no_annotation_pattern` are added,
+  asserting the manifest declares no `ac-verification-method` rule and that
+  `vc-validation-method` carries no `annotation_pattern`; both fail
   against the pre-change manifest. `main.tsp`'s `TestCaseRef` and
   `Verification` doc comments drop the `Test (TC-035)`-style example cell in
   favor of a plain method example; `schemas/TestCaseRef.json`,
