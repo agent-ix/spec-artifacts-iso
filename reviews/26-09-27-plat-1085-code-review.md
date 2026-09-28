@@ -66,3 +66,4 @@ Lows are informational.
 | FND-002 | fixed | 4e8fe49 |
 | FND-003 | fixed | 4e8fe49 |
 | FND-004 | deferred | leader post-merge release step |
+| FND-005 | fixed | 50ec34d |
