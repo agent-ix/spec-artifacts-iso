@@ -6,8 +6,6 @@
 # additions break nothing — it validates under the same bundled FR-035
 # schema and loads under quire with the same eleven archetypes.
 #
-# Regenerate with:
-#   poetry run python scripts/manifest_digests.py --write-legacy-fixture
 # tests/test_semantic_manifest.py fails if this file drifts from the real
 # manifest, so it is never a second hand-maintained copy.
 manifest_version: 1.0.0

@@ -107,7 +107,6 @@ artifact_types:
   frontmatter_schema_ref: schemas/fr-frontmatter.schema.json
   data_schema:
     schema: schemas/FR.json
-    digest: sha256:52f3bddd12319926c7d5423e053fc2ecc0db87b73d92b0db815d2ac5161333ed
   defaults:
     id_pattern: FR-{next:03d}
   allowed_links:
@@ -223,7 +222,6 @@ artifact_types:
   frontmatter_schema_ref: schemas/nfr-frontmatter.schema.json
   data_schema:
     schema: schemas/NFR.json
-    digest: sha256:b32f8d6b58a30925f5ce314b39d5a64b5b34cd228124b6238008eef8ba729d50
   defaults:
     id_pattern: NFR-{next:03d}
   allowed_links:
@@ -334,7 +332,6 @@ artifact_types:
   frontmatter_schema_ref: schemas/str-frontmatter.schema.json
   data_schema:
     schema: schemas/StR.json
-    digest: sha256:87f4705a50b41fc68955ff69e593c25b413e22858414256ca82098cd7e837b2c
   defaults:
     id_pattern: StR-{next:03d}
   allowed_links:
@@ -442,7 +439,6 @@ artifact_types:
   frontmatter_schema_ref: schemas/us-frontmatter.schema.json
   data_schema:
     schema: schemas/US.json
-    digest: sha256:f2b90a60c6427df47795ddd7c693851276ceb200d25411f7e26a8818478fe1cd
   defaults:
     id_pattern: US-{next:03d}
   allowed_links:
@@ -523,7 +519,6 @@ artifact_types:
   frontmatter_schema_ref: schemas/it-frontmatter.schema.json
   data_schema:
     schema: schemas/IT.json
-    digest: sha256:f08612466bb93dbe4a3f78f1de058961a32c9e7cae4ab7ef736d36b3c3a718ef
   defaults:
     id_pattern: IT-{next:03d}
   allowed_links:
@@ -604,7 +599,6 @@ artifact_types:
   frontmatter_schema_ref: schemas/tc-frontmatter.schema.json
   data_schema:
     schema: schemas/TC.json
-    digest: sha256:0f82b9516ca9178a070c7c5c7d7d4baf7b78a4d4052f0a4ac1db49a7aab84bd7
   defaults:
     id_pattern: TC-{next:03d}
   allowed_links:
@@ -644,7 +638,6 @@ artifact_types:
   frontmatter_schema_ref: schemas/master-requirements-frontmatter.schema.json
   data_schema:
     schema: schemas/MasterRequirements.json
-    digest: sha256:c601ce54f4a1d38871342b4bf75395fe6d68a69448d9e722b11f17207ddca86e
   allowed_links:
   - depends_on
   - calls
@@ -720,7 +713,6 @@ artifact_types:
   frontmatter_schema_ref: schemas/index-frontmatter.schema.json
   data_schema:
     schema: schemas/Index.json
-    digest: sha256:04440923c988b6ed27229ce743789cde3630ccbf75599c1e50a343901df3582d
   allowed_links: []
   examples: []
   lint_rules_ref: []
@@ -738,7 +730,6 @@ artifact_types:
   frontmatter_schema_ref: schemas/log-frontmatter.schema.json
   data_schema:
     schema: schemas/Log.json
-    digest: sha256:b0503f605a2777a184807e93a3341d85bc78ff48802ef9fe7c3044c586cb27c3
   allowed_links: []
   examples: []
   lint_rules_ref: []
@@ -759,7 +750,6 @@ artifact_types:
   frontmatter_schema_ref: schemas/glossary-frontmatter.schema.json
   data_schema:
     schema: schemas/Glossary.json
-    digest: sha256:98c4786af31d97ff407fa6cfa4e49fb8ef32d984347b73291b17f099349f7096
   defaults:
     id_pattern: GLO-{next:03d}
   allowed_links:
