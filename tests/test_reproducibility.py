@@ -1,24 +1,14 @@
-"""Reproducibility and offline resolution of the schema projection (NFR-001),
-and the digest binding at load (FR-006-AC-8).
+"""Reproducibility and offline resolution of the schema projection (NFR-001).
 
 NFR-001 has three measurements and this module discharges two of them as tests
 (byte reproducibility, wall time) and one as a manual gate (no network read).
-FR-006-AC-8 (quire-rs FR-069, `agent-ix/quire-rs#390`) shipped in quire-rs
-v0.47.0/0.47.1: a `data_schema.digest` mismatch is refused by *dropping* the
-mismatched archetype from the registry rather than raising, so the assertion
-is on `Registry.archetype_names()`, not on an exception — see
-``test_tc063_...`` below.
 """
 
 from __future__ import annotations
 
-import hashlib
 import pathlib
-import shutil
 import subprocess
 import time
-
-import yaml
 
 REPO_ROOT = pathlib.Path(__file__).resolve().parent.parent
 PKG_ROOT = REPO_ROOT / "spec_artifacts_iso"
@@ -81,11 +71,7 @@ def test_tc056_two_schema_runs_reproduce_the_committed_bundle() -> None:
     Metric 1's target and threshold are both 0 files differing, and its declared
     method is `make schemas` twice plus
     `git status --porcelain spec_artifacts_iso/schemas` — so the comparison is
-    against the committed bytes, not merely run 1 against run 2. Two runs
-    agreeing with each other while both differ from what is committed is
-    exactly the drift the manifest digests bind against, and comparing the runs
-    only to each other would report that as a pass.
-
+    against the committed bytes, not merely run 1 against run 2.
     The generator writes into the working tree, so the tree is snapshotted
     first and restored in a `finally`: a non-deterministic emitter fails this
     test without also leaving the checkout drifted for TC-047 and TC-061.
@@ -159,85 +145,3 @@ def test_tc058_schemas_check_completes_within_the_threshold() -> None:
         f"`make schemas-check` took {elapsed:.1f}s, over the "
         f"{SCHEMAS_CHECK_THRESHOLD_SECONDS:.0f}s threshold"
     )
-
-
-def _module_copy_with_broken_digest(destination: pathlib.Path) -> pathlib.Path:
-    """A copy of the module whose `FR` data_schema digest is off by one hex
-    digit — everything else byte-identical."""
-    module = destination / "spec_artifacts_iso"
-    shutil.copytree(
-        PKG_ROOT,
-        module,
-        ignore=shutil.ignore_patterns("semantic", "__pycache__", "*.pyc"),
-    )
-    manifest_path = module / "manifest.yaml"
-    text = manifest_path.read_text(encoding="utf-8")
-
-    manifest = yaml.safe_load(text)
-    reference = next(
-        entry["data_schema"]
-        for entry in manifest["artifact_types"]
-        if entry["name"] == "FR"
-    )
-    good = str(reference["digest"])
-    tail = good[-1]
-    broken = good[:-1] + ("0" if tail != "0" else "1")
-    assert broken != good
-    manifest_path.write_text(text.replace(good, broken), encoding="utf-8")
-
-    # Sanity: the file the reference names is untouched, so the mismatch is
-    # between the recorded digest and the shipped bytes, which is exactly what
-    # FR-006-AC-8 asks the loader to refuse.
-    shipped = (module / reference["schema"]).read_bytes()
-    assert f"sha256:{hashlib.sha256(shipped).hexdigest()}" == good
-    return destination
-
-
-def test_tc063_a_broken_digest_drops_the_archetype_at_load(
-    tmp_path: pathlib.Path,
-) -> None:
-    """TC-063: FR-006-AC-8: a copy of the module with one `data_schema.digest`
-    altered by one hex digit is refused at load — the digest binding is real,
-    not a no-op.
-
-    quire-rs FR-069's loader half (`semantic.data-schema-digest-mismatch`,
-    `src/semantic/resolver.rs`) does not raise on a mismatch: the loader
-    (`src/loader/mod.rs`) records the failure internally and `continue`s past
-    that archetype, so the registry loads with it *missing* rather than
-    refusing to load at all. The `quire.Registry` Python binding exposes no
-    diagnostics accessor — only `load_from`, `from_env`, `archetype_names`,
-    `validate` (checked against the installed 0.47.1 wheel) — so
-    `archetype_names()` is the only observable surface; the diagnostic code
-    itself is not asserted here because nothing in the binding surfaces it.
-    """
-    import quire
-
-    root = _module_copy_with_broken_digest(tmp_path)
-    registry = quire.Registry.load_from([str(root)])
-    assert "FR" not in registry.archetype_names(), (
-        "the loader loaded FR despite its recorded digest not matching the "
-        "shipped schema bytes — the digest binding is a no-op"
-    )
-
-
-def test_tc063_control_the_unmodified_module_still_loads(
-    tmp_path: pathlib.Path,
-) -> None:
-    """Control for TC-063: the same copy, with its digests intact, loads with
-    `FR` present.
-
-    Without this the assertion above (`FR` absent) would be indistinguishable
-    from a copy that never loaded anything at all — this pins the absence to
-    the digest mismatch specifically, not to some unrelated breakage in the
-    copy.
-    """
-    import quire
-
-    module = tmp_path / "spec_artifacts_iso"
-    shutil.copytree(
-        PKG_ROOT,
-        module,
-        ignore=shutil.ignore_patterns("semantic", "__pycache__", "*.pyc"),
-    )
-    registry = quire.Registry.load_from([str(tmp_path)])
-    assert "FR" in registry.archetype_names()

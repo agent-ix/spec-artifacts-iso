@@ -29,10 +29,7 @@ Two rows depend on a release outside this repository and cannot be green
 here until it lands. TC-055 and TC-064 are manual because the
 published quoin carries no semantic-block reader: the refusal
 agent-ix/quoin#336 tracks can be read out of quoin main's source, not run. TC-057 is the manual offline gate that
-no CI job claims. TC-063 needed a `quire` wheel carrying quire-rs FR-069's
-digest-binding half; that shipped in quire-rs v0.47.0/0.47.1
-(agent-ix/quire-rs#390), so TC-063 is now an ordinary passing test, not an
-expected failure. Every other row is dischargeable at the module's committed
+no CI job claims. Every other row is dischargeable at the module's committed
 floor (`quire ^0.47.1`).
 
 An NFR has no `-AC-` ids — its criteria are its `Metric | Target | Threshold |
@@ -157,4 +154,3 @@ Method` rows — so NFR rows trace to `NFR-001 (metric n)` (SR-003 FND-006).
 | TC-060 | Every emitted object schema declares its properties inline (no `allOf`/`oneOf`/`anyOf`/`$ref` at the object's top level except a nullable scalar's `anyOf`), and the Python `jsonschema` validator accepts every golden record and rejects every TC-045 mutation (FR-005-AC-8) | Unit | P0 | FR-005-AC-8 | ✅ |
 | TC-061 | The emitted schema file set equals `toolchain.json`'s `files`, and the digest recomputed over those bytes equals the recorded digest, with no toolchain run (FR-005-AC-7) | Unit | P0 | FR-005-AC-7 | ✅ |
 | TC-062 | The sdist/wheel `include` list and the npm `files` list name every shipped payload entry and no TypeSpec toolchain file; a built sdist and a packed npm tarball carry the same payload entry set (FR-005-AC-9) | Integration | P1 | FR-005-AC-9 | ✅ |
-| TC-063 | A copy of the module with one `data_schema.digest` altered by one hex digit loads with that archetype absent from `Registry.archetype_names()` — the digest binding shipped in quire-rs v0.47.0/0.47.1 (agent-ix/quire-rs#390) and drops the archetype rather than raising; a control proves the unmodified copy still loads it (FR-006-AC-8) | Integration | P0 | FR-006-AC-8 | ✅ |

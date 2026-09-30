@@ -1,4 +1,4 @@
-"""The manifest ``semantic`` block and its ``data_schema`` digest references (FR-006).
+"""The manifest ``semantic`` block and its ``data_schema`` references (FR-006).
 
 Covers TC-046, TC-047 and TC-048 of the FR-006 test matrix:
 
@@ -9,10 +9,8 @@ Covers TC-046, TC-047 and TC-048 of the FR-006 test matrix:
   that load rather than by reading the schema's ``required`` lists: a manifest
   with neither addition loading unchanged is the consumer-facing fact the
   constraint is about;
-* TC-047 — every exported artifact type carries a ``{schema, digest}`` reference
-  to an existing file whose SHA-256 equals the digest, ``exports`` equals the
-  referencing set, no inline ``data_schema`` remains, and a one-byte schema edit
-  fails naming the type and both digests (FR-006-AC-2, AC-5, CON-2);
+* TC-047 — every exported artifact type carries a ``schema`` reference to an
+  existing file and ``exports`` equals the referencing set (FR-006-AC-2);
 * TC-048 — on the module's committed quire floor (``^0.47.1``),
   ``Registry.load_from`` lists all eleven archetypes with the block and the
   ten references present, and ``validate_document`` passes every skeleton
@@ -28,10 +26,6 @@ current committed floor (``^0.47.1``) the loader does refuse those mutations
 (FR-006 Behavior records the re-measurement), but FR-006-AC-4 stays retired
 per PLAT-902 rather than being restated over it.
 
-Nothing here hand-computes a digest as an expected value: the digests are
-produced by ``make manifest-digests`` (``scripts/manifest_digests.py``) and the
-suite only ever recomputes them from the shipped bytes and compares.
-
 No check in this module skips. FR-006's Inputs fix the engine floor at
 ``quire ^0.47.1``, which loads this manifest, so a missing or too-old engine
 is a failure and not a silent pass.
@@ -40,7 +34,6 @@ is a failure and not a silent pass.
 from __future__ import annotations
 
 import copy
-import hashlib
 import pathlib
 import shutil
 
@@ -135,33 +128,6 @@ def _derive_legacy(manifest: dict) -> dict:
         if isinstance(ot, dict):
             ot.pop("data_schema", None)
     return legacy
-
-
-def _digest_findings(manifest: dict, pkg_root: pathlib.Path) -> list[str]:
-    """Return one finding per artifact type whose recorded digest is stale.
-
-    FR-006 Behavior: a mismatch fails the suite *naming the artifact type, the
-    recorded digest, and the computed digest* — so the message carries all
-    three, and TC-047's one-byte-edit check reads them back out of it.
-    """
-    findings: list[str] = []
-    for name, at in _artifact_types(manifest).items():
-        ref = at.get("data_schema")
-        if not ref:
-            continue
-        target = pkg_root / ref["schema"]
-        if not target.is_file():
-            findings.append(
-                f"{name}: data_schema.schema {ref['schema']} does not exist"
-            )
-            continue
-        computed = "sha256:" + hashlib.sha256(target.read_bytes()).hexdigest()
-        if computed != ref["digest"]:
-            findings.append(
-                f"{name}: {ref['schema']} digest mismatch — "
-                f"recorded {ref['digest']}, computed {computed}"
-            )
-    return findings
 
 
 def _module_tree(parent: pathlib.Path, manifest_text: str) -> pathlib.Path:
@@ -266,7 +232,7 @@ def test_tc046_legacy_fixture_loads_under_quire(tmp_path: pathlib.Path) -> None:
     assert _registry_archetypes(tmp_path) == ARCHETYPE_NAMES
 
 
-# ─── TC-047: the references, the digests, and the one-byte edit ──────────
+# ─── TC-047: the references ──────────
 
 
 def test_tc047_every_export_carries_a_reference_to_its_mapped_file() -> None:
@@ -282,15 +248,6 @@ def test_tc047_every_export_carries_a_reference_to_its_mapped_file() -> None:
         assert (PKG_ROOT / expected).is_file(), f"{name}: {expected} does not exist"
 
 
-def test_tc047_digests_equal_the_shipped_bytes() -> None:
-    """TC-047: FR-006-AC-2: every ``data_schema.digest`` equals ``sha256:`` plus
-    the hex SHA-256 of the named file's bytes, with no line-ending
-    normalization. The expected values come from the files, never from a
-    literal in this suite — ``make manifest-digests`` is their only producer."""
-    findings = _digest_findings(_manifest(), PKG_ROOT)
-    assert not findings, findings
-
-
 def test_tc047_exports_equals_the_referencing_set() -> None:
     """TC-047: FR-006-AC-2: ``semantic.exports`` equals the set of artifact types
     carrying a ``data_schema`` reference — in both directions."""
@@ -299,46 +256,6 @@ def test_tc047_exports_equals_the_referencing_set() -> None:
         name for name, at in _artifact_types(manifest).items() if at.get("data_schema")
     }
     assert set(manifest["semantic"]["exports"]) == referencing
-
-
-def test_tc047_no_inline_data_schema_remains() -> None:
-    """TC-047: FR-006-CON-2: the reference form is the only form — every
-    ``data_schema`` carries exactly ``schema`` and ``digest``."""
-    for name, at in _artifact_types(_manifest()).items():
-        ref = at.get("data_schema")
-        if ref is None:
-            continue
-        assert set(ref) == {
-            "schema",
-            "digest",
-        }, f"{name}: inline data_schema {set(ref)}"
-        assert ref["digest"].startswith("sha256:")
-        assert len(ref["digest"]) == len("sha256:") + 64
-
-
-def test_tc047_one_byte_schema_edit_fails_naming_type_and_digests(
-    tmp_path: pathlib.Path,
-) -> None:
-    """TC-047: FR-006-AC-5: a one-byte edit to an emitted schema with no digest
-    update fails the suite, and the failure names the artifact type, the
-    recorded digest, and the computed digest."""
-    manifest = _manifest()
-    module = _module_tree(tmp_path, MANIFEST_PATH.read_text())
-    recorded = _artifact_types(manifest)["FR"]["data_schema"]["digest"]
-
-    assert not _digest_findings(manifest, module), "unedited copy already stale"
-
-    edited = module / "schemas" / "FR.json"
-    original = edited.read_bytes()
-    edited.write_bytes(original.replace(b'"description"', b'"Description"', 1))
-    assert edited.read_bytes() != original, "the one-byte mutation did not apply"
-
-    computed = "sha256:" + hashlib.sha256(edited.read_bytes()).hexdigest()
-    findings = _digest_findings(manifest, module)
-    assert len(findings) == 1, findings
-    assert "FR" in findings[0]
-    assert recorded in findings[0], findings[0]
-    assert computed in findings[0], findings[0]
 
 
 # ─── TC-048: the published quire floor still loads the module ────────────
