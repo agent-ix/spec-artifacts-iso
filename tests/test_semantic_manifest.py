@@ -1,4 +1,4 @@
-"""The manifest ``semantic`` block and its ``data_schema`` digest references (FR-006).
+"""The manifest ``semantic`` block and its ``data_schema`` references (FR-006).
 
 Covers TC-046, TC-047 and TC-048 of the FR-006 test matrix:
 
@@ -232,7 +232,7 @@ def test_tc046_legacy_fixture_loads_under_quire(tmp_path: pathlib.Path) -> None:
     assert _registry_archetypes(tmp_path) == ARCHETYPE_NAMES
 
 
-# ─── TC-047: the references, the digests, and the one-byte edit ──────────
+# ─── TC-047: the references ──────────
 
 
 def test_tc047_every_export_carries_a_reference_to_its_mapped_file() -> None:

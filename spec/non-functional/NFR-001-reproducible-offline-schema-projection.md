@@ -21,8 +21,7 @@ The emitted bundle SHALL validate and resolve with no network read.
 
 ## Scope
 
-- Applies to: `make schemas`, `make schemas-check`, the digests in
-  `manifest.yaml`, and every `$ref` resolution performed by this module's tests.
+- Applies to: `make schemas`, `make schemas-check`, and every `$ref` resolution performed by this module's tests.
 - Operational context: a clean clone with `npm ci` in the TypeSpec package and
   the quire wheel installed; the only network access is the package install
   itself.
@@ -36,25 +35,14 @@ The emitted bundle SHALL validate and resolve with no network read.
   configuration does not route the scope, or authenticate against GitHub
   Packages, cannot reproduce the bundle at all.
 - Engine floor: the suite runs against the module's committed `quire ^0.47.1`
-  dev dependency, resolved from `internal-pypi` (PLAT-974). quire-rs FR-069's
-  digest-binding half — a `data_schema.digest` mismatch drops the affected
-  archetype at load (`semantic.data-schema-digest-mismatch`) — shipped in
-  quire-rs v0.47.0/0.47.1 (agent-ix/quire-rs#390) and reproduces offline with
-  no network read (TC-063). The broader engine work that would validate a full
+  dev dependency, resolved from `internal-pypi` (PLAT-974). The broader engine work that would validate a full
   artifact-type record against `data_schema` end to end is in no published
   wheel, so no engine reproduces that broader record validation offline
   today; see agent-ix/quire-rs#393 and agent-ix/quire-rs#388.
-- Line endings: the repository pins LF line endings via `.gitattributes`
-  (`* text=auto eol=lf`), so the emitted bundle, the golden records, and every
-  `manifest.yaml` digest are checkout-independent — the digests are computed
-  over bytes with no line-ending normalization, and a CRLF checkout would
-  change every one of them.
 
 ## Rationale
 
-The manifest binds each archetype to a digest. If the projection drifted with
-the machine that produced it, every consumer would see a different digest for
-the same source and the binding would mean nothing. Offline resolution is the
+Offline resolution is the
 FR-073-CON-1 boundary quoin and quire both enforce.
 
 ## Measurement and Evaluation
@@ -68,8 +56,7 @@ FR-073-CON-1 boundary quoin and quire both enforce.
 ## Verification
 
 A test regenerates the bundle into a scratch directory and compares every file
-to the committed one; a second test recomputes the `toolchain.json` digest and
-each manifest `data_schema.digest`; the offline run is a manual gate of this
+to the committed one; a second test recomputes the `toolchain.json` digest; the offline run is a manual gate of this
 repository, recorded in the release notes. No CI job is claimed by this
 requirement or by the ticket that introduces it; the manual gate stands until a
 CI job for it is filed against this repository.
