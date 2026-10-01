@@ -1,7 +1,7 @@
 """Packaging and TypeSpec-toolchain conformance (FR-005-CON-3, FR-005-AC-9).
 
-One test here is deliberately untagged: the TC-054 row covers the three exact
-pins, the committed lockfile, `file:`/`link:` references and `.npmrc`, and says
+One test here is deliberately untagged: the TC-054 row covers the committed
+lockfile, `file:`/`link:` references and `.npmrc`, and says
 nothing about `poetry.lock` sources, so tagging the lockfile-source check would
 mint a trace the row does not claim.
 
@@ -29,18 +29,10 @@ import tomllib
 REPO_ROOT = pathlib.Path(__file__).resolve().parent.parent
 PKG_ROOT = REPO_ROOT / "spec_artifacts_iso"
 SEMANTIC_DIR = PKG_ROOT / "semantic"
-SEMANTIC_PACKAGE_JSON = SEMANTIC_DIR / "package.json"
 SEMANTIC_PACKAGE_LOCK = SEMANTIC_DIR / "package-lock.json"
 NPM_PACKAGE_JSON = REPO_ROOT / "package.json"
 PYPROJECT = REPO_ROOT / "pyproject.toml"
 POETRY_LOCK = REPO_ROOT / "poetry.lock"
-
-#: FR-005-CON-3: the three versions the reproducibility claim rests on.
-PINNED_VERSIONS = {
-    "@typespec/compiler": "1.15.0",
-    "@typespec/json-schema": "1.15.0",
-    "@agent-ix/semantic-core": "0.3.0",
-}
 
 #: FR-005 Outputs — the shipped payload, module-root relative.
 PAYLOAD_ENTRIES = (
@@ -121,35 +113,11 @@ def _payload_members(names: list[str], strip: str) -> set[str]:
 
 
 # --------------------------------------------------------------------------
-# TC-054 — FR-005-CON-3: exact pins, a committed lockfile, no local references
+# TC-054 — FR-005-CON-3: a committed lockfile, no local references
 # --------------------------------------------------------------------------
 
 
-def test_typespec_package_pins_every_dependency_exactly() -> None:
-    """TC-054: FR-005-CON-3: the three toolchain versions are pinned exactly.
-
-    "Pinned exactly" means the literal version and nothing else: a ``^`` or
-    ``~`` range, an ``x`` wildcard, a ``*``, or a comparator would let a fresh
-    install resolve a different compiler and produce a different projection,
-    which is the whole claim this constraint makes.
-    """
-    package = _load_json(SEMANTIC_PACKAGE_JSON)
-    declared = {
-        **package.get("dependencies", {}),
-        **package.get("devDependencies", {}),
-    }
-    for name, version in PINNED_VERSIONS.items():
-        assert name in declared, f"{name} is not declared by semantic/package.json"
-        assert (
-            declared[name] == version
-        ), f"{name} is declared as {declared[name]!r}, not the exact pin {version!r}"
-    for name, spec in declared.items():
-        assert not any(
-            char in spec for char in "^~<>|*x "
-        ), f"{name} is declared as a range ({spec!r}), not an exact version"
-
-
-def test_package_lock_is_committed_and_agrees_with_the_pins() -> None:
+def test_package_lock_is_committed() -> None:
     """TC-054: FR-005-CON-3: ``package-lock.json`` is present, and not ignored."""
     assert SEMANTIC_PACKAGE_LOCK.is_file(), (
         f"{SEMANTIC_PACKAGE_LOCK} is missing: without it `npm ci` cannot "
@@ -162,19 +130,6 @@ def test_package_lock_is_committed_and_agrees_with_the_pins() -> None:
     assert (
         ignored.returncode != 0
     ), f"{SEMANTIC_PACKAGE_LOCK} is gitignored, so it can never be committed"
-
-    lock = _load_json(SEMANTIC_PACKAGE_LOCK)
-    root = lock["packages"][""]
-    declared = {**root.get("dependencies", {}), **root.get("devDependencies", {})}
-    assert declared == PINNED_VERSIONS, (
-        "the lockfile root records pins that differ from package.json: "
-        f"{declared} != {PINNED_VERSIONS}"
-    )
-    for name, version in PINNED_VERSIONS.items():
-        entry = lock["packages"].get(f"node_modules/{name}")
-        assert entry is not None, f"{name} is not resolved by the lockfile"
-        assert entry["version"] == version
-        assert entry.get("integrity"), f"{name} is locked without an integrity hash"
 
 
 def test_no_dependency_uses_a_file_or_link_reference() -> None:

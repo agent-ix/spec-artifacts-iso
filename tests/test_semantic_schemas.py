@@ -10,7 +10,7 @@ These tests assert the properties a consumer relies on:
 * the ten exported models exist, with the 2020-12 ``$schema`` and the
   version-embedded ``$id`` (TC-041);
 * every ``$ref`` in the bundle resolves offline — to a shipped sibling, or to a
-  file of the semantic-core 0.3.0 bundle (TC-041);
+  file of the semantic-core bundle (TC-041);
 * every property is constrained, or is declared free text with a reason
   (TC-040), and every locator output has a property and vice versa (TC-039);
 * no property models an execution result (TC-043);
@@ -42,7 +42,6 @@ EXAMPLES_DIR = PKG_ROOT / "examples"
 
 MODULE_BASE = "https://schemas.agent-ix.org/agent-ix/spec-artifacts-iso/"
 SEMANTIC_CORE_BASE = "https://schemas.agent-ix.org/semantic-core/"
-SEMANTIC_CORE_VERSION = "0.3.0"
 
 #: FR-005 Outputs: the export name a consumer writes, and the file it maps to.
 EXPORT_TO_FILE = {
@@ -99,27 +98,26 @@ def _manifest_version() -> str:
 
 
 def _semantic_core_files() -> frozenset[str]:
-    """The file list of the semantic-core bundle this module compiled against.
+    """The file names of the semantic-core bundle this module compiled against.
 
-    Read from the resolved package's own ``generated/toolchain.json`` — the
-    provenance FR-005-AC-2 names. Absent means `make semantic-install` was not
-    run, which is a failure: the offline-closure claim cannot be checked
-    without it.
+    Listed from the resolved package's ``generated/json-schema/`` directory.
+    Absent means `make semantic-install` was not run, which is a failure: the
+    offline-closure claim cannot be checked without it.
     """
-    path = (
+    directory = (
         SEMANTIC_DIR
         / "node_modules"
         / "@agent-ix"
         / "semantic-core"
         / "generated"
-        / "toolchain.json"
+        / "json-schema"
     )
-    assert path.exists(), (
-        f"{path} is missing; run `make semantic-install` — the semantic-core "
+    assert directory.is_dir(), (
+        f"{directory} is missing; run `make semantic-install` — the semantic-core "
         "file list is what FR-005-AC-2 resolves imported $refs against, and "
         "without it this assertion would pass by checking nothing"
     )
-    return frozenset(_load(path)["files"])
+    return frozenset(p.name for p in directory.glob("*.json"))
 
 
 def _walk_refs(node: object) -> list[str]:
@@ -264,13 +262,18 @@ def test_tc041_exported_schemas_exist_with_versioned_ids(
 
 def test_tc041_every_ref_resolves_offline(bundle: dict[str, dict]) -> None:
     """TC-041: FR-005-AC-2, FR-005-CON-2: every `$ref` across the bundle points
-    at a shipped sibling or at a file of the semantic-core 0.3.0 bundle, and no
+    at a shipped sibling or at a file of the semantic-core bundle, and no
     schema under the semantic-core base ships.
     """
     core_files = _semantic_core_files()
     version = _manifest_version()
     module_base = f"{MODULE_BASE}{version}/"
-    core_base = f"{SEMANTIC_CORE_BASE}{SEMANTIC_CORE_VERSION}/"
+    core_version = str(
+        yaml.safe_load(MANIFEST_PATH.read_text(encoding="utf-8"))["semantic"][
+            "semantic_core"
+        ]
+    )
+    core_base = f"{SEMANTIC_CORE_BASE}{core_version}/"
 
     for name, schema in bundle.items():
         assert not str(schema.get("$id", "")).startswith(SEMANTIC_CORE_BASE), (
@@ -287,12 +290,12 @@ def test_tc041_every_ref_resolves_offline(bundle: dict[str, dict]) -> None:
                 target = ref[len(core_base) :]
                 assert target in core_files, (
                     f"{name} refs {target}, which is not in the semantic-core "
-                    f"{SEMANTIC_CORE_VERSION} bundle"
+                    f"{core_version} bundle"
                 )
             else:
                 pytest.fail(
                     f"{name} carries `$ref` {ref!r}, which is outside the module "
-                    "base and the semantic-core 0.3.0 base — a consumer would "
+                    "base and the semantic-core base — a consumer would "
                     "have to read the network to resolve it"
                 )
 

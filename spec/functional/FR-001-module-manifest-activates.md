@@ -231,11 +231,6 @@ relationships:
 > conformance by activating.
 >
 > **CR-002 (schema fixture refresh + single-source packaging — 2026-08-17):**
-> the bundled FR-035 fixture is refreshed to the shipped engine surface, and it
-> moves from `tests/` to **package data** at
-> `spec_artifacts_iso/module-manifest.schema.json`, reachable as
-> `spec_artifacts_iso.module_manifest_schema()`. agent-ix/spec-artifacts-iso#15.
->
 > **Why it drifted.** AC-1 gates *this* manifest, and CR-001 established the
 > procedure — each new engine key gains a property + definition, "exactly as
 > `grammar_severity` and `lexicon` did". Three keys shipped without it:
@@ -289,10 +284,6 @@ relationships:
 > earn a label reached ~13% sampled precision, and a speculative phrase list here
 > would recreate that shape. This is the first numbered CR in this repo; the two
 > earlier notes (FR-002, StR-001, "render removal") predate the sequence.
-> AC-1 already covers the addition: the bundled FR-035 schema fixture is
-> `additionalProperties: false`, so the new key is gated by that criterion and
-> the fixture gains a `property_idioms` property with a `PropertyIdiomEntry`
-> definition, exactly as `grammar_severity` and `lexicon` did before it.
 
 The system **SHALL** publish a Filament Module manifest (`spec_artifacts_iso/manifest.yaml`) that conforms to filament-core-service [FR-035](ix://agent-ix/filament-core-service/FR-035) v1.0.0 and activates idempotently against `POST /api/v1/modules/activate`.
 
