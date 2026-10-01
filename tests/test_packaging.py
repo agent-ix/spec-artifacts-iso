@@ -9,7 +9,7 @@ Two payloads leave this repository — a Python sdist/wheel and an npm tarball �
 and FR-005 Outputs requires them to carry the same module: ``schemas/``,
 ``skeletons/``, ``manifest.yaml``,
 ``mappings.yaml``, ``mappings.schema.json``, ``examples/``,
-``semantic/main.tsp`` and ``semantic/generated/toolchain.json``, and none of the
+``semantic/main.tsp``, and none of the
 TypeSpec toolchain (``node_modules``, ``package.json``, ``package-lock.json``,
 ``tspconfig.yaml``, ``scripts/``), which is a build input.
 
@@ -51,7 +51,6 @@ PAYLOAD_ENTRIES = (
     "mappings.schema.json",
     "examples/",
     "semantic/main.tsp",
-    "semantic/generated/toolchain.json",
 )
 
 #: FR-005 Outputs — the TypeSpec toolchain, which is a build input and must not
@@ -85,8 +84,7 @@ def _covers(declared: str, entry: str) -> bool:
     """Does a shipping-list path ``declared`` name the payload ``entry``?
 
     Either direction counts. ``schemas/**/*.json`` names the ``schemas/`` entry
-    from inside it, and ``semantic/generated/`` names the
-    ``semantic/generated/toolchain.json`` entry by containing it.
+    from inside it.
     """
     declared = declared.strip().lstrip("./").rstrip("/")
     entry = entry.strip().lstrip("./").rstrip("/")

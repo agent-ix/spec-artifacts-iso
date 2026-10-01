@@ -984,8 +984,7 @@ traceability:
 # required only when `legacy_forms` is promoted to `error`, and `warning` is
 # the value that changes nothing for a module none of whose documents author
 # the legacy `## Properties` forms quoin FR-074 sweeps.
-# `exports` names every artifact type carrying a `data_schema` reference; the
-# emitted schemas are bound by digest on the artifact types themselves.
+# `exports` names every artifact type carrying a `data_schema` reference.
 semantic:
   contract_version: 1.0.0
   semantic_core: 0.3.0

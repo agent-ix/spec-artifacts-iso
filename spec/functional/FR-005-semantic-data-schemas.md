@@ -79,15 +79,6 @@ and the outcome of executing it is not a field of any model.
   `Constraint`, `ValidationCriterion`, `MeasurementRow`, `SuccessCriterion`,
   `Story`, `GlossaryTerm`, `IndexEntry`, `LogEntry`, `QualityAttribute`, and
   the id, line, digest, and text scalars).
-- `spec_artifacts_iso/semantic/generated/toolchain.json` recording the
-  compiler, emitter, and semantic-core versions, the SHA-256 digest of the
-  resolved `@agent-ix/semantic-core` package's own `generated/toolchain.json`
-  (so the copy this module compiled against is identified by bytes and not by
-  a version string two registries could disagree on), the emitted file list,
-  the imported files excluded, and a SHA-256 digest computed as
-  `sha256(concat(name + "\n" + bytes))` over the emitted files in sorted name
-  order — the same computation as filament-core-data
-  `packages/semantic-core/generated/toolchain.json`.
 - `make schemas` (regenerate) and `make schemas-check` (fail on any byte
   difference between the committed projection and a fresh one), each run after
   `make semantic-install` (`npm ci` in the TypeSpec package). The hand-authored
@@ -96,7 +87,7 @@ and the outcome of executing it is not a field of any model.
 - The shipped payload of the module — identical in the sdist, the wheel, and
   the npm tarball — SHALL carry `schemas/`, `skeletons/`, `manifest.yaml`,
   `mappings.yaml`, `mappings.schema.json`,
-  `examples/`, `semantic/main.tsp`, and `semantic/generated/toolchain.json`.
+  `examples/`, and `semantic/main.tsp`.
   The TypeSpec toolchain itself (`node_modules`, `package.json`,
   `package-lock.json`, `tspconfig.yaml`, `scripts/`) is a build input and SHALL
   NOT ship.
@@ -129,8 +120,7 @@ Projection:
 - The generator SHALL render each file as `JSON.stringify(schema, null, 2)`
   plus one trailing newline, with no formatter dependency.
 - If `make schemas-check` finds a committed projection whose bytes differ from
-  the fresh one, a committed projection the fresh run no longer produces, or a
-  `toolchain.json` that differs, then `make schemas-check` SHALL exit non-zero
+  the fresh one, or a committed projection the fresh run no longer produces, then `make schemas-check` SHALL exit non-zero
   naming each file.
 - If the `@jsonSchema` base of `main.tsp` does not embed the manifest
   `version`, then `make schemas` SHALL fail naming both values before writing
@@ -307,11 +297,10 @@ Sections and tables:
 | FR-005-AC-4 | For each of the ten skeletons, the record built by the FR-007 reference mapping validates against the type's schema; a record with one extra property, one required section removed, a `line: 0`, an empty typed table, or a `status` outside its pattern fails schema validation naming the JSON path. A row id with the wrong *document* prefix (`FR-002-CON-1` inside `FR-001`) is not one of these: the row-id scalars are anchored to the artifact type, not to the document, so the schema accepts it by design and the FR-007 mapping rejects it against the locator's `id_pattern`, naming the line (FR-007-AC-6). | Test (TC-044, TC-045) |
 | FR-005-AC-5 | `make schemas-check` exits 0 on the committed tree, and exits non-zero naming the file after any one emitted schema is edited by a single byte. | Test (TC-042) |
 | FR-005-AC-6 | No emitted schema property is named `result`, `outcome`, `passed`, `failed`, `run`, `executedAt`, or `evidence`, and the `TC.json` description carries the sentence `execution results (pass/fail, run time, evidence) are not modelled`. | Test (TC-043) |
-| FR-005-AC-7 | The set of emitted schema files equals the `files` list of `toolchain.json`, and the digest recomputed over those files (`sha256(concat(name + "\n" + bytes))`, sorted) equals the recorded digest, with no toolchain run. | Test (TC-061) |
 | FR-005-AC-8 | Every emitted object schema declares its properties inline (no `allOf`, `oneOf`, `anyOf`, or `$ref` at the object's top level except the `anyOf` of a nullable scalar), so `unevaluatedProperties` and `additionalProperties` agree; the Python `jsonschema` validator accepts every golden record and rejects every TC-045 mutation that produces a record at all — the mapping-layer cases fail before a record exists, and are FR-007-AC-6's. | Test (TC-060) |
 | FR-005-AC-9 | The sdist/wheel `include` list and the npm `files` list both name every shipped payload entry of Outputs and neither names any TypeSpec toolchain file; a fresh `poetry build` sdist and a fresh `npm pack` tarball carry the same payload entry set. | Test (TC-062) |
 
 ## Dependencies
 
 - **Upstream**: [FR-002](./FR-002-unified-archetype-validation.md) (the locators the models type), [US-001](../usecase/US-001-consume-typed-iso-artifact-records.md), filament-core-data FR-031..FR-033 (`@agent-ix/semantic-core` 0.3.0, agent-ix/filament-core-data#35; the public npm publish that would make the package resolvable without a scope-routed registry is agent-ix/filament-core-data#11), filament-core-data ADR-0005 (TypeSpec as the structural source)
-- **Downstream**: [FR-006](./FR-006-semantic-manifest-block.md) (references the emitted files by digest), [FR-007](./FR-007-markdown-mappings.md) (maps Markdown onto these models), [NFR-001](../non-functional/NFR-001-reproducible-offline-schema-projection.md), agent-ix/filament-core-data#36 and agent-ix/quire-contract-ir#52 (consume the schemas as fixtures)
+- **Downstream**: [FR-006](./FR-006-semantic-manifest-block.md) (references the emitted files), [FR-007](./FR-007-markdown-mappings.md) (maps Markdown onto these models), [NFR-001](../non-functional/NFR-001-reproducible-offline-schema-projection.md), agent-ix/filament-core-data#36 and agent-ix/quire-contract-ir#52 (consume the schemas as fixtures)

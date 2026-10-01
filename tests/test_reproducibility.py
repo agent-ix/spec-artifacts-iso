@@ -74,7 +74,7 @@ def test_tc056_two_schema_runs_reproduce_the_committed_bundle() -> None:
     against the committed bytes, not merely run 1 against run 2.
     The generator writes into the working tree, so the tree is snapshotted
     first and restored in a `finally`: a non-deterministic emitter fails this
-    test without also leaving the checkout drifted for TC-047 and TC-061.
+    test without also leaving the checkout drifted for TC-047.
     """
     assert _schemas_porcelain() == "", (
         "`spec_artifacts_iso/schemas` is already dirty before the measurement; "

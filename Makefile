@@ -73,8 +73,8 @@ build:
 # Semantic data schemas (FR-005): TypeSpec -> JSON Schema projection
 # =============================================================================
 # The TypeSpec package lives in spec_artifacts_iso/semantic/ (npm, lockfile
-# committed). `make schemas` regenerates spec_artifacts_iso/schemas/<Model>.json
-# and generated/toolchain.json; `make schemas-check` fails on any byte drift.
+# committed). `make schemas` regenerates spec_artifacts_iso/schemas/<Model>.json;
+# `make schemas-check` fails on any byte drift.
 
 SEMANTIC_DIR = spec_artifacts_iso/semantic
 
