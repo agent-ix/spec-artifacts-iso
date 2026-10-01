@@ -1,20 +1,20 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://schemas.agent-ix.org/agent-ix/spec-artifacts-iso/0.2.0/IndexEntry.json",
+  "$id": "https://schemas.agent-ix.org/agent-ix/spec-artifacts-iso/IndexEntry.json",
   "type": "object",
   "properties": {
     "title": {
-      "$ref": "https://schemas.agent-ix.org/agent-ix/spec-artifacts-iso/0.2.0/NonEmptyText.json"
+      "$ref": "https://schemas.agent-ix.org/agent-ix/spec-artifacts-iso/NonEmptyText.json"
     },
     "href": {
-      "$ref": "https://schemas.agent-ix.org/agent-ix/spec-artifacts-iso/0.2.0/RelativeHref.json"
+      "$ref": "https://schemas.agent-ix.org/agent-ix/spec-artifacts-iso/RelativeHref.json"
     },
     "summary": {
       "type": "string",
       "description": "free text: the trailing summary after ` - `, when present."
     },
     "line": {
-      "$ref": "https://schemas.agent-ix.org/agent-ix/spec-artifacts-iso/0.2.0/LineNumber.json"
+      "$ref": "https://schemas.agent-ix.org/agent-ix/spec-artifacts-iso/LineNumber.json"
     }
   },
   "required": [

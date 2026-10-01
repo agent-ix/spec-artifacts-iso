@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://schemas.agent-ix.org/agent-ix/spec-artifacts-iso/0.2.0/MasterRequirements.json",
+  "$id": "https://schemas.agent-ix.org/agent-ix/spec-artifacts-iso/MasterRequirements.json",
   "type": "object",
   "properties": {
     "type": {
@@ -8,21 +8,21 @@
       "const": "master-requirements"
     },
     "name": {
-      "$ref": "https://schemas.agent-ix.org/agent-ix/spec-artifacts-iso/0.2.0/NonEmptyText.json"
+      "$ref": "https://schemas.agent-ix.org/agent-ix/spec-artifacts-iso/NonEmptyText.json"
     },
     "org": {
-      "$ref": "https://schemas.agent-ix.org/agent-ix/spec-artifacts-iso/0.2.0/NonEmptyText.json"
+      "$ref": "https://schemas.agent-ix.org/agent-ix/spec-artifacts-iso/NonEmptyText.json"
     },
     "componentType": {
-      "$ref": "https://schemas.agent-ix.org/agent-ix/spec-artifacts-iso/0.2.0/ComponentType.json"
+      "$ref": "https://schemas.agent-ix.org/agent-ix/spec-artifacts-iso/ComponentType.json"
     },
     "title": {
-      "$ref": "https://schemas.agent-ix.org/agent-ix/spec-artifacts-iso/0.2.0/NonEmptyText.json"
+      "$ref": "https://schemas.agent-ix.org/agent-ix/spec-artifacts-iso/NonEmptyText.json"
     },
     "implementationLanguage": {
       "anyOf": [
         {
-          "$ref": "https://schemas.agent-ix.org/agent-ix/spec-artifacts-iso/0.2.0/NonEmptyText.json"
+          "$ref": "https://schemas.agent-ix.org/agent-ix/spec-artifacts-iso/NonEmptyText.json"
         },
         {
           "type": "null"
@@ -33,51 +33,51 @@
     "tags": {
       "type": "array",
       "items": {
-        "$ref": "https://schemas.agent-ix.org/agent-ix/spec-artifacts-iso/0.2.0/NonEmptyText.json"
+        "$ref": "https://schemas.agent-ix.org/agent-ix/spec-artifacts-iso/NonEmptyText.json"
       }
     },
     "dependsOn": {
       "type": "array",
       "items": {
-        "$ref": "https://schemas.agent-ix.org/agent-ix/spec-artifacts-iso/0.2.0/NonEmptyText.json"
+        "$ref": "https://schemas.agent-ix.org/agent-ix/spec-artifacts-iso/NonEmptyText.json"
       },
       "description": "Bare module names, as the census finds (143 non-empty lists, 67 empty)."
     },
     "standardsAlignment": {
       "type": "array",
       "items": {
-        "$ref": "https://schemas.agent-ix.org/agent-ix/spec-artifacts-iso/0.2.0/NonEmptyText.json"
+        "$ref": "https://schemas.agent-ix.org/agent-ix/spec-artifacts-iso/NonEmptyText.json"
       }
     },
     "securityCritical": {
       "type": "boolean"
     },
     "status": {
-      "$ref": "https://schemas.agent-ix.org/agent-ix/spec-artifacts-iso/0.2.0/ArtifactStatus.json"
+      "$ref": "https://schemas.agent-ix.org/agent-ix/spec-artifacts-iso/ArtifactStatus.json"
     },
     "relationships": {
       "type": "array",
       "items": {
-        "$ref": "https://schemas.agent-ix.org/agent-ix/spec-artifacts-iso/0.2.0/Relationship.json"
+        "$ref": "https://schemas.agent-ix.org/agent-ix/spec-artifacts-iso/Relationship.json"
       }
     },
     "provenance": {
-      "$ref": "https://schemas.agent-ix.org/agent-ix/spec-artifacts-iso/0.2.0/Provenance.json"
+      "$ref": "https://schemas.agent-ix.org/agent-ix/spec-artifacts-iso/Provenance.json"
     },
     "purpose": {
-      "$ref": "https://schemas.agent-ix.org/agent-ix/spec-artifacts-iso/0.2.0/Section.json"
+      "$ref": "https://schemas.agent-ix.org/agent-ix/spec-artifacts-iso/Section.json"
     },
     "scope": {
-      "$ref": "https://schemas.agent-ix.org/agent-ix/spec-artifacts-iso/0.2.0/HeadingRef.json"
+      "$ref": "https://schemas.agent-ix.org/agent-ix/spec-artifacts-iso/HeadingRef.json"
     },
     "systemOverview": {
-      "$ref": "https://schemas.agent-ix.org/agent-ix/spec-artifacts-iso/0.2.0/HeadingRef.json"
+      "$ref": "https://schemas.agent-ix.org/agent-ix/spec-artifacts-iso/HeadingRef.json"
     },
     "requirementsArchitecture": {
-      "$ref": "https://schemas.agent-ix.org/agent-ix/spec-artifacts-iso/0.2.0/HeadingRef.json"
+      "$ref": "https://schemas.agent-ix.org/agent-ix/spec-artifacts-iso/HeadingRef.json"
     },
     "references": {
-      "$ref": "https://schemas.agent-ix.org/agent-ix/spec-artifacts-iso/0.2.0/Section.json"
+      "$ref": "https://schemas.agent-ix.org/agent-ix/spec-artifacts-iso/Section.json"
     }
   },
   "required": [

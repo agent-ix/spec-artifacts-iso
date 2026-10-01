@@ -25,7 +25,7 @@ The emitted bundle SHALL validate and resolve with no network read.
 - Operational context: a clean clone with `npm ci` in the TypeSpec package and
   the quire wheel installed; the only network access is the package install
   itself.
-- npm-configuration precondition: `@agent-ix/semantic-core` 0.3.0 resolves from
+- npm-configuration precondition: `@agent-ix/semantic-core` resolves from
   GitHub Packages (`npm.pkg.github.com`), the registry the `@agent-ix` scope is
   configured against; the dev-only `npm.ix` mirror is not reachable from CI and
   is no longer part of this module's resolution path (PLAT-974). The public
@@ -34,7 +34,7 @@ The emitted bundle SHALL validate and resolve with no network read.
   job's) npm configuration and not the repository's, and a machine whose npm
   configuration does not route the scope, or authenticate against GitHub
   Packages, cannot reproduce the bundle at all.
-- Engine floor: the suite runs against the module's committed `quire ^0.47.1`
+- Engine floor: the suite runs against the module's committed `quire`
   dev dependency, resolved from `internal-pypi` (PLAT-974). The broader engine work that would validate a full
   artifact-type record against `data_schema` end to end is in no published
   wheel, so no engine reproduces that broader record validation offline

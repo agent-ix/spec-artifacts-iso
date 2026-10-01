@@ -731,8 +731,7 @@ def test_fr004_ac5_the_vocabulary_is_declared_and_a_broken_entry_is_refused(
     entry cannot load partially. An unmutated control proves the load is real —
     without it the refusal half passes on any copy that fails to load at all.
 
-    Measured against the declared floor (quire 0.33.0): an ``edge_types`` entry
-    gaining an *unknown key* loads all eleven archetypes, so that half of the
+    An ``edge_types`` entry gaining an *unknown key* loads all eleven archetypes, so that half of the
     old criterion is not asserted here and FR-004-AC-5 no longer claims it.
     """
     import quire

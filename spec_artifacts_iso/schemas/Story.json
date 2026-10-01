@@ -1,22 +1,22 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://schemas.agent-ix.org/agent-ix/spec-artifacts-iso/0.2.0/Story.json",
+  "$id": "https://schemas.agent-ix.org/agent-ix/spec-artifacts-iso/Story.json",
   "type": "object",
   "properties": {
     "asA": {
-      "$ref": "https://schemas.agent-ix.org/agent-ix/spec-artifacts-iso/0.2.0/NonEmptyText.json",
+      "$ref": "https://schemas.agent-ix.org/agent-ix/spec-artifacts-iso/NonEmptyText.json",
       "description": "free text: the role clause."
     },
     "iWant": {
-      "$ref": "https://schemas.agent-ix.org/agent-ix/spec-artifacts-iso/0.2.0/NonEmptyText.json",
+      "$ref": "https://schemas.agent-ix.org/agent-ix/spec-artifacts-iso/NonEmptyText.json",
       "description": "free text: the need clause."
     },
     "soThat": {
-      "$ref": "https://schemas.agent-ix.org/agent-ix/spec-artifacts-iso/0.2.0/NonEmptyText.json",
+      "$ref": "https://schemas.agent-ix.org/agent-ix/spec-artifacts-iso/NonEmptyText.json",
       "description": "free text: the value clause."
     },
     "section": {
-      "$ref": "https://schemas.agent-ix.org/agent-ix/spec-artifacts-iso/0.2.0/Section.json"
+      "$ref": "https://schemas.agent-ix.org/agent-ix/spec-artifacts-iso/Section.json"
     }
   },
   "required": [

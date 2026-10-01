@@ -46,21 +46,12 @@ function missingInstall(error, what) {
   return error;
 }
 
-/** The manifest `version` is the authority; the `@jsonSchema` base must embed it (FR-005). */
+/** The `@jsonSchema` base declared in main.tsp (FR-005). */
 function packageBase() {
-  const manifest = readFileSync(resolve(moduleRoot, "manifest.yaml"), "utf8");
-  const manifestVersion = manifest.match(/^version:\s*["']?([0-9]+\.[0-9]+\.[0-9]+)["']?\s*$/m)?.[1];
-  if (!manifestVersion) throw new Error("manifest.yaml declares no top-level semver version");
   const source = readFileSync(resolve(packageRoot, "main.tsp"), "utf8");
-  const declared = source.match(/@jsonSchema\("([^"]+)"\)/)?.[1];
-  if (!declared) throw new Error("main.tsp declares no @jsonSchema base");
-  const expected = `https://schemas.agent-ix.org/agent-ix/spec-artifacts-iso/${manifestVersion}/`;
-  if (declared !== expected) {
-    throw new Error(
-      `@jsonSchema base ${declared} does not match manifest version ${manifestVersion} (expected ${expected})`,
-    );
-  }
-  return { base: expected, manifestVersion };
+  const base = source.match(/@jsonSchema\("([^"]+)"\)/)?.[1];
+  if (!base) throw new Error("main.tsp declares no @jsonSchema base");
+  return { base };
 }
 
 function normalize(files, base) {

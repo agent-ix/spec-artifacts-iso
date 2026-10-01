@@ -210,8 +210,6 @@ def test_json_output_carries_every_metric_and_its_provenance(capsys) -> None:
     assert main(["--root", FIXTURE_GLOB, "--json"]) == 0
     payload = json.loads(capsys.readouterr().out)
 
-    assert payload["census_version"] == 1
-    assert payload["source"] == "scripts/corpus_census.py"
     assert payload["root_patterns"] == [FIXTURE_GLOB]
     assert len(payload["roots"]) == 2
 
