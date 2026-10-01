@@ -21,9 +21,7 @@ relationships:
 > **Review pass (2026-09-03, SR-003..SR-010):** obligations on quoin and on
 > "the module author" are removed; this requirement binds the manifest and the
 > module's own suite only. What quoin and quire do with the block is recorded
-> as evidence, not as obligations. The quire engine floor (`^0.47.1`) and the FR-035 schema refresh provenance
-> (filament-core-service CR-003, revision a77f31e, as vendored by quoin
-> 3e842ce) are named. The known quoin contract gap is stated as certain:
+> as evidence, not as obligations. The quire engine floor (`^0.47.1`) is named. The known quoin contract gap is stated as certain:
 > quoin 3e842ce checks `semantic.exports` and resolves `data_schema` against
 > `object_types` only.
 >
@@ -100,14 +98,8 @@ schema: schemas/<Model>.json }`).
 - Every existing `frontmatter_schema_ref`, `body_extraction` locator, and
   `assert` facet SHALL remain byte-for-byte as before this change; the only
   locator addition is the `FR` `invariants` locator of Outputs.
-- The bundled FR-035 schema SHALL carry, verbatim from revision a77f31e, the
-  `semantic` property and the `ObjectTypeEntry.data_schema` reference form,
-  and the same reference form on `ArtifactTypeEntry.data_schema`.
 - The manifest SHALL carry no inline `data_schema` object on any artifact
   type.
-- If the manifest carries a `semantic` key outside the admitted ten, a `package` that
-  is not `<org>/<repo>`, or a `targets` value outside the registry, then the
-  bundled FR-035 schema SHALL reject the manifest naming the key or value.
 - Evidence, not obligation — quire: with the block and the references in
   place, the quire 0.47.1 loader (`quire.Registry.load_from`) admits
   artifact-type exports because it checks `exports` against every archetype
