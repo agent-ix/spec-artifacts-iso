@@ -724,8 +724,6 @@ class Census:
 
     def as_json(self, roots: list[pathlib.Path], patterns: list[str]) -> dict:
         return {
-            "census_version": 1,
-            "source": "scripts/corpus_census.py",
             "root_patterns": patterns,
             "roots": [str(root) for root in roots],
             "metrics": {

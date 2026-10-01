@@ -21,8 +21,8 @@ relationships:
 > **Review pass (2026-09-03, SR-003..SR-010):** obligations on quoin and on
 > "the module author" are removed; this requirement binds the manifest and the
 > module's own suite only. What quoin and quire do with the block is recorded
-> as evidence, not as obligations. The quire engine floor (`^0.47.1`) is named. The known quoin contract gap is stated as certain:
-> quoin 3e842ce checks `semantic.exports` and resolves `data_schema` against
+> as evidence, not as obligations. The known quoin contract gap is stated as certain:
+> quoin checks `semantic.exports` and resolves `data_schema` against
 > `object_types` only.
 >
 > **Which record `data_schema` binds.** For this module, `data_schema` binds
@@ -56,7 +56,7 @@ schema: schemas/<Model>.json }`).
   description that contradicts artifact-type exports (agent-ix/quoin#336) — are
   recorded here as upstream's, and are no longer frozen into this repository by
   a byte-identity criterion.
-- The quire wheel the suite runs against: `^0.47.1`, the module's committed
+- The quire wheel the suite runs against: the module's committed
   dev dependency, resolved from `internal-pypi` (PLAT-974). Every criterion of
   this requirement, including AC-8, is discharged at that floor, because a
   consumer that ignores the `semantic` block loads the module unchanged
@@ -83,8 +83,6 @@ schema: schemas/<Model>.json }`).
   `frontmatter_schema_ref`, using the FR-005 map (`master-requirements` →
   `schemas/MasterRequirements.json`, `index` → `schemas/Index.json`, `log` →
   `schemas/Log.json`).
-- `version: 0.2.0` (every emitted `$id` embeds it), bumped as the first step
-  of the change so `make schemas` is computed once.
 - On the `FR` archetype, one new optional locator `invariants` (`from:
   code_block`, `language: ocl`, `under_section: Invariants`, `required:
   false`, `multiple: true`) for the FR-007 `ocl-clause` mapping, declared
@@ -101,7 +99,7 @@ schema: schemas/<Model>.json }`).
 - The manifest SHALL carry no inline `data_schema` object on any artifact
   type.
 - Evidence, not obligation — quire: with the block and the references in
-  place, the quire 0.47.1 loader (`quire.Registry.load_from`) admits
+  place, the quire loader (`quire.Registry.load_from`) admits
   artifact-type exports because it checks `exports` against every archetype
   (`Manifest::all_archetypes`), resolves each reference-form `data_schema`,
   and refuses the module (`unknown archetype`) on an
@@ -110,12 +108,12 @@ schema: schemas/<Model>.json }`).
   behaviour is the evidence this requirement relies on, and the wording gap is
   filed as agent-ix/quire-rs#393 with the record-kind question above.
 - Evidence, not obligation — quoin, as published: `quoin module install
-  path:<module root>` on the published CLI (quoin 0.23.1) **succeeds** and
+  path:<module root>` on the published CLI **succeeds** and
   installs the module, because that CLI carries no semantic-block reader at
   all. Run on 2026-09-03 against this manifest; exit 0, an install record for
   `spec-artifacts-iso`, no diagnostic. The block is inert to every quoin a user
   can install today, which is the practical form of CON-1.
-- Evidence, not obligation — quoin, on main: quoin at 3e842ce
+- Evidence, not obligation — quoin, on main: quoin
   (`readSemanticBlock`, `src/semantic/manifest.ts:175-186,258`) checks
   `semantic.exports` against `object_types` names and builds `dataSchemas` from
   `object_types` only, so once that code ships the same install will emit, per
@@ -132,16 +130,7 @@ schema: schemas/<Model>.json }`).
   consumer that applies the FR-035 schema, verified where that schema is
   applied. The retired FR-006-AC-4 verified it here by mutating this manifest
   and validating the result against a copy of the schema this repository
-  shipped, which reports on the copy. It is not restated over quire's loader,
-  because **measured** at this requirement's originally declared floor (quire
-  0.33.0, then the published floor of the internal index) the loader ignored
-  the block entirely: all four mutations above loaded all eleven archetypes.
-  quire 0.47.1 — published to `internal-pypi` (agent-ix/quire-rs#392) and,
-  since PLAT-974, the module's committed dev dependency — refuses them: the
-  unknown key, the non-`<org>/<repo>` package and the unregistered target
-  each empty the registry, and the ambiguous `data_schema` drops that one
-  artifact type (each reconfirmed against the installed 0.47.1 wheel on
-  2026-09-22). FR-006-AC-4 stays retired rather than restated (PLAT-902) —
+  shipped, which reports on the copy. It is not restated over quire's loader. FR-006-AC-4 stays retired rather than restated (PLAT-902) —
   this paragraph is historical explanation, not a live criterion.
 ## Constraints
 
@@ -156,9 +145,9 @@ schema: schemas/<Model>.json }`).
 |----|----------|--------------|
 | FR-006-AC-1 | The manifest carries a `semantic` block whose key set equals exactly `{contract_version, semantic_core, package, exports, imports, targets, mappings, compatibility_posture, legacy_forms}` with the values of Outputs. | Test (TC-046) |
 | FR-006-AC-2 | For each of the ten exported artifact types, `data_schema.schema` names an existing file under `spec_artifacts_iso/schemas/` per the FR-005 map, and `exports` equals the set of artifact types carrying a reference. | Test (TC-047) |
-| FR-006-AC-3 | At the module's committed floor (quire ^0.47.1), `quire.Registry.load_from` over the module's parent directory lists all eleven archetypes with the `semantic` block and the ten `data_schema` references present, and `validate_document` passes every skeleton — adding the block breaks no consumer. | Test (TC-048) |
-| FR-006-AC-6 | `quoin module install path:<module root>` on the published quoin (0.23.1) installs the module with no diagnostic, so the block is inert to every quoin a user can install today; the verbatim output is recorded, and the previously installed registry version of this module is restored afterwards. | Demonstration (TC-055) |
-| FR-006-AC-9 | On a quoin carrying FR-070 (main ≥ 3e842ce, unpublished), the same install is refused with `semantic.unknown-export` and `semantic.export-without-schema` for each of the ten exports and no other diagnostic. Discharged by source reading against `src/semantic/manifest.ts` until such a quoin is published; tracked by agent-ix/quoin#336. | Analysis (TC-064) |
+| FR-006-AC-3 | `quire.Registry.load_from` over the module's parent directory lists all eleven archetypes with the `semantic` block and the ten `data_schema` references present, and `validate_document` passes every skeleton — adding the block breaks no consumer. | Test (TC-048) |
+| FR-006-AC-6 | `quoin module install path:<module root>` on the published quoin installs the module with no diagnostic, so the block is inert to every quoin a user can install today; the verbatim output is recorded, and the previously installed registry version of this module is restored afterwards. | Demonstration (TC-055) |
+| FR-006-AC-9 | On a quoin carrying FR-070, the same install is refused with `semantic.unknown-export` and `semantic.export-without-schema` for each of the ten exports and no other diagnostic. Discharged by source reading against `src/semantic/manifest.ts` until such a quoin is published; tracked by agent-ix/quoin#336. | Analysis (TC-064) |
 | FR-006-AC-7 | The legacy-manifest fixture (no `semantic` block, no `data_schema`) is this manifest with exactly those removals, and loads under quire with the same eleven archetypes. | Test (TC-046) |
 
 ## Dependencies

@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://schemas.agent-ix.org/agent-ix/spec-artifacts-iso/0.2.0/NFRId.json",
+  "$id": "https://schemas.agent-ix.org/agent-ix/spec-artifacts-iso/NFRId.json",
   "type": "string",
   "pattern": "^NFR-[0-9]+$",
   "description": "Non-functional requirement id (`NFR-N`, 825 documents)."

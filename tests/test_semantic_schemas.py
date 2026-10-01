@@ -8,7 +8,7 @@ hand-edited, and ``make schemas-check`` is the gate that says so.
 These tests assert the properties a consumer relies on:
 
 * the ten exported models exist, with the 2020-12 ``$schema`` and the
-  version-embedded ``$id`` (TC-041);
+  stable ``$id`` (TC-041);
 * every ``$ref`` in the bundle resolves offline — to a shipped sibling, or to a
   file of the semantic-core bundle (TC-041);
 * every property is constrained, or is declared free text with a reason
@@ -91,10 +91,6 @@ def _projection_files() -> dict[str, pathlib.Path]:
         for p in sorted(SCHEMAS_DIR.glob("*.json"))
         if not p.name.endswith("-frontmatter.schema.json")
     }
-
-
-def _manifest_version() -> str:
-    return str(yaml.safe_load(MANIFEST_PATH.read_text(encoding="utf-8"))["version"])
 
 
 def _semantic_core_files() -> frozenset[str]:
@@ -240,19 +236,18 @@ def bundle() -> dict[str, dict]:
     return {name: _load(path) for name, path in files.items()}
 
 
-def test_tc041_exported_schemas_exist_with_versioned_ids(
+def test_tc041_exported_schemas_exist_with_stable_ids(
     bundle: dict[str, dict],
 ) -> None:
     """TC-041: FR-005-AC-1: the ten exported models ship as JSON Schema 2020-12
-    documents whose `$id` embeds the manifest version, and whose `type` const is
-    the archetype name — not the model name.
+    documents whose `$id` is the stable module base plus the file name, and
+    whose `type` const is the archetype name — not the model name.
     """
-    version = _manifest_version()
     for export, filename in EXPORT_TO_FILE.items():
         schema = bundle.get(filename)
         assert schema is not None, f"{filename} is not in the emitted bundle"
         assert schema["$schema"] == "https://json-schema.org/draft/2020-12/schema"
-        assert schema["$id"] == f"{MODULE_BASE}{version}/{filename}"
+        assert schema["$id"] == f"{MODULE_BASE}{filename}"
         type_property = schema["properties"]["type"]
         assert type_property.get("const") == export, (
             f"{filename} declares type const {type_property.get('const')!r}; "
@@ -266,8 +261,6 @@ def test_tc041_every_ref_resolves_offline(bundle: dict[str, dict]) -> None:
     schema under the semantic-core base ships.
     """
     core_files = _semantic_core_files()
-    version = _manifest_version()
-    module_base = f"{MODULE_BASE}{version}/"
     core_version = str(
         yaml.safe_load(MANIFEST_PATH.read_text(encoding="utf-8"))["semantic"][
             "semantic_core"
@@ -283,8 +276,8 @@ def test_tc041_every_ref_resolves_offline(bundle: dict[str, dict]) -> None:
 
     for name, schema in bundle.items():
         for ref in _walk_refs(schema):
-            if ref.startswith(module_base):
-                target = ref[len(module_base) :]
+            if ref.startswith(MODULE_BASE):
+                target = ref[len(MODULE_BASE) :]
                 assert target in bundle, f"{name} refs unshipped sibling {target}"
             elif ref.startswith(core_base):
                 target = ref[len(core_base) :]

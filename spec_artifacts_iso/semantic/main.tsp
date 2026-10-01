@@ -17,7 +17,7 @@ using AgentIx.Semantic.Core;
  * Every field carries a constraint. Where a field is free text the doc comment
  * says `free text:` and why (FR-005-AC-3).
  */
-@jsonSchema("https://schemas.agent-ix.org/agent-ix/spec-artifacts-iso/0.2.0/")
+@jsonSchema("https://schemas.agent-ix.org/agent-ix/spec-artifacts-iso/")
 namespace AgentIx.SpecArtifactsIso;
 
 // ---------------------------------------------------------------------------

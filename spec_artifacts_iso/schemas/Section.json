@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://schemas.agent-ix.org/agent-ix/spec-artifacts-iso/0.2.0/Section.json",
+  "$id": "https://schemas.agent-ix.org/agent-ix/spec-artifacts-iso/Section.json",
   "type": "object",
   "properties": {
     "text": {
@@ -8,10 +8,10 @@
       "description": "free text: authored prose; sentence grammar is the `iso-spec-core` EARS advisory, not a schema."
     },
     "startLine": {
-      "$ref": "https://schemas.agent-ix.org/agent-ix/spec-artifacts-iso/0.2.0/LineNumber.json"
+      "$ref": "https://schemas.agent-ix.org/agent-ix/spec-artifacts-iso/LineNumber.json"
     },
     "endLine": {
-      "$ref": "https://schemas.agent-ix.org/agent-ix/spec-artifacts-iso/0.2.0/LineNumber.json"
+      "$ref": "https://schemas.agent-ix.org/agent-ix/spec-artifacts-iso/LineNumber.json"
     }
   },
   "required": [

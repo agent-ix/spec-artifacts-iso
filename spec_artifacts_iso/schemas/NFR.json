@@ -1,65 +1,65 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://schemas.agent-ix.org/agent-ix/spec-artifacts-iso/0.2.0/NFR.json",
+  "$id": "https://schemas.agent-ix.org/agent-ix/spec-artifacts-iso/NFR.json",
   "type": "object",
   "properties": {
     "id": {
-      "$ref": "https://schemas.agent-ix.org/agent-ix/spec-artifacts-iso/0.2.0/NFRId.json"
+      "$ref": "https://schemas.agent-ix.org/agent-ix/spec-artifacts-iso/NFRId.json"
     },
     "title": {
-      "$ref": "https://schemas.agent-ix.org/agent-ix/spec-artifacts-iso/0.2.0/NonEmptyText.json"
+      "$ref": "https://schemas.agent-ix.org/agent-ix/spec-artifacts-iso/NonEmptyText.json"
     },
     "type": {
       "type": "string",
       "const": "NFR"
     },
     "qualityAttribute": {
-      "$ref": "https://schemas.agent-ix.org/agent-ix/spec-artifacts-iso/0.2.0/QualityAttribute.json"
+      "$ref": "https://schemas.agent-ix.org/agent-ix/spec-artifacts-iso/QualityAttribute.json"
     },
     "object": {
-      "$ref": "https://schemas.agent-ix.org/agent-ix/spec-artifacts-iso/0.2.0/ObjectTypeName.json"
+      "$ref": "https://schemas.agent-ix.org/agent-ix/spec-artifacts-iso/ObjectTypeName.json"
     },
     "status": {
-      "$ref": "https://schemas.agent-ix.org/agent-ix/spec-artifacts-iso/0.2.0/ArtifactStatus.json"
+      "$ref": "https://schemas.agent-ix.org/agent-ix/spec-artifacts-iso/ArtifactStatus.json"
     },
     "relationships": {
       "type": "array",
       "items": {
-        "$ref": "https://schemas.agent-ix.org/agent-ix/spec-artifacts-iso/0.2.0/Relationship.json"
+        "$ref": "https://schemas.agent-ix.org/agent-ix/spec-artifacts-iso/Relationship.json"
       }
     },
     "provenance": {
-      "$ref": "https://schemas.agent-ix.org/agent-ix/spec-artifacts-iso/0.2.0/Provenance.json"
+      "$ref": "https://schemas.agent-ix.org/agent-ix/spec-artifacts-iso/Provenance.json"
     },
     "statement": {
-      "$ref": "https://schemas.agent-ix.org/agent-ix/spec-artifacts-iso/0.2.0/Section.json"
+      "$ref": "https://schemas.agent-ix.org/agent-ix/spec-artifacts-iso/Section.json"
     },
     "scope": {
-      "$ref": "https://schemas.agent-ix.org/agent-ix/spec-artifacts-iso/0.2.0/Section.json"
+      "$ref": "https://schemas.agent-ix.org/agent-ix/spec-artifacts-iso/Section.json"
     },
     "rationale": {
-      "$ref": "https://schemas.agent-ix.org/agent-ix/spec-artifacts-iso/0.2.0/Section.json"
+      "$ref": "https://schemas.agent-ix.org/agent-ix/spec-artifacts-iso/Section.json"
     },
     "measurement": {
       "type": "array",
       "items": {
-        "$ref": "https://schemas.agent-ix.org/agent-ix/spec-artifacts-iso/0.2.0/MeasurementRow.json"
+        "$ref": "https://schemas.agent-ix.org/agent-ix/spec-artifacts-iso/MeasurementRow.json"
       },
       "minItems": 1
     },
     "verification": {
-      "$ref": "https://schemas.agent-ix.org/agent-ix/spec-artifacts-iso/0.2.0/Section.json"
+      "$ref": "https://schemas.agent-ix.org/agent-ix/spec-artifacts-iso/Section.json"
     },
     "acceptanceCriteria": {
       "type": "array",
       "items": {
-        "$ref": "https://schemas.agent-ix.org/agent-ix/spec-artifacts-iso/0.2.0/AcceptanceCriterion.json"
+        "$ref": "https://schemas.agent-ix.org/agent-ix/spec-artifacts-iso/AcceptanceCriterion.json"
       },
       "minItems": 1,
       "description": "Present only for a policy NFR; a measurable NFR's criteria are its measurement rows."
     },
     "dependencies": {
-      "$ref": "https://schemas.agent-ix.org/agent-ix/spec-artifacts-iso/0.2.0/Section.json"
+      "$ref": "https://schemas.agent-ix.org/agent-ix/spec-artifacts-iso/Section.json"
     }
   },
   "required": [
