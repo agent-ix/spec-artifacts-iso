@@ -71,7 +71,7 @@ relationships:
 >
 > Filed for the reason CR-005, CR-007, CR-008 and CR-009 were: without the key
 > here, `additionalProperties: false` rejects the manifest **before the engine
-> ever sees it**, so a module could not declare what quire-rs v0.41.0 already
+> ever sees it**, so a module could not declare what quire-rs already
 > reads. This gate has now caught four such keys, which is a good record for the
 > gate and a poor one for the sequencing.
 
@@ -200,7 +200,7 @@ relationships:
 > and its suite failed on `Additional properties are not allowed ('obligations'
 > was unexpected)`.
 
-> **CR-003 (quire-rs v0.29.0 manifest keys — 2026-08-17):** the fixture gains
+> **CR-003 (quire-rs manifest keys, 2026-08-17):** the fixture gains
 > **`verification_catalog`** (quire-rs FR-054) and **`ambiguity_terms`**
 > (FR-056), with a `VerificationMethodEntry` definition beside the existing
 > ones. agent-ix/spec-artifacts-process#35.
