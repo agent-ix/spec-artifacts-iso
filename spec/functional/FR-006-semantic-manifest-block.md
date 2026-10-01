@@ -75,7 +75,7 @@ schema: schemas/<Model>.json }`).
   the legacy `## Properties` forms quoin FR-074 sweeps — a form none of this
   module's own documents author — so `warning` is the value that changes
   nothing, and promoting it to `error` is what would demand a `sweep_report`.
-- A legacy-manifest fixture at `tests/fixtures/manifest-legacy.yaml`: this
+- A legacy form of the manifest, derived by the tests (no committed copy): this
   manifest with the `semantic` block and every `data_schema` removed, which
   CON-1 and AC-7 use to prove the module still validates and loads for a
   consumer that predates the block.
@@ -148,7 +148,7 @@ schema: schemas/<Model>.json }`).
 | FR-006-AC-3 | `quire.Registry.load_from` over the module's parent directory lists all eleven archetypes with the `semantic` block and the ten `data_schema` references present, and `validate_document` passes every skeleton — adding the block breaks no consumer. | Test (TC-048) |
 | FR-006-AC-6 | `quoin module install path:<module root>` on the published quoin installs the module with no diagnostic, so the block is inert to every quoin a user can install today; the verbatim output is recorded, and the previously installed registry version of this module is restored afterwards. | Demonstration (TC-055) |
 | FR-006-AC-9 | On a quoin carrying FR-070, the same install is refused with `semantic.unknown-export` and `semantic.export-without-schema` for each of the ten exports and no other diagnostic. Discharged by source reading against `src/semantic/manifest.ts` until such a quoin is published; tracked by agent-ix/quoin#336. | Analysis (TC-064) |
-| FR-006-AC-7 | The legacy-manifest fixture (no `semantic` block, no `data_schema`) is this manifest with exactly those removals, and loads under quire with the same eleven archetypes. | Test (TC-046) |
+| FR-006-AC-7 | The legacy form of the manifest, derived from it by the test (no `semantic` block, no `data_schema`) is this manifest with exactly those removals, and loads under quire with the same eleven archetypes. | Test (TC-046) |
 
 ## Dependencies
 

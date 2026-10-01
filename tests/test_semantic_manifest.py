@@ -3,8 +3,9 @@
 Covers TC-046, TC-047 and TC-048 of the FR-006 test matrix:
 
 * TC-046 — the block carries exactly the nine declared keys, and the
-  legacy-manifest fixture (block and references removed) is this manifest with
-  exactly those removals and loads under quire with the same eleven archetypes
+  legacy form (block and references removed, derived here from this manifest)
+  is this manifest with exactly those removals and loads under quire with the
+  same eleven archetypes
   (FR-006-AC-1, AC-7, CON-1). CON-1's "adds no required key" is now carried by
   that load rather than by reading the schema's ``required`` lists: a manifest
   with neither addition loading unchanged is the consumer-facing fact the
@@ -37,8 +38,6 @@ REPO_ROOT = pathlib.Path(__file__).resolve().parent.parent
 PKG_ROOT = REPO_ROOT / "spec_artifacts_iso"
 MANIFEST_PATH = PKG_ROOT / "manifest.yaml"
 SKELETONS_DIR = PKG_ROOT / "skeletons"
-FIXTURES_DIR = pathlib.Path(__file__).resolve().parent / "fixtures"
-LEGACY_FIXTURE = FIXTURES_DIR / "manifest-legacy.yaml"
 
 # FR-005 Outputs, restated by FR-006: export name -> emitted model file.
 EXPORT_SCHEMA_FILE = {
@@ -152,7 +151,7 @@ def _registry_archetypes(parent: pathlib.Path) -> set[str]:
     return set(registry.archetype_names())
 
 
-# ─── TC-046: the block, its key set, and the legacy fixture ──────────────
+# ─── TC-046: the block, its key set, and the derived legacy form ──────────────
 
 
 def test_tc046_manifest_carries_a_semantic_block() -> None:
@@ -186,42 +185,30 @@ def test_tc046_semantic_block_key_set_and_values() -> None:
     assert semantic["legacy_forms"] == "warning"
 
 
-def test_tc046_legacy_fixture_is_in_sync_with_the_manifest() -> None:
-    """TC-046: FR-006-CON-1: the committed legacy fixture is this manifest with
-    the block and every ``data_schema`` removed, and nothing else — a second
-    hand-maintained copy would stop proving anything about *this* manifest."""
-    assert LEGACY_FIXTURE.is_file(), f"missing legacy fixture {LEGACY_FIXTURE}"
-    fixture = yaml.safe_load(LEGACY_FIXTURE.read_text())
-    assert fixture == _derive_legacy(_manifest()), (
-        f"{LEGACY_FIXTURE} has drifted from spec_artifacts_iso/manifest.yaml; "
-        f"regenerate it from the real manifest"
-    )
-
-
 def test_tc046_legacy_fixture_carries_neither_addition() -> None:
-    """TC-046: FR-006-AC-7: the fixture is the pre-change form — no ``semantic``
-    block and no ``data_schema`` on any artifact type *or object type*.
+    """TC-046: FR-006-AC-7: the derived legacy form is the pre-change form --
+    no ``semantic`` block and no ``data_schema`` on any artifact type *or object type*.
 
     ``_derive_legacy`` strips ``data_schema`` from both lists, so both are
     walked here: checking only ``artifact_types`` would leave the object-type
     half of the derivation unasserted, and a ``data_schema`` reaching an object
-    type would ride into the fixture unnoticed.
+    type would ride into the derived form unnoticed.
     """
-    fixture = yaml.safe_load(LEGACY_FIXTURE.read_text())
+    fixture = _derive_legacy(_manifest())
     assert "semantic" not in fixture
     typed = {
         **_artifact_types(fixture),
         **_object_types(fixture),
     }
-    assert typed, "the fixture declares no type at all; the walk proves nothing"
+    assert typed, "the derived form declares no type at all; the walk proves nothing"
     for name, entry in typed.items():
         assert "data_schema" not in entry, f"{name} still carries a data_schema"
 
 
 def test_tc046_legacy_fixture_loads_under_quire(tmp_path: pathlib.Path) -> None:
-    """TC-046: FR-006-AC-7: the legacy fixture loads under quire with the same
+    """TC-046: FR-006-AC-7: the derived legacy form loads under quire with the same
     eleven archetypes the current manifest lists."""
-    _module_tree(tmp_path, LEGACY_FIXTURE.read_text())
+    _module_tree(tmp_path, yaml.safe_dump(_derive_legacy(_manifest())))
     assert _registry_archetypes(tmp_path) == ARCHETYPE_NAMES
 
 
