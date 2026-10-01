@@ -254,8 +254,9 @@ def test_tc047_exports_equals_the_referencing_set() -> None:
 
 
 def test_tc048_registry_lists_eleven_archetypes_with_the_block_present() -> None:
-    """TC-048: FR-006-AC-3: ``Registry.load_from`` over the module's parent directory lists all eleven
-    archetypes with the ``semantic`` block and the ten ``data_schema``
+    """TC-048: FR-006-AC-3: ``Registry.load_from`` over the module's parent
+    directory lists all eleven archetypes with the ``semantic`` block and the ten
+    ``data_schema``
     references present — adding the block breaks no consumer.
 
     This check never skips. FR-006's Inputs fix the floor at a wheel that loads
