@@ -20,7 +20,6 @@
     "mappings.schema.json",
     "examples/*.record.json",
     "semantic/main.tsp",
-    "semantic/generated/toolchain.json",
     "README.md",
     "LICENSE"
   ],

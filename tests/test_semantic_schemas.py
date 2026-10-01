@@ -16,8 +16,6 @@ These tests assert the properties a consumer relies on:
 * no property models an execution result (TC-043);
 * object schemas declare their properties inline, so the Python and Rust
   validators cannot disagree about ``unevaluatedProperties`` (TC-060);
-* the file set and digest recorded in ``toolchain.json`` describe the committed
-  bytes (TC-061);
 * the drift gate actually fails on drift (TC-042).
 
 There are no skip guards. A missing toolchain, a missing schema or a missing
@@ -27,10 +25,8 @@ history (IT-002, 21 assertions that stood down on a stale wheel) is why.
 
 from __future__ import annotations
 
-import hashlib
 import json
 import pathlib
-import re
 import subprocess
 
 import pytest
@@ -41,7 +37,6 @@ REPO_ROOT = pathlib.Path(__file__).resolve().parent.parent
 PKG_ROOT = REPO_ROOT / "spec_artifacts_iso"
 SCHEMAS_DIR = PKG_ROOT / "schemas"
 SEMANTIC_DIR = PKG_ROOT / "semantic"
-TOOLCHAIN_PATH = SEMANTIC_DIR / "generated" / "toolchain.json"
 MANIFEST_PATH = PKG_ROOT / "manifest.yaml"
 EXAMPLES_DIR = PKG_ROOT / "examples"
 
@@ -505,30 +500,6 @@ def _registry(bundle: dict[str, dict]):
         schema = _load(path)
         resources.append((schema["$id"], Resource.from_contents(schema)))
     return Registry().with_resources(resources)
-
-
-def test_tc061_toolchain_records_the_committed_bytes() -> None:
-    """TC-061: FR-005-AC-7: the emitted file set equals `toolchain.json`'s
-    `files`, and the digest recomputed over those bytes equals the recorded
-    digest — computed from the committed tree, with no toolchain run.
-    """
-    toolchain = _load(TOOLCHAIN_PATH)
-    files = _projection_files()
-    assert sorted(files) == sorted(toolchain["files"])
-
-    digest = hashlib.sha256()
-    for name in sorted(files):
-        digest.update(f"{name}\n".encode("utf-8"))
-        digest.update(files[name].read_bytes())
-    assert f"sha256:{digest.hexdigest()}" == toolchain["digest"]
-
-    version = _manifest_version()
-    assert toolchain["manifestVersion"] == version
-    assert toolchain["base"] == f"{MODULE_BASE}{version}/"
-    assert toolchain["semanticCore"]["version"] == SEMANTIC_CORE_VERSION
-    assert re.fullmatch(
-        r"sha256:[0-9a-f]{64}", toolchain["semanticCore"]["toolchainDigest"]
-    ), "toolchain.json does not pin the semantic-core copy by digest"
 
 
 def test_tc042_schemas_check_passes_clean_and_fails_on_drift(

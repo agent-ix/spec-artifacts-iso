@@ -7,10 +7,8 @@
  * also writes the imported semantic-core models; those ship in the vendored
  * semantic-core bundle, never here), applies the filament-core-data issue #31
  * `$id` normalization (absolute `$id` for any schema the emitter left
- * relative; a recorded no-op when none is), writes the files to
- * `spec_artifacts_iso/schemas/<Model>.json`, and records
- * `generated/toolchain.json` with the compiler and emitter versions plus a
- * digest over the emitted files (name + newline + bytes, sorted).
+ * relative), writes the files to
+ * `spec_artifacts_iso/schemas/<Model>.json`.
  *
  *   node scripts/generate.mjs          # regenerate (make schemas)
  *   node scripts/generate.mjs --check  # fail on any byte difference (make schemas-check)
@@ -20,7 +18,6 @@
  */
 
 import { execFileSync } from "node:child_process";
-import { createHash } from "node:crypto";
 import {
   existsSync,
   mkdtempSync,
@@ -37,13 +34,7 @@ const packageRoot = resolve(dirname(fileURLToPath(import.meta.url)), "..");
 const moduleRoot = resolve(packageRoot, "..");
 const repoRoot = resolve(moduleRoot, "..");
 const outputDir = resolve(moduleRoot, "schemas");
-const toolchainPath = resolve(packageRoot, "generated/toolchain.json");
 const SEMANTIC_CORE_BASE = "https://schemas.agent-ix.org/semantic-core/";
-const NORMALIZATION = {
-  name: "issue-31-absolute-id",
-  version: "1.0.0",
-  issue: "https://github.com/agent-ix/filament-core-data/issues/31",
-};
 
 const INSTALL_HINT = "run `make semantic-install` first";
 
@@ -53,33 +44,6 @@ function missingInstall(error, what) {
     return new Error(`${what} is not installed under ${packageRoot}/node_modules — ${INSTALL_HINT}`);
   }
   return error;
-}
-
-function version(name) {
-  try {
-    return JSON.parse(
-      readFileSync(resolve(packageRoot, "node_modules", name, "package.json"), "utf8"),
-    ).version;
-  } catch (error) {
-    throw missingInstall(error, name);
-  }
-}
-
-/**
- * Digest of the resolved semantic-core's own `generated/toolchain.json`, so the
- * copy this module compiled against is identified by bytes rather than by a
- * version string two registries could disagree on (SR-006 FND-246).
- */
-function semanticCoreDigest() {
-  const path = resolve(
-    packageRoot,
-    "node_modules/@agent-ix/semantic-core/generated/toolchain.json",
-  );
-  try {
-    return `sha256:${createHash("sha256").update(readFileSync(path)).digest("hex")}`;
-  } catch (error) {
-    throw missingInstall(error, "@agent-ix/semantic-core");
-  }
 }
 
 /** The manifest `version` is the authority; the `@jsonSchema` base must embed it (FR-005). */
@@ -115,7 +79,7 @@ function render(schema) {
 }
 
 function emit() {
-  const { base, manifestVersion } = packageBase();
+  const { base } = packageBase();
   const tsp = resolve(packageRoot, "node_modules/.bin/tsp");
   if (!existsSync(tsp)) {
     throw new Error(`the TypeSpec compiler (${tsp}) is not installed — ${INSTALL_HINT}`);
@@ -133,7 +97,7 @@ function emit() {
     }
     // Read the emitter's output explicitly rather than assuming it is flat: a
     // future emitter that writes into a subdirectory would otherwise have those
-    // files dropped from both the bundle and the digest without a word. An
+    // files dropped from the bundle without a word. An
     // unexpected entry is a hard failure, never a silent omission.
     const entries = readdirSync(scratch, { withFileTypes: true }).sort((a, b) =>
       a.name < b.name ? -1 : a.name > b.name ? 1 : 0,
@@ -151,41 +115,17 @@ function emit() {
       entry.name,
       JSON.parse(readFileSync(join(scratch, entry.name), "utf8")),
     ]);
-    const excluded = [];
     const files = new Map();
     for (const [name, schema] of all) {
       const id = typeof schema.$id === "string" ? schema.$id : "";
       if (id.startsWith(SEMANTIC_CORE_BASE)) {
-        excluded.push(name);
         continue;
       }
       files.set(name, schema);
     }
     const rewritten = normalize(files, base);
     const rendered = new Map([...files].map(([name, schema]) => [name, render(schema)]));
-    const digest = createHash("sha256");
-    for (const [name, text] of rendered) digest.update(`${name}\n${text}`);
-    const toolchain = {
-      compiler: { name: "@typespec/compiler", version: version("@typespec/compiler") },
-      emitter: { name: "@typespec/json-schema", version: version("@typespec/json-schema") },
-      semanticCore: {
-        name: "@agent-ix/semantic-core",
-        version: version("@agent-ix/semantic-core"),
-        toolchainDigest: semanticCoreDigest(),
-      },
-      normalization: {
-        ...NORMALIZATION,
-        applied: rewritten.length > 0,
-        rewrittenFiles: rewritten,
-        note: rewritten.length === 0 ? "no-op: the emitter produced no relative $id" : undefined,
-      },
-      base,
-      manifestVersion,
-      excludedImportedFiles: excluded,
-      files: [...rendered.keys()],
-      digest: `sha256:${digest.digest("hex")}`,
-    };
-    return { rendered, toolchain: render(toolchain) };
+    return { rendered };
   } finally {
     rmSync(scratch, { recursive: true, force: true });
   }
@@ -198,7 +138,7 @@ function isProjection(name) {
 
 function main() {
   const check = process.argv.includes("--check");
-  const { rendered, toolchain } = emit();
+  const { rendered } = emit();
   if (check) {
     const problems = [];
     for (const [name, text] of rendered) {
@@ -219,13 +159,6 @@ function main() {
     }
     for (const name of committed)
       if (!rendered.has(name)) problems.push(`${relative(repoRoot, join(outputDir, name))} (stale)`);
-    let currentToolchain;
-    try {
-      currentToolchain = readFileSync(toolchainPath, "utf8");
-    } catch {
-      currentToolchain = undefined;
-    }
-    if (currentToolchain !== toolchain) problems.push(relative(repoRoot, toolchainPath));
     if (problems.length > 0) {
       console.error(`schema projection differs from the committed output:\n  ${problems.join("\n  ")}`);
       process.exit(1);
@@ -235,7 +168,6 @@ function main() {
   }
   for (const name of readdirSync(outputDir).filter(isProjection)) rmSync(join(outputDir, name));
   for (const [name, text] of rendered) writeFileSync(join(outputDir, name), text);
-  writeFileSync(toolchainPath, toolchain);
   console.log(`schema projection written (${rendered.size} files)`);
 }
 

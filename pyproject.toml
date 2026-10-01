@@ -17,7 +17,6 @@ include = [
     { path = "spec_artifacts_iso/mappings.schema.json", format = ["sdist", "wheel"] },
     { path = "spec_artifacts_iso/examples/*.record.json", format = ["sdist", "wheel"] },
     { path = "spec_artifacts_iso/semantic/main.tsp", format = ["sdist", "wheel"] },
-    { path = "spec_artifacts_iso/semantic/generated/toolchain.json", format = ["sdist", "wheel"] },
 ]
 # The TypeSpec toolchain is a build input, not module data (FR-005-CON-3).
 exclude = [

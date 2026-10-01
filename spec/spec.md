@@ -36,11 +36,11 @@ and no render step.
   `skeletons/` and consumed by authors and the `quire validate` CLI.
 - The TypeSpec source under `spec_artifacts_iso/semantic/` and the JSON Schema
   2020-12 bundle projected from it at `spec_artifacts_iso/schemas/<Model>.json`,
-  together with `spec_artifacts_iso/semantic/generated/toolchain.json` and the
+  together with the
   `make schemas` and `make schemas-check` targets that regenerate and check it.
 - The `semantic` block of `spec_artifacts_iso/manifest.yaml` and the
-  per-archetype `data_schema: { schema, digest }` references that bind each
-  artifact type to the exact shipped schema bytes.
+  per-archetype `data_schema: { schema }` references that bind each
+  artifact type to its schema.
 - `spec_artifacts_iso/mappings.yaml`, the golden records at
   `spec_artifacts_iso/examples/<type>.record.json`, and the Python reference
   mapping the test suite uses to build a record from an authored document.
@@ -103,9 +103,8 @@ structural completeness is checked by quire-rs `validate_document`.
 Beside the archetypes, the Module declares one semantic data model per ISO
 artifact type as TypeSpec under `spec_artifacts_iso/semantic/`, ships the JSON
 Schema 2020-12 projection of each model at
-`spec_artifacts_iso/schemas/<Model>.json` with the `toolchain.json` that records
-the projection's provenance, and binds each artifact type to its schema by
-module-relative path and SHA-256 digest through the manifest `semantic` block
+`spec_artifacts_iso/schemas/<Model>.json` and binds each artifact type to its schema by
+module-relative path through the manifest `semantic` block
 and per-archetype `data_schema` references. `spec_artifacts_iso/mappings.yaml`
 declares how the authored Markdown fills each field of a record, and
 `spec_artifacts_iso/examples/<type>.record.json` carries one golden record per

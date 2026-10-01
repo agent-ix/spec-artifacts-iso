@@ -37,7 +37,7 @@ extracted record gets a string per section and a tab-joined string for the first
 table row, so an acceptance criterion, a constraint, or a glossary term is text
 to be parsed again. Wave 4 of the semantic program (agent-ix/quoin#286)
 introduced a module contract in which an archetype references its emitted JSON
-Schema by path and digest (quoin FR-073) and Markdown forms map to semantic-core
+Schema by path (quoin FR-073) and Markdown forms map to semantic-core
 declarations (quoin FR-071, FR-072). This module is one of the two read-only
 fixture sources for that program.
 

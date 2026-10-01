@@ -56,7 +56,7 @@ FR-073-CON-1 boundary quoin and quire both enforce.
 ## Verification
 
 A test regenerates the bundle into a scratch directory and compares every file
-to the committed one; a second test recomputes the `toolchain.json` digest; the offline run is a manual gate of this
+to the committed one; the offline run is a manual gate of this
 repository, recorded in the release notes. No CI job is claimed by this
 requirement or by the ticket that introduces it; the manual gate stands until a
 CI job for it is filed against this repository.
