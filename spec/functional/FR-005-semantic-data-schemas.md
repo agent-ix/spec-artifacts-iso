@@ -106,7 +106,8 @@ Projection:
   https://schemas.agent-ix.org/agent-ix/spec-artifacts-iso/<Model>.json`.
 - The generator SHALL keep every `$ref` of the shipped bundle inside two bases:
   the module base above and
-  `https://schemas.agent-ix.org/semantic-core/0.3.0/`.
+  `https://schemas.agent-ix.org/semantic-core/<version>/`, where `<version>` is the
+  version of the `@agent-ix/semantic-core` the module declares.
 - The generator SHALL exclude from the shipped bundle every file whose `$id`
   starts with `https://schemas.agent-ix.org/semantic-core/`, which the
   emitter produces for the imported semantic-core models (they ship in the

@@ -955,7 +955,7 @@ roles:
   business-intent: { description: "An enterprise capability/function/value-stream the system realizes." }
   sensitive: { description: "Carries secret or otherwise sensitive material." }
 
-# FR-059 (quire-rs v0.33.0): which declared vocabulary values does no document
+# FR-059 (quire-rs): which declared vocabulary values does no document
 # claim. Declared HERE because this module owns both halves — the `NFR`
 # archetype and the `quality_attribute` enum in its frontmatter schema — so the
 # vocabulary is read from the schema beside it and nothing is restated.

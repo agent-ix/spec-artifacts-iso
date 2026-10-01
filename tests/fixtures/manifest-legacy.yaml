@@ -10,7 +10,6 @@
 # manifest, so it is never a second hand-maintained copy.
 manifest_version: 1.0.0
 name: spec-artifacts-iso
-version: 0.2.0
 description: 'Filament Module: ISO-style spec artifacts (FR, NFR, StR, US, IT, TC) — unified-shape archetypes (frontmatter schema + body_extraction asserts) validated by quire-rs; per-archetype authoring skeletons are the source of truth (no render templates); iso-spec-core grammar'
 archetypes:
 - kind: spec

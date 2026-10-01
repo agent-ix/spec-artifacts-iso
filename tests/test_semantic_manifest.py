@@ -107,7 +107,7 @@ def _object_types(manifest: dict) -> dict[str, dict]:
 
 
 def _derive_legacy(manifest: dict) -> dict:
-    """Return the manifest with the ``semantic`` block and every ref removed.
+    """Return the manifest minus the ``semantic`` block, every ref and the version.
 
     This is the FR-006-CON-1 consumer that predates the block: nothing it needs
     is expressed by either addition, so removing both must leave a manifest that
@@ -115,6 +115,7 @@ def _derive_legacy(manifest: dict) -> dict:
     """
     legacy = copy.deepcopy(manifest)
     legacy.pop("semantic", None)
+    legacy.pop("version", None)
     for at in legacy.get("artifact_types") or []:
         at.pop("data_schema", None)
     for ot in legacy.get("object_types") or []:
