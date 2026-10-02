@@ -16,8 +16,8 @@ persisting it.
 ## Invariants
 
 The persisted digest always equals the declared digest. This section is prose:
-the census counts 54 corpus FR documents whose `## Invariants` carries no fence,
-and they keep validating.
+a document whose `## Invariants` carries no fence
+keeps validating.
 
 ## Acceptance Criteria
 
