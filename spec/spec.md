@@ -80,8 +80,8 @@ and no render step.
 - Amending the quoin FR-070 contract so `semantic.exports` admits artifact types
   and not only `object_types` names. Owner: agent-ix/quoin
   (agent-ix/quoin#336); the change is quoin's, not this Module's.
-- Closing the `status` frontmatter vocabulary (16 spellings over 973 corpus
-  documents). Closing it is a vocabulary sweep-and-report, not a side effect of
+- Closing the `status` frontmatter vocabulary.
+  Closing it is a vocabulary sweep-and-report, not a side effect of
   this schema set. Owner: a later sweep in this repository.
 - Making the offline, no-network run a CI job. NFR-001 calls this "the corpus
   promotion gate"; it is not owned by agent-ix/spec-artifacts-iso#34. The
@@ -97,7 +97,7 @@ ISO artifact archetypes (FR, NFR, StR, US, IT, TC) as unified-shape archetypes â
 per-archetype authoring skeletons (the source of truth), `body_extraction`
 asserts, and JSON Schema frontmatter validation â€” together with a generic
 `master-requirements` archetype. Templates (`.md.j2`) and `template_ref` are
-removed (parity with quire-rs commit 500a3d3 and filament-core FR-035 CR-002);
+removed (parity with filament-core FR-035 CR-002);
 structural completeness is checked by quire-rs `validate_document`.
 
 Beside the archetypes, the Module declares one semantic data model per ISO

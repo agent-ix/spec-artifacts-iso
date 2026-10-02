@@ -9,22 +9,6 @@ title: "Test Matrix"
 
 Maps every acceptance criterion to the test that backs it.
 
-This document was **non-canonical until 2026-08-19**, and that had a measurable
-cost. It carried no `## Test Case Summary`, so the module minted **zero
-`test-case` targets** and every `TC-…` id written in a test bound to nothing —
-the defect agent-ix/quire-rs#72 counts across the ecosystem. The ids were also
-spelled `TC-SCHEMA-nnn`, a second shape nothing else in the ecosystem uses; they
-are **renumbered rather than admitted**, because a rule accepting every spelling
-enforces nothing.
-
-**[RAN]** `quire coverage --scope .` in this repository, before and after:
-**17 written trace tags bound to nothing → 0**.
-
-The 10 criteria still pending are the ones whose verification is an
-**activation or authoring integration test** against a running filament-core, or
-a document-mutation test — none of which this package's suite runs. They are
-listed as pending rather than quietly dropped.
-
 Two rows depend on a release outside this repository and cannot be green
 here until it lands. TC-055 and TC-064 are manual because the
 published quoin carries no semantic-block reader: the refusal
@@ -61,8 +45,6 @@ Method` rows — so NFR rows trace to `NFR-001 (metric n)` (SR-003 FND-006).
 | FR-003 | FR-003-AC-7 | — | 🚧 Pending |
 | FR-003 | FR-003-AC-8 | — | 🚧 Pending |
 | FR-004 | FR-004-AC-1 | TC-017 | ✅ Complete |
-| FR-004 | FR-004-AC-2 | TC-018 | ✅ Complete |
-| FR-004 | FR-004-AC-3 | TC-019 | ✅ Complete |
 | FR-004 | FR-004-AC-4 | TC-020 | ✅ Complete |
 | FR-004 | FR-004-AC-5 | TC-021 | ✅ Complete |
 | FR-005 | FR-005-AC-1 | TC-041 | ✅ Complete |
@@ -91,10 +73,8 @@ Method` rows — so NFR rows trace to `NFR-001 (metric n)` (SR-003 FND-006).
 | FR-007 | FR-007-AC-2 | TC-044 | ✅ Complete |
 | FR-007 | FR-007-AC-3 | TC-053 | ✅ Complete |
 | FR-007 | FR-007-AC-4 | TC-051 | ✅ Complete |
-| FR-007 | FR-007-AC-5 | TC-050 | ✅ Complete |
 | FR-007 | FR-007-AC-6 | TC-045 | ✅ Complete |
 | FR-007 | FR-007-AC-7 | TC-052 | ✅ Complete |
-| FR-007 | FR-007-CON-1 | TC-050 | ✅ Complete |
 | FR-007 | FR-007-CON-2 | TC-051 | ✅ Complete |
 | FR-007 | FR-007-CON-3 | TC-059 | ✅ Complete |
 
@@ -125,8 +105,6 @@ Method` rows — so NFR rows trace to `NFR-001 (metric n)` (SR-003 FND-006).
 | TC-015 | NFR's AC section stays optional but takes the FR table shape when present. A *measurable* NFR's criteria are its `Metric \| Target \| Threshold \| Method` rows and it omits the section; a *policy* NFR authors the table. What is no (`test_nfr_acceptance_criteria_is_absent_or_well_formed`) | Unit | P0 | FR-002-AC-1 | ✅ |
 | TC-016 | extract over the conformant skeleton yields a record whose fields match the archetype's body_extraction (validate + extract share one declaration) (`test_it002_ac3_extract_yields_record`) | Unit | P0 | FR-002-AC-1 | ✅ |
 | TC-017 | . A verb with no description is a verb nobody can use correctly, and a category outside the declared seven is a typo that would silently create an eighth (`test_fr004_ac1_every_edge_type_has_a_description_and_known_category`) | Unit | P0 | FR-004-AC-1 | ✅ |
-| TC-018 | . An inverse label declared by two forward verbs resolves first-wins with a diagnostic (quire-rs FR-041-AC-3), so which verb it normalizes onto depends on declaration order. That is designed. What is *not* designed is a new collis (`test_fr004_ac2_shared_inverse_labels_are_the_recorded_set`) | Unit | P0 | FR-004-AC-2 | ✅ |
-| TC-019 | . Deliberately the opposite of the invariant it is tempting to assert. quire-rs FR-041-AC-2 type-allows an edge whose verb is a declared inverse label "even when the label is absent from ``edge_types``" — so requiring every invers (`test_fr004_ac3_inverse_labels_need_not_be_declared_verbs`) | Unit | P0 | FR-004-AC-3 | ✅ |
 | TC-020 |  (`test_fr004_ac4_every_role_has_a_description`) | Unit | P0 | FR-004-AC-4 | ✅ |
 | TC-021 | the manifest declares both vocabulary registries, and an `edge_types` entry that loses its `category` costs the module every archetype under `Registry.load_from`, with an unmutated control proving the load is real (`test_fr004_ac5_the_vocabulary_is_declared_and_a_broken_entry_is_refused`) | Unit | P0 | FR-004-AC-5 | ✅ |
 | TC-039 | Every locator output of every artifact type is a property of its model, and every model property traces to a locator, a frontmatter key, or a `mappings.yaml` entry (FR-005-CON-1) | Unit | P0 | FR-005-CON-1 | ✅ |
@@ -139,7 +117,6 @@ Method` rows — so NFR rows trace to `NFR-001 (metric n)` (SR-003 FND-006).
 | TC-046 | The manifest's `semantic` block key set is exactly the nine declared keys with the declared values; the block and the `data_schema` references add no required key at the manifest root or on an `ArtifactTypeEntry`; and the legacy form derived from it (block and references removed) is this manifest with exactly those removals and loads under quire with the same eleven archetypes (FR-006-AC-1, AC-7) | Unit | P0 | FR-006-AC-1, FR-006-AC-7, FR-006-CON-1 | ✅ |
 | TC-047 | Every exported artifact type carries a `{schema}` reference to an existing file; `exports` equals the referencing set; no inline `data_schema` remains (FR-006-AC-2, AC-5) | Unit | P0 | FR-006-AC-2, FR-006-AC-5, FR-006-CON-2 | ✅ |
 | TC-048 | `Registry.load_from` lists all eleven archetypes with the `semantic` block and the ten `data_schema` references present, and `validate_document` passes every skeleton — the block breaks no consumer (FR-006-AC-3) | Integration | P0 | FR-006-AC-3 | ✅ |
-| TC-050 | Each pre-change skeleton committed at 3d87196 maps to a record that validates against the new schema; no table header, heading, or column order changed (FR-007-AC-5) | Snapshot | P0 | FR-007-AC-5, FR-007-CON-1 | ✅ |
 | TC-051 | The FR skeleton's `## Invariants` clause maps to a `ClauseRef` with `language: ocl` and the heading as `clauseId`; `sourceSpan` is present with a caller `sourceIdentity` and absent without one; the `invariantsText` entry equals the fence body byte-for-byte; a non-identifier heading, a `tla` fence, a second fence under one heading, a repeated `clauseId`, and an unowned fence each fail naming the line; a prose `## Invariants` leaves `invariants` absent without failing; no module code parses the clause (FR-007-AC-4) | Unit | P0 | FR-007-AC-4, FR-007-CON-2 | ✅ |
 | TC-052 | `mappings.yaml` validates against `mappings.schema.json`, names every model property exactly once with one of the eight mapping kinds, names no undeclared property, matches locator `assert.columns` on tables, and records `authority`, `round_trip`, per-property `lossless`, and the dropped frontmatter keys (FR-007-AC-1, AC-7) | Unit | P0 | FR-007-AC-1, FR-007-AC-7 | ✅ |
 | TC-053 | The FR skeleton's AC rows map to a plain method cell (`method` only, no `annotation`, `testRefs: []`), its constraint row carries `type: Security`, and the split still parses an annotated cell (`Test (TC-035, TC-036)`) for a caller that authors one (FR-007-AC-3) | Unit | P0 | FR-007-AC-3 | ✅ |

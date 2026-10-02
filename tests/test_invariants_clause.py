@@ -205,8 +205,8 @@ def test_tc051_prose_invariants_leaves_the_property_absent(
     declaration: dict, bundle: dict
 ) -> None:
     """TC-051: FR-007-AC-4: a prose `## Invariants` with no fenced block leaves
-    `invariants` absent and does NOT fail — the census counts 54 corpus FR
-    documents in exactly that shape, and they keep validating. A document with
+    `invariants` absent and does NOT fail — documents in exactly that shape
+    keep validating. A document with
     no `## Invariants` at all is likewise unaffected.
     """
     for fixture in ("prose-invariants.md", "no-invariants-section.md"):

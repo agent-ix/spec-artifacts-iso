@@ -28,27 +28,27 @@ namespace AgentIx.SpecArtifactsIso;
 @minLength(1)
 scalar NonEmptyText extends string;
 
-/** Functional requirement id; the corpus population (2,885 documents, census 2026-09-04) is `FR-N`. */
+/** Functional requirement id (`FR-N`). */
 @pattern("^FR-[0-9]+$")
 scalar FRId extends string;
 
-/** Non-functional requirement id (`NFR-N`, 825 documents). */
+/** Non-functional requirement id (`NFR-N`). */
 @pattern("^NFR-[0-9]+$")
 scalar NFRId extends string;
 
-/** Stakeholder requirement id (`StR-N`, 543 documents); the frontmatter schema pins the same form. */
+/** Stakeholder requirement id (`StR-N`); the frontmatter schema pins the same form. */
 @pattern("^StR-[0-9]+$")
 scalar StRId extends string;
 
-/** User story id (`US-N`, 1,064 documents). */
+/** User story id (`US-N`). */
 @pattern("^US-[0-9]+$")
 scalar USId extends string;
 
-/** Integration test id (`IT-N`, 183 documents). */
+/** Integration test id (`IT-N`). */
 @pattern("^IT-[0-9]+$")
 scalar ITId extends string;
 
-/** Test case id (`TC-N`, 67 documents). */
+/** Test case id (`TC-N`). */
 @pattern("^TC-[0-9]+$")
 scalar TCId extends string;
 
@@ -80,11 +80,10 @@ scalar TestCaseRef extends string;
 
 /**
  * Lifecycle status from frontmatter `status`. The value set is deliberately
- * open: the 2026-09-04 census counts 16 spellings over the 863 documents
- * that declare one (`APPROVED` 448, `IMPLEMENTED` 147, `DRAFT` 118,
- * `PROPOSED` 77, `SUPERSEDED` 20, eleven minor forms); closing it is a
- * vocabulary decision that needs its own sweep-and-report, not a side effect
- * of this schema.
+ * open: the corpus uses many spellings (`APPROVED`, `IMPLEMENTED`, `DRAFT`,
+ * `PROPOSED`, `SUPERSEDED` and minor forms); closing it is a vocabulary
+ * decision that needs its own sweep-and-report, not a side effect of this
+ * schema.
  */
 @pattern("^[A-Za-z][A-Za-z_-]*$")
 scalar ArtifactStatus extends string;
@@ -98,8 +97,8 @@ scalar EdgeVerb extends string;
 scalar IxTarget extends string;
 
 /**
- * Relationship cardinality as authored. Admits the census population (11 forms
- * over 2,925 entries): `1:1`, `1:N`, `N:1`, `n:1`, `1`, `0:1`, `1:n`, `many:1`,
+ * Relationship cardinality as authored. Admits these forms:
+ * `1:1`, `1:N`, `N:1`, `n:1`, `1`, `0:1`, `1:n`, `many:1`,
  * `1..1`, `0..1`, `1:m`; each side is a number, a letter token, or `*`,
  * optionally a `..` range.
  */
@@ -201,7 +200,7 @@ model Relationship {
  * criterion id, not a cell annotation.
  */
 model Verification {
-  /** free text: on FR/NFR this is the Verification cell, owned by spec-artifacts-process's lint rule (ISO 29148 methods plus its catalog method ids); on StR this is the Validation cell, owned by this module's advisory `vc-validation-method` rule (the four ISO 29148 methods). The census counts 1,144 distinct spellings over 21,181 cells, of which those admitted spellings are the large majority, and a schema that closed the vocabulary would reject the corpus it describes. */
+  /** free text: on FR/NFR this is the Verification cell, owned by spec-artifacts-process's lint rule (ISO 29148 methods plus its catalog method ids); on StR this is the Validation cell, owned by this module's advisory `vc-validation-method` rule (the four ISO 29148 methods). A schema that closed the vocabulary would reject the corpus it describes. */
   method: NonEmptyText;
   testRefs: TestCaseRef[];
   /** free text: the parenthesized remainder of the cell, verbatim, so the split loses nothing the author wrote. */
@@ -224,7 +223,7 @@ model Constraint {
   id: ConstraintId;
   /** free text: the constraint statement. */
   constraint: NonEmptyText;
-  /** free text: the constraint category; the census counts 335 distinct categories over 3,960 constraint rows and no rule owns the vocabulary. */
+  /** free text: the constraint category; no rule owns the vocabulary. */
   type: NonEmptyText;
   validation: Verification;
   line: LineNumber;
@@ -433,7 +432,7 @@ model MasterRequirements {
   /** `null` is authored for components without one; the frontmatter schema admits it. */
   implementationLanguage?: NonEmptyText | null;
   tags?: NonEmptyText[];
-  /** Bare module names, as the census finds (143 non-empty lists, 67 empty). */
+  /** Bare module names. */
   dependsOn?: NonEmptyText[];
   standardsAlignment?: NonEmptyText[];
   securityCritical?: boolean;

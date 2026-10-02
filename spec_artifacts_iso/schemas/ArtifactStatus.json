@@ -3,5 +3,5 @@
   "$id": "https://schemas.agent-ix.org/agent-ix/spec-artifacts-iso/ArtifactStatus.json",
   "type": "string",
   "pattern": "^[A-Za-z][A-Za-z_-]*$",
-  "description": "Lifecycle status from frontmatter `status`. The value set is deliberately\nopen: the 2026-09-04 census counts 16 spellings over the 863 documents\nthat declare one (`APPROVED` 448, `IMPLEMENTED` 147, `DRAFT` 118,\n`PROPOSED` 77, `SUPERSEDED` 20, eleven minor forms); closing it is a\nvocabulary decision that needs its own sweep-and-report, not a side effect\nof this schema."
+  "description": "Lifecycle status from frontmatter `status`. The value set is deliberately\nopen: the corpus uses many spellings (`APPROVED`, `IMPLEMENTED`, `DRAFT`,\n`PROPOSED`, `SUPERSEDED` and minor forms); closing it is a vocabulary\ndecision that needs its own sweep-and-report, not a side effect of this\nschema."
 }

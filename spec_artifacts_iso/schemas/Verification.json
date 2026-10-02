@@ -5,7 +5,7 @@
   "properties": {
     "method": {
       "$ref": "https://schemas.agent-ix.org/agent-ix/spec-artifacts-iso/NonEmptyText.json",
-      "description": "free text: on FR/NFR this is the Verification cell, owned by spec-artifacts-process's lint rule (ISO 29148 methods plus its catalog method ids); on StR this is the Validation cell, owned by this module's advisory `vc-validation-method` rule (the four ISO 29148 methods). The census counts 1,144 distinct spellings over 21,181 cells, of which those admitted spellings are the large majority, and a schema that closed the vocabulary would reject the corpus it describes."
+      "description": "free text: on FR/NFR this is the Verification cell, owned by spec-artifacts-process's lint rule (ISO 29148 methods plus its catalog method ids); on StR this is the Validation cell, owned by this module's advisory `vc-validation-method` rule (the four ISO 29148 methods). A schema that closed the vocabulary would reject the corpus it describes."
     },
     "testRefs": {
       "type": "array",

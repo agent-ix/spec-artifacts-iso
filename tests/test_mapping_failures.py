@@ -416,7 +416,7 @@ def test_tc045_empty_verification_cell_fails_min_length(
     — it is not one of the failures FR-007 lists — and the schema rejects the
     record on `minLength: 1`, naming the path down to `verification/method`.
 
-    The census counts such cells in the corpus. That is a finding about those
+    Such cells are a finding about those
     documents; `minLength: 1` is not relaxed to accommodate them.
     """
     result = _map("fr-empty-verification-cell.md", declaration)

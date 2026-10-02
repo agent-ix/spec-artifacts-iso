@@ -3,5 +3,5 @@
   "$id": "https://schemas.agent-ix.org/agent-ix/spec-artifacts-iso/USId.json",
   "type": "string",
   "pattern": "^US-[0-9]+$",
-  "description": "User story id (`US-N`, 1,064 documents)."
+  "description": "User story id (`US-N`)."
 }

@@ -18,7 +18,7 @@ relationships:
 
 ## Description
 
-> **Review pass (2026-09-03, SR-003..SR-010):** obligations on quoin and on
+> **Scope.** Obligations on quoin and on
 > "the module author" are removed; this requirement binds the manifest and the
 > module's own suite only. What quoin and quire do with the block is recorded
 > as evidence, not as obligations. The known quoin contract gap is stated as certain:
@@ -103,14 +103,14 @@ schema: schemas/<Model>.json }`).
   artifact-type exports because it checks `exports` against every archetype
   (`Manifest::all_archetypes`), resolves each reference-form `data_schema`,
   and refuses the module (`unknown archetype`) on an
-  undeclared export — probed on 2026-09-03 against a copy of this module with
+  undeclared export — observed against a copy of this module with
   one export. quire-rs FR-069's prose says "object types"; the loader's
   behaviour is the evidence this requirement relies on, and the wording gap is
   filed as agent-ix/quire-rs#393 with the record-kind question above.
 - Evidence, not obligation — quoin, as published: `quoin module install
   path:<module root>` on the published CLI **succeeds** and
   installs the module, because that CLI carries no semantic-block reader at
-  all. Run on 2026-09-03 against this manifest; exit 0, an install record for
+  all. Observed against this manifest: exit 0, an install record for
   `spec-artifacts-iso`, no diagnostic. The block is inert to every quoin a user
   can install today, which is the practical form of CON-1.
 - Evidence, not obligation — quoin, on main: quoin
