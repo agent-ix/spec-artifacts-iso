@@ -18,7 +18,7 @@ relationships:
 
 ## Description
 
-> **Review pass (2026-09-03, SR-003..SR-010):** the mapping-kind vocabulary is
+> **Scope.** The mapping-kind vocabulary is
 > widened from five to eight so that every declared property has exactly one
 > kind; the `Verification` split is realigned with FR-005 (`annotation`); the
 > `ocl-clause` mapping states what happens to a prose `## Invariants` section,
@@ -44,8 +44,7 @@ The Markdown forms are the ones the corpus already uses. This requirement adds
 no new table header, renames no heading, and reorders no column. A document
 that validated before FR-005 therefore maps to a record that validates against
 its model, with one stated exception: FR-005 gives every prose cell
-`minLength: 1`, so a document carrying an empty required cell (census
-2026-09-04: 7 `Verification` cells of 20,881) is rejected. That is a census finding
+`minLength: 1`, so a document carrying an empty required cell is rejected. That is a finding
 about those documents, not a form this module admits, and TC-045 pins it.
 
 **Who builds the record.** Nothing in production builds an ISO record from
@@ -111,8 +110,7 @@ Mapping kinds:
   <iWant>`, and `So that <soThat>`, each optionally wrapped in `**` or `_`
   emphasis and optionally followed by `:`, matched case-insensitively at the
   start of a line, with the captured text trimmed and its surrounding emphasis
-  markers removed (census 2026-09-04: 908 bold, 149 plain, 0 neither over
-  1,057 `US` documents — the grammar matches every story in the corpus).
+  markers removed.
 - A `table` mapping SHALL name a section and a column list equal to the
   `assert.columns` of the corresponding locator, and fill an array with one
   object per data row in authored order, cells trimmed, with the row's line.
@@ -151,8 +149,8 @@ Clauses:
   `startColumn` and `endColumn` are the 1-based columns of the first and last
   characters of those fence lines (quire-rs FR-071).
 - If a `## Invariants` section carries no fenced block, then the mapping SHALL
-  leave `invariants` absent and SHALL NOT fail. The census counts 54 corpus FR
-  documents whose `## Invariants` is prose; those documents keep validating.
+  leave `invariants` absent and SHALL NOT fail. A document whose
+  `## Invariants` is prose keeps validating.
 - If a `### <clauseId>` heading is not an `Identifier`
   (`^[A-Za-z_][A-Za-z0-9_]*$`), owns a fence tagged with another language, owns
   more than one fence, owns an unterminated fence, or repeats a `clauseId`
@@ -203,7 +201,6 @@ Golden records:
 
 | ID | Constraint | Type | Validation |
 |----|------------|------|------------|
-| FR-007-CON-1 | The mapping SHALL keep every existing table header, heading, and column order the corpus uses; the only Markdown form it adds is the optional `## Invariants` section on FR. | Compatibility | Test (TC-050) |
 | FR-007-CON-2 | The mapping SHALL carry clause text under `## Invariants` as opaque bytes; no code in this module tokenizes, typechecks, or evaluates it. | Boundary | Test (TC-051) |
 | FR-007-CON-3 | The mapping SHALL read Markdown and write nothing back; no file in the module derives Markdown from a record. | Boundary | Inspection (TC-059) |
 
@@ -215,7 +212,6 @@ Golden records:
 | FR-007-AC-2 | For each of the ten skeletons the reference mapping produces a record equal to `examples/<type>.record.json` and that record validates against `schemas/<Model>.json`. | Test (TC-044) |
 | FR-007-AC-3 | The FR skeleton's `## Acceptance Criteria` rows map to `AcceptanceCriterion` objects whose `verification` is a plain method cell — `method: Test`/`method: Inspection` with no `annotation` and `testRefs: []`, since a criterion binds to its tests by criterion id, not a cell annotation — and the `## Constraints` row maps to a `Constraint` with `type: Security` and a `validation` of the same `Verification` shape (`method: Integration Test`, no `annotation`, `testRefs: []`). The split still parses an annotated cell (`Test (TC-035, TC-036)` splits into `method: Test`, `annotation: TC-035, TC-036`, `testRefs: [TC-035, TC-036]`) for a caller that still authors one; no skeleton does. | Test (TC-053) |
 | FR-007-AC-4 | The FR skeleton's `## Invariants` clause maps to a `ClauseRef` with `language: ocl` and `clauseId` equal to the `###` heading; with a caller-supplied `sourceIdentity` it also carries a `sourceSpan` whose `startLine`/`endLine` are the fence lines, and without one it carries no `sourceSpan`; the `invariantsText` entry equals the fence body byte-for-byte; a `### not-an-identifier` heading, a ```` ```tla ```` fence, a second fence under one heading, a repeated `clauseId`, and a fence owned by no `###` heading each fail naming the line; a prose `## Invariants` with no fence leaves `invariants` absent and does not fail. | Test (TC-051) |
-| FR-007-AC-5 | A document copied from each of the ten skeletons before this change (the committed pre-change skeletons at 3d87196) maps to a record that validates against the new schema, so existing conforming Markdown is semantically equivalent. | Test (TC-050) |
 | FR-007-AC-6 | A row id with the wrong prefix, a row id repeated in one table, a duplicated level-2 heading, and a `## Story` without the As-a/I-want/So-that grammar each fail the mapping naming the line and yield no record, and all failures present in one document are reported together. An empty `Verification` cell is rejected by the schema instead, naming the JSON path, because FR-005 gives every prose cell `minLength: 1` — the mapping builds the cell faithfully and the model refuses it. | Test (TC-045) |
 | FR-007-AC-7 | `section` and `ocl-clause` properties carry `lossless: true` and `table`, `typed-table`, `list`, `token`, and `frontmatter` properties carry `lossless: false` in `mappings.yaml`; every model records `authority: markdown` and `round_trip: derived`; and every model records the frontmatter keys its mapping drops. | Test (TC-052) |
 

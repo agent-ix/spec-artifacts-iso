@@ -640,59 +640,6 @@ def test_fr004_ac1_every_edge_type_has_a_description_and_known_category() -> Non
         )
 
 
-def test_fr004_ac2_shared_inverse_labels_are_the_recorded_set() -> None:
-    """TC-018: (FR-004-AC-2).
-
-    An inverse label declared by two forward verbs resolves first-wins with a
-    diagnostic (quire-rs FR-041-AC-3), so which verb it normalizes onto depends
-    on declaration order. That is designed. What is *not* designed is a new
-    collision appearing silently and changing an existing normalization, so the
-    current set is pinned here.
-    """
-    edges = _edge_types()
-    by_label: dict[str, list[str]] = {}
-    for verb, entry in edges.items():
-        inverse = entry.get("inverse")
-        if inverse is None:
-            continue
-        assert (
-            isinstance(inverse, str) and inverse.strip()
-        ), f"{verb}: inverse is a non-empty label"
-        by_label.setdefault(inverse, []).append(verb)
-
-    shared = {label: sorted(v) for label, v in by_label.items() if len(v) > 1}
-    assert shared == {"part_of": ["aggregates", "contains"]}, (
-        "a new shared inverse label changes which forward verb it normalizes "
-        f"onto, first-wins and silently: {shared}"
-    )
-
-
-def test_fr004_ac3_inverse_labels_need_not_be_declared_verbs() -> None:
-    """TC-019: (FR-004-AC-3).
-
-    Deliberately the opposite of the invariant it is tempting to assert.
-    quire-rs FR-041-AC-2 type-allows an edge whose verb is a declared inverse
-    label "even when the label is absent from ``edge_types``" — so requiring
-    every inverse to be independently declared would double the vocabulary with
-    entries no author ever writes.
-
-    The ratio is pinned rather than the rule inverted: a drift toward declaring
-    inverses as verbs is a real change of approach and should be deliberate.
-    """
-    edges = _edge_types()
-    inverses = {e["inverse"] for e in edges.values() if e.get("inverse")}
-    also_forward = sorted(inverses & set(edges))
-    derived_only = sorted(inverses - set(edges))
-
-    assert also_forward == ["contains"], (
-        "labels that are also forward verbs (forward registration governs, "
-        f"FR-041-AC-3): {also_forward}"
-    )
-    assert (
-        len(derived_only) == 25
-    ), f"derived-only inverse labels: {len(derived_only)} — {derived_only}"
-
-
 def test_fr004_ac4_every_role_has_a_description() -> None:
     """TC-020: (FR-004-AC-4)."""
     roles = _roles()

@@ -41,7 +41,7 @@
       "items": {
         "$ref": "https://schemas.agent-ix.org/agent-ix/spec-artifacts-iso/NonEmptyText.json"
       },
-      "description": "Bare module names, as the census finds (143 non-empty lists, 67 empty)."
+      "description": "Bare module names."
     },
     "standardsAlignment": {
       "type": "array",

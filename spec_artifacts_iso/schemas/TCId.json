@@ -3,5 +3,5 @@
   "$id": "https://schemas.agent-ix.org/agent-ix/spec-artifacts-iso/TCId.json",
   "type": "string",
   "pattern": "^TC-[0-9]+$",
-  "description": "Test case id (`TC-N`, 67 documents)."
+  "description": "Test case id (`TC-N`)."
 }

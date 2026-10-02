@@ -15,8 +15,8 @@ relationships:
 ## Description
 
 > **CR (render removal — 2026-06-04):** templates are **removed** (parity with
-> filament-core FR-035 CR-002 corrected and the quire-rs render retirement, commit
-> 500a3d3). `template_ref` is no longer optional/legacy — it is **removed and
+> filament-core FR-035 CR-002 corrected and the quire-rs render retirement).
+> `template_ref` is no longer optional/legacy — it is **removed and
 > rejected** by the manifest schema. The per-archetype **skeletons are the
 > authoring source of truth** (replacing the former `.md.j2` templates and template
 > placeholder defaults). The skeleton-removal of `templates/` and `template_ref:`

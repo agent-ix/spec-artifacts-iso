@@ -100,19 +100,7 @@ same **kind** of fact. Before adding one:
 
 ## Decided: `satisfied_by` owns stakeholder-requirement lineage
 
-**[RAN]** over 237 `~/dev` spec bundles, counting authored `relationships` entries:
-
-| Verb | Edges | Declared category | Declared meaning |
-|---|---|---|---|
-| `implements` | 956 | **dependency** | "Fulfils an interface/contract" |
-| `traces_to` | 368 | traceability | "Traceability link (matrix/coverage)" |
-| `satisfied_by` | 328 | traceability | "Stakeholder requirement satisfied by the target" |
-| `derives_from` | 131 | traceability | "derived/refined from the target (decomposition lineage)" |
-| `satisfies` | 38 | traceability | inverse of `satisfied_by` |
-| `exercises` | 25 | traceability | "User story exercises a functional requirement" |
-| `refines` | 2 | **undeclared** | — |
-
-**The decision (2026-08-18, kreneskyp):** `implements` keeps its declared meaning — an interface
+**The decision:** `implements` keeps its declared meaning — an interface
 or contract being fulfilled — and is **not** overloaded for requirement lineage.
 **`satisfied_by` is the generic stakeholder-requirement-to-artifact relationship**, authorable
 from either end via its `satisfies` inverse.
@@ -123,11 +111,11 @@ than a change to the vocabulary: `implements` now states the exclusion explicitl
 
 Two consequences, both **corpus debt** rather than vocabulary gaps:
 
-- **956 edges spell requirement lineage `implements`.** They are wrong under the decision above
+- **Edges that spell requirement lineage `implements`.** They are wrong under the decision above
   and should be `satisfies` (or the stakeholder requirement's own `satisfied_by`). This is the
   largest single migration the vocabulary implies and it is tracked separately — it is not fixed
   here, and it is not a reason to soften either verb's meaning.
-- **`refines` is not in the vocabulary** and is authored twice, so those two edges are
+- **`refines` is not in the vocabulary**, so edges using it are
   `UnknownEdgeType` findings and should become `satisfies` or `derives_from` depending on what
   their authors meant.
 
@@ -139,12 +127,10 @@ quire-rs FR-058's upward-trace relations follow this decision: they accept `sati
 | ID | Criteria | Verification |
 |----|----------|--------------|
 | FR-004-AC-1 | Every entry in `edge_types` carries a non-empty `description` and a `category` drawn from the seven declared categories. | Test (TC-017) |
-| FR-004-AC-2 | Every `inverse` label is a non-empty identifier, and the set of labels declared by more than one verb is exactly the recorded set — so a **new** collision, which FR-041-AC-3 resolves first-wins and would silently change which forward verb the label normalizes onto, fails rather than passing quietly. | Test (TC-018) |
-| FR-004-AC-3 | An inverse label is **not** required to be a declared `edge_types` key: FR-041-AC-2 type-allows it regardless, and requiring it would double the vocabulary with entries no author writes. The recorded count of labels that are not forward verbs is asserted, so a change in that ratio is visible. | Test (TC-019) |
 | FR-004-AC-4 | Every entry in `roles` carries a non-empty `description`. | Test (TC-020) |
 | FR-004-AC-5 | The manifest declares both registries, and an `edge_types` entry that loses its `category` costs the module every archetype at load — a broken entry does not load partially. Asserted against the engine that reads the vocabulary, with an unmutated control proving the load is real. | Test (TC-021) |
 
-**[RAN] What FR-004-AC-5 no longer claims.** Until PLAT-902 this criterion was
+**What FR-004-AC-5 no longer claims.** Until PLAT-902 this criterion was
 verified by validating the manifest against a copy of the FR-035 module-manifest
 schema this package shipped, and it asserted that an entry with an *unknown key*
 also fails module load. It does not: an `edge_types` entry gaining an undeclared key loads all

@@ -3,5 +3,5 @@
   "$id": "https://schemas.agent-ix.org/agent-ix/spec-artifacts-iso/ITId.json",
   "type": "string",
   "pattern": "^IT-[0-9]+$",
-  "description": "Integration test id (`IT-N`, 183 documents)."
+  "description": "Integration test id (`IT-N`)."
 }

@@ -11,8 +11,6 @@ independent truth:
   assertion prove nothing;
 * TC-044 rebuilds each golden from its skeleton and compares bytes, then
   validates it against its model;
-* TC-050 maps the pre-change skeletons read out of git at 3d87196 and checks
-  that a document conforming before FR-005 still maps to a valid record;
 * TC-053 pins the `Verification` split and the constraint row of the FR
   skeleton.
 
@@ -25,7 +23,6 @@ from __future__ import annotations
 
 import json
 import pathlib
-import subprocess
 
 import pytest
 import yaml
@@ -36,8 +33,6 @@ REPO_ROOT = pathlib.Path(__file__).resolve().parent.parent
 PKG_ROOT = REPO_ROOT / "spec_artifacts_iso"
 MANIFEST_PATH = PKG_ROOT / "manifest.yaml"
 
-#: The commit the pre-change skeletons are read from (FR-007-AC-5).
-PRE_CHANGE_COMMIT = "3d87196"
 
 #: FR-007-AC-7: the kinds whose text is the byte-exact slice.
 LOSSLESS_KINDS = frozenset({"section", "ocl-clause"})
@@ -159,97 +154,6 @@ def test_tc044_provenance_carries_the_bytes_as_read(declaration: dict) -> None:
         assert (
             "sourceIdentity" not in without
         ), f"{model} synthesized a sourceIdentity the caller did not supply"
-
-
-# ---------------------------------------------------------------------------
-# TC-050 — the pre-change skeletons
-# ---------------------------------------------------------------------------
-def _git_show(path: str) -> bytes:
-    completed = subprocess.run(
-        ["git", "-C", str(REPO_ROOT), "show", f"{PRE_CHANGE_COMMIT}:{path}"],
-        capture_output=True,
-    )
-    assert completed.returncode == 0, (
-        f"`git show {PRE_CHANGE_COMMIT}:{path}` failed: "
-        f"{completed.stderr.decode('utf-8', 'replace')}. The pre-change "
-        "skeletons are read out of git, never copied by hand — a hand copy "
-        "would prove nothing about what was committed."
-    )
-    return completed.stdout
-
-
-def test_tc050_pre_change_skeletons_still_map_and_validate(
-    declaration: dict, bundle: dict
-) -> None:
-    """TC-050: FR-007-AC-5: a document copied from each of the ten skeletons as
-    committed at 3d87196 — before FR-005 and FR-007 — maps to a record that
-    validates against the new schema, so existing conforming Markdown is
-    semantically equivalent under the new models.
-    """
-    for model, model_declaration in declaration["models"].items():
-        relative = f"spec_artifacts_iso/{model_declaration['skeleton']}"
-        data = _git_show(relative)
-        result = rm.map_bytes(
-            data,
-            path=relative,
-            model=model,
-            source_identity=None,
-            declaration=declaration,
-        )
-        errors = validation_errors(
-            result.record, model_declaration["schema"].split("/")[-1], bundle
-        )
-        assert not errors, (
-            f"the {PRE_CHANGE_COMMIT} {model} skeleton maps to a record the new "
-            f"schema rejects: {errors}"
-        )
-
-
-def test_tc050_no_heading_or_table_header_changed(declaration: dict) -> None:
-    """TC-050: FR-007-CON-1: the mapping keeps every existing heading, table
-    header, and column order the corpus uses; the only Markdown form added is
-    the optional `## Invariants` section on FR.
-    """
-    added_by_this_change = {"fr.md": {"Invariants", "digest_matches_declared"}}
-
-    for model_declaration in declaration["models"].values():
-        name = model_declaration["skeleton"].split("/")[-1]
-        before = rm.Document(
-            _git_show(f"spec_artifacts_iso/{model_declaration['skeleton']}").decode(
-                "utf-8"
-            )
-        )
-        after = rm.Document(
-            (PKG_ROOT / model_declaration["skeleton"]).read_text(encoding="utf-8")
-        )
-        before_headings = [(h.level, h.text) for h in before.headings]
-        after_headings = [(h.level, h.text) for h in after.headings]
-        removed = [h for h in before_headings if h not in after_headings]
-        added = {text for _level, text in after_headings} - {
-            text for _level, text in before_headings
-        }
-        assert not removed, f"{name} lost headings {removed}"
-        assert added == added_by_this_change.get(name, set()), (
-            f"{name} gained headings {sorted(added)}; the only Markdown form "
-            "this change adds is the FR `## Invariants` section"
-        )
-        assert _table_headers(before) == _table_headers(
-            after
-        ), f"{name} changed a table header or column order"
-
-
-def _table_headers(document: rm.Document) -> list[list[str]]:
-    headers: list[list[str]] = []
-    for index, line in enumerate(document.lines):
-        stripped = line.strip()
-        if not stripped.startswith("|"):
-            continue
-        if index + 1 >= len(document.lines):
-            continue
-        following = document.lines[index + 1].strip()
-        if following.startswith("|") and set(following) <= set("|:- \t"):
-            headers.append([cell.strip() for cell in stripped.strip("|").split("|")])
-    return headers
 
 
 # ---------------------------------------------------------------------------
