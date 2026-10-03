@@ -1,6 +1,6 @@
 # spec-artifacts-iso
 
-[![Discord](https://img.shields.io/badge/Discord-Join%20us-5865F2?logo=discord&logoColor=white)](https://discord.gg/6qsdhSPE)
+[![Discord](https://img.shields.io/badge/Discord-Join%20us-5865F2?logo=discord&logoColor=white)](https://discord.gg/k8DVhuYBR2)
 
 > Filament Module: ISO-style spec artifacts (FR, NFR, StR, US, IT, TC) — unified-shape archetypes (frontmatter schema + body_extraction asserts) validated by quire-rs; per-archetype authoring skeletons are the source of truth (no render templates); iso-spec-core grammar
 
