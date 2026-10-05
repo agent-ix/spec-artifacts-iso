@@ -847,7 +847,7 @@ lint_rules:
 # category ∈ structural|behavioral|dataflow|dependency|realization|governance|traceability
 edge_types:
   # structural
-  contains: { description: "Composition; the source owns the target's lifecycle.", category: structural, inverse: part_of }
+  contains: { description: "Composition; the source owns the target's lifecycle.", category: structural, inverse: contained_by }
   aggregates: { description: "Aggregate root owns member entities.", category: structural, inverse: part_of }
   composes: { description: "Value object composed of other value objects/enums.", category: structural, inverse: composed_by }
   contained_by: { description: "This spec/requirement is a child of a parent bundle's master-requirements.", category: structural, inverse: contains }
