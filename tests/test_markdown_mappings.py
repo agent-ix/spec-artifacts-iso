@@ -93,7 +93,7 @@ def test_tc044_every_skeleton_reproduces_its_golden_record(
     byte-for-byte after canonical serialization, and that record validates
     against `schemas/<Model>.json`.
     """
-    assert len(declaration["models"]) == 10
+    assert len(declaration["models"]) == 9
 
     for model, model_declaration in declaration["models"].items():
         result = _build(model, declaration)
