@@ -17,8 +17,7 @@ relationships:
 ## Description
 
 The module SHALL declare one semantic data model per ISO artifact type — `FR`,
-`NFR`, `StR`, `US`, `IT`, `TC`, `MasterRequirements`, `Index`, `Log`, and
-`Glossary` — as TypeSpec source importing `@agent-ix/semantic-core`.
+`NFR`, `StR`, `US`, `IT`, `TC`, `MasterRequirements`, `Index`, and `Glossary` — as TypeSpec source importing `@agent-ix/semantic-core`.
 
 The module SHALL ship the JSON Schema 2020-12 projection of each model at
 `spec_artifacts_iso/schemas/<Model>.json`.
@@ -45,11 +44,11 @@ and the outcome of executing it is not a field of any model.
 
 ## Outputs
 
-- `spec_artifacts_iso/schemas/<Model>.json` for the ten exported models and for
+- `spec_artifacts_iso/schemas/<Model>.json` for the nine exported models and for
   every shared model and scalar they reference (`Section`, `HeadingRef`,
   `Provenance`, `Relationship`, `Verification`, `AcceptanceCriterion`,
   `Constraint`, `ValidationCriterion`, `MeasurementRow`, `SuccessCriterion`,
-  `Story`, `GlossaryTerm`, `IndexEntry`, `LogEntry`, `QualityAttribute`, and
+  `Story`, `GlossaryTerm`, `IndexEntry`, `QualityAttribute`, and
   the id, line, digest, and text scalars).
 - `make schemas` (regenerate) and `make schemas-check` (fail on any byte
   difference between the committed projection and a fresh one), each run after
@@ -66,9 +65,8 @@ and the outcome of executing it is not a field of any model.
 - The export-name to model map, fixed by this requirement and restated in
   FR-006: `FR` → `FR.json`, `NFR` → `NFR.json`, `StR` → `StR.json`, `US` →
   `US.json`, `IT` → `IT.json`, `TC` → `TC.json`, `master-requirements` →
-  `MasterRequirements.json`, `index` → `Index.json`, `log` → `Log.json`,
-  `Glossary` → `Glossary.json`. The `type` `const` of each model is the
-  archetype name (`master-requirements`, `index`, `log`), never the model name.
+  `MasterRequirements.json`, `index` → `Index.json`, `Glossary` → `Glossary.json`. The `type` `const` of each model is the
+  archetype name (`master-requirements`, `index`), never the model name.
 
 ## Behavior
 
@@ -110,8 +108,7 @@ Identity, relationships, status, provenance:
   frontmatter schema declares no `title` key; the `title` heading locator is
   the only source there is.
 - The `Index` model SHALL carry `type` (`index`) and the optional `title`,
-  `description`, and `okfVersion`; the `Log` model SHALL carry `type` (`log`)
-  and the optional `title` and `description`; the `Glossary` model SHALL carry
+  `description`, and `okfVersion`; the `Glossary` model SHALL carry
   the optional `scope` and `description`.
 - The `id` scalar of each model SHALL be the artifact type's own prefix:
   `^FR-[0-9]+$`, `^NFR-[0-9]+$`, `^StR-[0-9]+$`, `^US-[0-9]+$`, `^IT-[0-9]+$`,
@@ -136,7 +133,7 @@ Identity, relationships, status, provenance:
   the FR-007 frontmatter drop policy and listed there as dropped keys, which is
   a declared loss rather than a silent one.
 - Every model whose frontmatter schema declares `status` — every model except
-  `Index` and `Log`, whose OKF reserved frontmatter has no such key — SHALL
+  `Index`, whose frontmatter has no such key — SHALL
   carry an optional `status: ArtifactStatus`, a string matching
   `^[A-Za-z][A-Za-z_-]*$`. The value set stays open by design: the corpus
   uses many spellings, and closing it is a
@@ -223,11 +220,6 @@ Sections and tables:
   matches neither form (prose, a nested bullet, a blank line) is not an entry
   and is not an error; `## Contents` is authored prose with links in it, not a
   table.
-- The `Log` model SHALL declare `history: LogEntry { date:
-  ^[0-9]{4}-[0-9]{2}-[0-9]{2}$, text, line }[]`, one per
-  `* **YYYY-MM-DD** — text` entry under `## History`, where the bullet is `*`
-  or `-`, the dash separator is optional, and the entry extends to the next
-  bullet at the same indentation (an undated entry is rejected by the mapping naming the line).
 - The `FR` model SHALL declare `invariants?: ClauseRef[]` (semantic-core,
   `minItems: 1`), filled by the FR-007 `ocl-clause` mapping from an optional
   `## Invariants` section; the clause text is never parsed.
@@ -249,10 +241,10 @@ Sections and tables:
 
 | ID | Criteria | Verification |
 |----|----------|--------------|
-| FR-005-AC-1 | `spec_artifacts_iso/schemas/` carries `FR.json`, `NFR.json`, `StR.json`, `US.json`, `IT.json`, `TC.json`, `MasterRequirements.json`, `Index.json`, `Log.json`, and `Glossary.json`, each a JSON Schema 2020-12 document whose `$id` is `https://schemas.agent-ix.org/agent-ix/spec-artifacts-iso/<Model>.json`, and each `type` `const` equals the archetype name of the map in Outputs. | Test (TC-041) |
+| FR-005-AC-1 | `spec_artifacts_iso/schemas/` carries `FR.json`, `NFR.json`, `StR.json`, `US.json`, `IT.json`, `TC.json`, `MasterRequirements.json`, `Index.json`, and `Glossary.json`, each a JSON Schema 2020-12 document whose `$id` is `https://schemas.agent-ix.org/agent-ix/spec-artifacts-iso/<Model>.json`, and each `type` `const` equals the archetype name of the map in Outputs. | Test (TC-041) |
 | FR-005-AC-2 | Every `$ref` across the emitted bundle resolves to a shipped sibling or to a file name of the semantic-core bundle, with no network read; no `$ref` names another semantic-core version or an unshipped file; no `$id` under the semantic-core base ships. | Test (TC-041) |
 | FR-005-AC-3 | Every property of every emitted object schema is either constrained — its schema, after following `$ref`, carries `pattern`, `minLength`, `minimum`, `enum`, `const`, or `format`, or is an object whose properties are all constrained, or an array of such items, or `boolean`/`null` — or is free text, in which case its description carries `free text:` and a reason and its name is in the closed list the test enumerates (`Section.text`, the prose cells, `detail`, `summary`, `description`, `annotation`). | Test (TC-040) |
-| FR-005-AC-4 | For each of the ten skeletons, the record built by the FR-007 reference mapping validates against the type's schema; a record with one extra property, one required section removed, a `line: 0`, an empty typed table, or a `status` outside its pattern fails schema validation naming the JSON path. A row id with the wrong *document* prefix (`FR-002-CON-1` inside `FR-001`) is not one of these: the row-id scalars are anchored to the artifact type, not to the document, so the schema accepts it by design and the FR-007 mapping rejects it against the locator's `id_pattern`, naming the line (FR-007-AC-6). | Test (TC-044, TC-045) |
+| FR-005-AC-4 | For each of the nine skeletons, the record built by the FR-007 reference mapping validates against the type's schema; a record with one extra property, one required section removed, a `line: 0`, an empty typed table, or a `status` outside its pattern fails schema validation naming the JSON path. A row id with the wrong *document* prefix (`FR-002-CON-1` inside `FR-001`) is not one of these: the row-id scalars are anchored to the artifact type, not to the document, so the schema accepts it by design and the FR-007 mapping rejects it against the locator's `id_pattern`, naming the line (FR-007-AC-6). | Test (TC-044, TC-045) |
 | FR-005-AC-5 | `make schemas-check` exits 0 on the committed tree, and exits non-zero naming the file after any one emitted schema is edited by a single byte. | Test (TC-042) |
 | FR-005-AC-6 | No emitted schema property is named `result`, `outcome`, `passed`, `failed`, `run`, `executedAt`, or `evidence`, and the `TC.json` description carries the sentence `execution results (pass/fail, run time, evidence) are not modelled`. | Test (TC-043) |
 | FR-005-AC-8 | Every emitted object schema declares its properties inline (no `allOf`, `oneOf`, `anyOf`, or `$ref` at the object's top level except the `anyOf` of a nullable scalar), so `unevaluatedProperties` and `additionalProperties` agree; the Python `jsonschema` validator accepts every golden record and rejects every TC-045 mutation that produces a record at all — the mapping-layer cases fail before a record exists, and are FR-007-AC-6's. | Test (TC-060) |

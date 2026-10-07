@@ -43,7 +43,6 @@
         "verification",
         "row-id",
         "index-entry",
-        "log-entry",
         "success-criterion"
       ],
       "properties": {
@@ -51,15 +50,14 @@
         "verification": { "type": "string", "minLength": 1 },
         "row-id": { "type": "string", "minLength": 1 },
         "index-entry": { "type": "string", "minLength": 1 },
-        "log-entry": { "type": "string", "minLength": 1 },
         "success-criterion": { "type": "string", "minLength": 1 }
       }
     },
     "models": {
       "type": "object",
       "description": "One entry per exported archetype name (FR-005 Outputs export map).",
-      "minProperties": 10,
-      "maxProperties": 10,
+      "minProperties": 9,
+      "maxProperties": 9,
       "propertyNames": {
         "enum": [
           "FR",
@@ -70,7 +68,6 @@
           "TC",
           "master-requirements",
           "index",
-          "log",
           "Glossary"
         ]
       },
@@ -313,7 +310,6 @@
         "verification",
         "row-id",
         "index-entry",
-        "log-entry",
         "success-criterion"
       ]
     },

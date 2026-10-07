@@ -24,7 +24,7 @@ Semantics implemented here, each from FR-007 ``## Behavior``:
 * ``table`` / ``typed-table`` — one object per data row in authored order,
   every cell trimmed (``\\r`` included), the ``Verification`` split, row-id
   patterns and uniqueness, and ``### <row id>`` detail subsections;
-* ``list`` — index entries and log history;
+* ``list`` — index entries;
 * ``token`` — ``IT-XXX-SC-NN`` success criteria;
 * ``ocl-clause`` — ``### <clauseId>`` clauses under ``## Invariants``, with the
   clause text carried beside the record in ``invariantsText`` and never parsed;
@@ -278,11 +278,6 @@ _TEST_REF_RE = re.compile(r"TC-[0-9]+")
 _INDEX_ENTRY_RE = re.compile(
     r"^(?P<bullet>[*-])[ \t]+\[(?P<title>[^\]]*)\]\((?P<href>[^)]*)\)"
     r"(?:[ \t]+[-–—][ \t]+(?P<summary>.*?))?[ \t]*$"
-)
-_BULLET_RE = re.compile(r"^(?P<bullet>[*-])[ \t]+(?P<rest>.*)$")
-_LOG_DATE_RE = re.compile(
-    r"^(?:\*\*|__)?(?P<date>[0-9]{4}-[0-9]{2}-[0-9]{2})(?:\*\*|__)?"
-    r"[ \t]*(?:[-–—][ \t]*)?(?P<text>.*)$"
 )
 _IDENTIFIER_RE = re.compile(r"^[A-Za-z_][A-Za-z0-9_]*$")
 
@@ -600,9 +595,7 @@ class _Mapper:
         heading = self.heading(source["section"], 2)
         if heading is None:
             return None
-        if entry["parse"] == "index-entry":
-            return self._index_entries(heading)
-        return self._log_entries(heading)
+        return self._index_entries(heading)
 
     def _index_entries(self, heading: _Heading) -> list[dict[str, Any]]:
         entries: list[dict[str, Any]] = []
@@ -619,44 +612,6 @@ class _Mapper:
             if summary is not None:
                 entry["summary"] = summary.strip()
             entries.append(entry)
-        return entries
-
-    def _log_entries(self, heading: _Heading) -> list[dict[str, Any]]:
-        starts = [
-            index
-            for index in range(heading.content_start, heading.content_end)
-            if _BULLET_RE.match(self.doc.line_text(index).rstrip("\r"))
-        ]
-        entries: list[dict[str, Any]] = []
-        for position, start in enumerate(starts):
-            end = (
-                starts[position + 1]
-                if position + 1 < len(starts)
-                else heading.content_end
-            )
-            bullet = _BULLET_RE.match(self.doc.line_text(start).rstrip("\r"))
-            assert bullet is not None
-            match = _LOG_DATE_RE.match(bullet.group("rest"))
-            if not match:
-                self.fail(
-                    start,
-                    "history entry carries no `YYYY-MM-DD` date: "
-                    f"{bullet.group('rest').strip()!r}",
-                )
-                continue
-            # The entry extends to the next bullet at the same indentation.
-            body = [match.group("text")]
-            body.extend(
-                self.doc.line_text(index).rstrip("\r")
-                for index in range(start + 1, end)
-            )
-            entries.append(
-                {
-                    "date": match.group("date"),
-                    "text": "\n".join(body).strip(),
-                    "line": self.doc.doc_line(start),
-                }
-            )
         return entries
 
     def token(self, entry: dict[str, Any]) -> Any:

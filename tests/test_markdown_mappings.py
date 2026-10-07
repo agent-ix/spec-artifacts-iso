@@ -88,7 +88,7 @@ def _build(model: str, declaration: dict, source_identity: str | None = ...):
 def test_tc044_every_skeleton_reproduces_its_golden_record(
     declaration: dict, bundle: dict
 ) -> None:
-    """TC-044: FR-005-AC-4, FR-007-AC-2: for each of the ten skeletons the
+    """TC-044: FR-005-AC-4, FR-007-AC-2: for each of the nine skeletons the
     reference mapping produces the committed `examples/<type>.record.json`
     byte-for-byte after canonical serialization, and that record validates
     against `schemas/<Model>.json`.
@@ -117,7 +117,7 @@ def test_tc044_every_skeleton_reproduces_its_golden_record(
 
 def test_tc044_golden_filenames_are_the_archetype_names(declaration: dict) -> None:
     """TC-044: FR-007-AC-2: `examples/<type>.record.json` is named by the
-    archetype name — `master-requirements`, `index`, `log` — not the model
+    archetype name — `master-requirements`, `index`, `Glossary` — not the model
     name, so a consumer finds the record by the name it already writes.
     """
     on_disk = sorted(p.name for p in (PKG_ROOT / "examples").glob("*.record.json"))
