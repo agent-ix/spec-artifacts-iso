@@ -3,7 +3,7 @@
 Some tests here are deliberately untagged. The TC-045 row enumerates its own
 cases, and the oracle's remaining declared error paths — a column-list
 mismatch, a row cell-count mismatch, a malformed table delimiter, an escaped
-pipe, an undated history bullet, a `### <row id>` subsection naming no row —
+pipe, a `### <row id>` subsection naming no row —
 are not among them, so tagging them would mint a trace the row does not claim.
 They are covered because an untested error branch reports nothing, not because
 a matrix row asks for them.
@@ -257,21 +257,6 @@ def test_an_escaped_pipe_stays_inside_its_cell(declaration: dict, bundle: dict) 
     assert not _schema_errors(result.record, "FR", declaration, bundle)
 
 
-def test_a_history_bullet_with_no_date_fails_naming_the_line(
-    declaration: dict,
-) -> None:
-    """FR-007 Behavior: a `list` mapping fills `Log.history` with one object per
-    matching bullet. A bullet carrying no `YYYY-MM-DD` date cannot fill
-    `LogEntry.date`, so it fails naming the bullet's line and quotes the text —
-    it is not skipped, which would drop an authored entry from the record
-    without a word.
-    """
-    (failure,) = _failing_map("log-history-without-date.md", declaration).failures
-    assert failure.line == 11
-    assert "YYYY-MM-DD" in failure.message
-    assert "Renamed the bundle index" in failure.message
-
-
 def test_a_type_that_names_no_model_is_refused(declaration: dict) -> None:
     """FR-007: the model of a document is its frontmatter `type`. A `type` that
     names no model in `mappings.yaml` is refused naming the value and listing
@@ -287,7 +272,7 @@ def test_a_type_that_names_no_model_is_refused(declaration: dict) -> None:
             call()
         message = str(raised.value)
         assert "NotAModel" in message
-        assert "FR" in message and "log" in message, (
+        assert "FR" in message and "index" in message, (
             "the refusal lists the models that do exist: " f"{message}"
         )
 
@@ -512,7 +497,6 @@ def test_tc045_each_case_is_reported_by_exactly_one_layer(
         "fr-row-cell-count.md",
         "fr-detail-names-no-row.md",
         "fr-detail-repeated.md",
-        "log-history-without-date.md",
     }
     schema_layer = {
         "fr-missing-required-section.md",

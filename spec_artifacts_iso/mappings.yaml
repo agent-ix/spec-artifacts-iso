@@ -67,11 +67,6 @@ parses:
     the summary separated by a spaced `-` or em dash. A line matching neither
     form (prose, a nested bullet, a blank line) is not an entry and is not an
     error.
-  log-entry: >-
-    One `* **YYYY-MM-DD** — text` entry at indent 0; the bullet is `*` or `-`,
-    the date may be wrapped in `**`/`__`, the dash separator is optional, and
-    the entry extends to the next bullet at the same indentation. An entry
-    carrying no date fails the mapping naming its line.
   success-criterion: >-
     One `IT-[0-9]+-SC-[0-9]+` token occurrence; `text` is the trimmed
     remainder of the token's line after an optional `:`.
@@ -745,39 +740,6 @@ models:
         source: {section: Contents, locator: contents, bullets: ['*', '-'],
                  indent: 0}
         parse: index-entry
-        lossless: false
-
-  # ---------------------------------------------------------------------------
-  log:
-    schema: schemas/Log.json
-    skeleton: skeletons/log.md
-    example: examples/log.record.json
-    authority: markdown
-    round_trip: derived
-    dropped_frontmatter_keys: []
-    properties:
-      type:
-        kind: frontmatter
-        source: {key: type}
-        lossless: false
-      title:
-        kind: frontmatter
-        source: {key: title}
-        lossless: false
-      description:
-        kind: frontmatter
-        source: {key: description}
-        lossless: false
-      provenance:
-        kind: provenance
-        source: {path: corpus-relative, digest: sha256-of-bytes-as-read,
-                 source_identity: caller}
-        lossless: false
-      history:
-        kind: list
-        source: {section: History, locator: history, bullets: ['*', '-'],
-                 indent: 0}
-        parse: log-entry
         lossless: false
 
   # ---------------------------------------------------------------------------

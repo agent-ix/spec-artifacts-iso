@@ -64,7 +64,7 @@ this module's (agent-ix/quire-rs#393, and see `spec.md` Out of Scope).
 - `spec_artifacts_iso/mappings.schema.json`: the JSON Schema the mapping file
   itself validates against, so a malformed mapping is a schema error rather
   than a reader's surprise.
-- The ten authoring skeletons under `spec_artifacts_iso/skeletons/`.
+- The nine authoring skeletons under `spec_artifacts_iso/skeletons/`.
 - The emitted schemas of [FR-005](./FR-005-semantic-data-schemas.md), which fix
   the property set every mapping entry must name.
 - The quoin mapping conventions for typed tables and clauses (quoin FR-071,
@@ -119,8 +119,7 @@ Mapping kinds:
   { method, testRefs, annotation? }` by the FR-005 split, and a supplementary
   `### <row id>` subsection into the row's `detail`.
 - A `list` mapping SHALL name a section and a bullet form and fill an array
-  with one object per matching line in authored order; it fills `Index.entries`
-  and `Log.history`.
+  with one object per matching line in authored order; it fills `Index.entries`.
 - A `token` mapping SHALL name a section and a token pattern and fill an array
   with one object per token occurrence in authored order; it fills
   `IT.successCriteria`.
@@ -209,7 +208,7 @@ Golden records:
 | ID | Criteria | Verification |
 |----|----------|--------------|
 | FR-007-AC-1 | `mappings.yaml` validates against `mappings.schema.json`, declares every property of every exported model exactly once, names no undeclared property, uses only the eight mapping kinds the manifest lists, and each `table`/`typed-table` column list equals the locator's `assert.columns`. | Test (TC-052) |
-| FR-007-AC-2 | For each of the ten skeletons the reference mapping produces a record equal to `examples/<type>.record.json` and that record validates against `schemas/<Model>.json`. | Test (TC-044) |
+| FR-007-AC-2 | For each of the nine skeletons the reference mapping produces a record equal to `examples/<type>.record.json` and that record validates against `schemas/<Model>.json`. | Test (TC-044) |
 | FR-007-AC-3 | The FR skeleton's `## Acceptance Criteria` rows map to `AcceptanceCriterion` objects whose `verification` is a plain method cell — `method: Test`/`method: Inspection` with no `annotation` and `testRefs: []`, since a criterion binds to its tests by criterion id, not a cell annotation — and the `## Constraints` row maps to a `Constraint` with `type: Security` and a `validation` of the same `Verification` shape (`method: Integration Test`, no `annotation`, `testRefs: []`). The split still parses an annotated cell (`Test (TC-035, TC-036)` splits into `method: Test`, `annotation: TC-035, TC-036`, `testRefs: [TC-035, TC-036]`) for a caller that still authors one; no skeleton does. | Test (TC-053) |
 | FR-007-AC-4 | The FR skeleton's `## Invariants` clause maps to a `ClauseRef` with `language: ocl` and `clauseId` equal to the `###` heading; with a caller-supplied `sourceIdentity` it also carries a `sourceSpan` whose `startLine`/`endLine` are the fence lines, and without one it carries no `sourceSpan`; the `invariantsText` entry equals the fence body byte-for-byte; a `### not-an-identifier` heading, a ```` ```tla ```` fence, a second fence under one heading, a repeated `clauseId`, and a fence owned by no `###` heading each fail naming the line; a prose `## Invariants` with no fence leaves `invariants` absent and does not fail. | Test (TC-051) |
 | FR-007-AC-6 | A row id with the wrong prefix, a row id repeated in one table, a duplicated level-2 heading, and a `## Story` without the As-a/I-want/So-that grammar each fail the mapping naming the line and yield no record, and all failures present in one document are reported together. An empty `Verification` cell is rejected by the schema instead, naming the JSON path, because FR-005 gives every prose cell `minLength: 1` — the mapping builds the cell faithfully and the model refuses it. | Test (TC-045) |

@@ -5,15 +5,15 @@ Covers TC-046, TC-047 and TC-048 of the FR-006 test matrix:
 * TC-046 — the block carries exactly the nine declared keys, and the
   legacy form (block and references removed, derived here from this manifest)
   is this manifest with exactly those removals and loads under quire with the
-  same eleven archetypes
+  same ten archetypes
   (FR-006-AC-1, AC-7, CON-1). CON-1's "adds no required key" is now carried by
   that load rather than by reading the schema's ``required`` lists: a manifest
   with neither addition loading unchanged is the consumer-facing fact the
   constraint is about;
 * TC-047 — every exported artifact type carries a ``schema`` reference to an
   existing file and ``exports`` equals the referencing set (FR-006-AC-2);
-* TC-048 — ``Registry.load_from`` lists all eleven archetypes with the block and the
-  ten references present, and ``validate_document`` passes every skeleton
+* TC-048 — ``Registry.load_from`` lists all ten archetypes with the block and the
+  nine references present, and ``validate_document`` passes every skeleton
   (FR-006-AC-3);
 
 FR-006-AC-4 — refusal of a malformed ``semantic`` block — is verified nowhere
@@ -49,7 +49,6 @@ EXPORT_SCHEMA_FILE = {
     "TC": "schemas/TC.json",
     "master-requirements": "schemas/MasterRequirements.json",
     "index": "schemas/Index.json",
-    "log": "schemas/Log.json",
     "Glossary": "schemas/Glossary.json",
 }
 
@@ -66,8 +65,8 @@ SEMANTIC_KEYS = {
     "legacy_forms",
 }
 
-# The eleven archetypes quire lists for this module: the ``Spec`` container
-# archetype plus the ten artifact types.
+# The ten archetypes quire lists for this module: the ``Spec`` container
+# archetype plus the nine artifact types.
 ARCHETYPE_NAMES = {"Spec", *EXPORT_SCHEMA_FILE}
 
 _SKELETON_FILE = {
@@ -79,7 +78,6 @@ _SKELETON_FILE = {
     "TC": "tc",
     "master-requirements": "spec",
     "index": "index",
-    "log": "log",
     "Glossary": "glossary",
 }
 
@@ -207,7 +205,7 @@ def test_tc046_legacy_fixture_carries_neither_addition() -> None:
 
 def test_tc046_legacy_fixture_loads_under_quire(tmp_path: pathlib.Path) -> None:
     """TC-046: FR-006-AC-7: the derived legacy form loads under quire with the same
-    eleven archetypes the current manifest lists."""
+    ten archetypes the current manifest lists."""
     _module_tree(tmp_path, yaml.safe_dump(_derive_legacy(_manifest())))
     assert _registry_archetypes(tmp_path) == ARCHETYPE_NAMES
 
@@ -216,7 +214,7 @@ def test_tc046_legacy_fixture_loads_under_quire(tmp_path: pathlib.Path) -> None:
 
 
 def test_tc047_every_export_carries_a_reference_to_its_mapped_file() -> None:
-    """TC-047: FR-006-AC-2: each of the ten exported artifact types carries a
+    """TC-047: FR-006-AC-2: each of the nine exported artifact types carries a
     ``data_schema.schema`` naming the existing file the FR-005 map fixes."""
     manifest = _manifest()
     types = _artifact_types(manifest)
@@ -241,9 +239,9 @@ def test_tc047_exports_equals_the_referencing_set() -> None:
 # ─── TC-048: the published quire floor still loads the module ────────────
 
 
-def test_tc048_registry_lists_eleven_archetypes_with_the_block_present() -> None:
+def test_tc048_registry_lists_ten_archetypes_with_the_block_present() -> None:
     """TC-048: FR-006-AC-3: ``Registry.load_from`` over the module's parent
-    directory lists all eleven archetypes with the ``semantic`` block and the ten
+    directory lists all ten archetypes with the ``semantic`` block and the nine
     ``data_schema``
     references present — adding the block breaks no consumer.
 

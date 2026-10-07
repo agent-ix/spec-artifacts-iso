@@ -134,7 +134,7 @@ quire-rs FR-058's upward-trace relations follow this decision: they accept `sati
 verified by validating the manifest against a copy of the FR-035 module-manifest
 schema this package shipped, and it asserted that an entry with an *unknown key*
 also fails module load. It does not: an `edge_types` entry gaining an undeclared key loads all
-eleven archetypes. Removing both registries outright also loads. So the
+ten archetypes. Removing both registries outright also loads. So the
 criterion now states only what is observed — the declaration (also covered by
 AC-1 and AC-4) and the `category` refusal, which empties the registry. The
 unknown-key obligation belongs to whatever applies the FR-035 schema, and is not

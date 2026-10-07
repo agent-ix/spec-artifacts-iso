@@ -48,7 +48,6 @@ The `Spec` archetype (kind `spec`) is a doc-backed container that holds ISO-styl
 | `TC` | `TC-{next:03d}` | Test Case (ISO/IEC/IEEE 29119 essentials): required `## Description` + `## Test Procedure` + `## Expected Results`. |
 | `master-requirements` | _(bundle root)_ | Master Requirements Specification: H1 fixed to "Master Requirements Specification"; required `## Purpose`, `## Scope`, `## System Overview`, `## Requirements Architecture`, `## References`; the repo-level `depends_on:` dependency manifest. |
 | `index` | _(`index.md`)_ | OKF bundle directory index: required `## Contents` listing the artifacts in the directory via content-local relative links (not knowledge-graph edges). |
-| `log` | _(`log.md`)_ | OKF bundle update log: required `## History` of dated, non-normative structural changes to the bundle. |
 
 ## How this module is used
 

@@ -67,7 +67,7 @@ schema: schemas/<Model>.json }`).
 - The `semantic` block: `contract_version: 1.0.0`, `semantic_core` (the declared semantic-core pin),
   `package: agent-ix/spec-artifacts-iso`, `exports` naming every artifact type
   that carries a `data_schema` reference (`FR`, `NFR`, `StR`, `US`, `IT`, `TC`,
-  `master-requirements`, `index`, `log`, `Glossary`), `imports: {}`,
+  `master-requirements`, `index`, `Glossary`), `imports: {}`,
   `targets: [json-schema, markdown]`, `mappings: [frontmatter, section, table,
   typed-table, ocl-clause, list, token, provenance]`,
   `compatibility_posture: additive`, and `legacy_forms: warning`. `sweep_report` is absent because `legacy_forms` is
@@ -81,8 +81,7 @@ schema: schemas/<Model>.json }`).
   consumer that predates the block.
 - One `data_schema` reference per exported artifact type, beside its
   `frontmatter_schema_ref`, using the FR-005 map (`master-requirements` →
-  `schemas/MasterRequirements.json`, `index` → `schemas/Index.json`, `log` →
-  `schemas/Log.json`).
+  `schemas/MasterRequirements.json`, `index` → `schemas/Index.json`).
 - On the `FR` archetype, one new optional locator `invariants` (`from:
   code_block`, `language: ocl`, `under_section: Invariants`, `required:
   false`, `multiple: true`) for the FR-007 `ocl-clause` mapping, declared
@@ -144,11 +143,11 @@ schema: schemas/<Model>.json }`).
 | ID | Criteria | Verification |
 |----|----------|--------------|
 | FR-006-AC-1 | The manifest carries a `semantic` block whose key set equals exactly `{contract_version, semantic_core, package, exports, imports, targets, mappings, compatibility_posture, legacy_forms}` with the values of Outputs. | Test (TC-046) |
-| FR-006-AC-2 | For each of the ten exported artifact types, `data_schema.schema` names an existing file under `spec_artifacts_iso/schemas/` per the FR-005 map, and `exports` equals the set of artifact types carrying a reference. | Test (TC-047) |
-| FR-006-AC-3 | `quire.Registry.load_from` over the module's parent directory lists all eleven archetypes with the `semantic` block and the ten `data_schema` references present, and `validate_document` passes every skeleton — adding the block breaks no consumer. | Test (TC-048) |
+| FR-006-AC-2 | For each of the nine exported artifact types, `data_schema.schema` names an existing file under `spec_artifacts_iso/schemas/` per the FR-005 map, and `exports` equals the set of artifact types carrying a reference. | Test (TC-047) |
+| FR-006-AC-3 | `quire.Registry.load_from` over the module's parent directory lists all ten archetypes with the `semantic` block and the nine `data_schema` references present, and `validate_document` passes every skeleton — adding the block breaks no consumer. | Test (TC-048) |
 | FR-006-AC-6 | `quoin module install path:<module root>` on the published quoin installs the module with no diagnostic, so the block is inert to every quoin a user can install today; the verbatim output is recorded, and the previously installed registry version of this module is restored afterwards. | Demonstration (TC-055) |
-| FR-006-AC-9 | On a quoin carrying FR-070, the same install is refused with `semantic.unknown-export` and `semantic.export-without-schema` for each of the ten exports and no other diagnostic. Discharged by source reading against `src/semantic/manifest.ts` until such a quoin is published; tracked by agent-ix/quoin#336. | Analysis (TC-064) |
-| FR-006-AC-7 | The legacy form of the manifest, derived from it by the test (no `semantic` block, no `data_schema`) is this manifest with exactly those removals, and loads under quire with the same eleven archetypes. | Test (TC-046) |
+| FR-006-AC-9 | On a quoin carrying FR-070, the same install is refused with `semantic.unknown-export` and `semantic.export-without-schema` for each of the nine exports and no other diagnostic. Discharged by source reading against `src/semantic/manifest.ts` until such a quoin is published; tracked by agent-ix/quoin#336. | Analysis (TC-064) |
+| FR-006-AC-7 | The legacy form of the manifest, derived from it by the test (no `semantic` block, no `data_schema`) is this manifest with exactly those removals, and loads under quire with the same ten archetypes. | Test (TC-046) |
 
 ## Dependencies
 

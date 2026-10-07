@@ -1,6 +1,6 @@
 manifest_version: 1.0.0
 name: spec-artifacts-iso
-version: 0.2.0
+version: 0.3.0
 description: "Filament Module: ISO-style spec artifacts (FR, NFR, StR, US, IT, TC) — unified-shape archetypes (frontmatter schema + body_extraction asserts) validated by quire-rs; per-archetype authoring skeletons are the source of truth (no render templates); iso-spec-core grammar"
 archetypes:
 - kind: spec
@@ -698,11 +698,9 @@ artifact_types:
           required: true
           assert:
             level: 2
-# OKF reserved bundle files (index.md / log.md): first-class authored
-# artifacts, validated like any other. Routed by frontmatter `type`
-# (`index` / `log`). index.md navigation uses relative links that are
-# LOCAL to the content — they are not knowledge-graph edges (ix:// owns
-# those). log.md is non-normative authored history.
+# OKF bundle index: a first-class authored artifact, validated like any other.
+# Routed by frontmatter `type: index`. Its navigation uses relative links that
+# are LOCAL to the content; knowledge-graph edges use ix:// links.
 - name: index
   grammar_ref: iso-spec-core
   frontmatter_schema_ref: schemas/index-frontmatter.schema.json
@@ -717,23 +715,6 @@ artifact_types:
         contents:
           from: section_body
           after_heading: Contents
-          required: true
-          assert:
-            level: 2
-- name: log
-  grammar_ref: iso-spec-core
-  frontmatter_schema_ref: schemas/log-frontmatter.schema.json
-  data_schema:
-    schema: schemas/Log.json
-  allowed_links: []
-  examples: []
-  lint_rules_ref: []
-  body_extraction:
-    yield_pattern:
-      match:
-        history:
-          from: section_body
-          after_heading: History
           required: true
           assert:
             level: 2
@@ -993,7 +974,6 @@ semantic:
   - TC
   - master-requirements
   - index
-  - log
   - Glossary
   imports: {}
   targets:

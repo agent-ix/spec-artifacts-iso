@@ -113,10 +113,6 @@ scalar Sha256Digest extends string;
 @minValue(1)
 scalar LineNumber extends int32;
 
-/** A calendar date `YYYY-MM-DD` as the log skeleton writes it. */
-@pattern("^[0-9]{4}-[0-9]{2}-[0-9]{2}$")
-scalar IsoDate extends string;
-
 /** A relative link target (`./FR-001-x.md`, `functional/index.md`); never a scheme, because index links are local navigation, not graph edges. */
 @pattern("^(\\./|\\.\\./)*[^:/][^:]*$")
 scalar RelativeHref extends string;
@@ -287,14 +283,6 @@ model IndexEntry {
   line: LineNumber;
 }
 
-/** One `* **YYYY-MM-DD** — text` entry of a log `## History`. */
-model LogEntry {
-  date: IsoDate;
-  /** free text: the entry body after the date. */
-  text: NonEmptyText;
-  line: LineNumber;
-}
-
 // ---------------------------------------------------------------------------
 // Artifact models (exported)
 // ---------------------------------------------------------------------------
@@ -455,16 +443,6 @@ model Index {
   okfVersion?: NonEmptyText;
   provenance: Provenance;
   entries: IndexEntry[];
-}
-
-/** Update log record (archetype `log`, OKF reserved file). */
-model Log {
-  type: "log";
-  title?: NonEmptyText;
-  /** free text: the frontmatter description. */
-  description?: string;
-  provenance: Provenance;
-  @minItems(1) history: LogEntry[];
 }
 
 /** Ubiquitous-language glossary record (archetype `Glossary`, FR-044). */

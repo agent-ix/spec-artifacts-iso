@@ -20,7 +20,7 @@ relationships:
 the filament-core-data code generators, and the Filament extraction API)
 **I want** every ISO artifact type this module declares to publish a typed data
 schema and an explicit Markdown mapping
-**So that** I can read a requirement, test, index, log, or glossary as a record
+**So that** I can read a requirement, test, index, or glossary as a record
 whose fields, rows, relationships, and source locations are declared once,
 instead of re-parsing the section prose in every consumer.
 

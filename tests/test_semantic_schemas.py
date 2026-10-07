@@ -7,7 +7,7 @@ hand-edited, and ``make schemas-check`` is the gate that says so.
 
 These tests assert the properties a consumer relies on:
 
-* the ten exported models exist, with the 2020-12 ``$schema`` and the
+* the nine exported models exist, with the 2020-12 ``$schema`` and the
   stable ``$id`` (TC-041);
 * every ``$ref`` in the bundle resolves offline — to a shipped sibling, or to a
   file of the semantic-core bundle (TC-041);
@@ -53,7 +53,6 @@ EXPORT_TO_FILE = {
     "TC": "TC.json",
     "master-requirements": "MasterRequirements.json",
     "index": "Index.json",
-    "log": "Log.json",
     "Glossary": "Glossary.json",
 }
 
@@ -71,7 +70,7 @@ FREE_TEXT_PROPERTIES = frozenset(
         "text",  # Section.text — the byte-exact section slice
         "detail",  # a supplementary `### <row id>` subsection body
         "summary",  # an index entry's trailing summary
-        "description",  # the frontmatter description of index/log/Glossary
+        "description",  # the frontmatter description of index/Glossary
         "annotation",  # the parenthesized remainder of a verification cell
     }
 )
@@ -239,7 +238,7 @@ def bundle() -> dict[str, dict]:
 def test_tc041_exported_schemas_exist_with_stable_ids(
     bundle: dict[str, dict],
 ) -> None:
-    """TC-041: FR-005-AC-1: the ten exported models ship as JSON Schema 2020-12
+    """TC-041: FR-005-AC-1: the nine exported models ship as JSON Schema 2020-12
     documents whose `$id` is the stable module base plus the file name, and
     whose `type` const is the archetype name — not the model name.
     """
