@@ -963,7 +963,7 @@ traceability:
 # `exports` names every artifact type carrying a `data_schema` reference.
 semantic:
   contract_version: 1.0.0
-  semantic_core: 0.3.2
+  semantic_core: 0.3.3
   package: agent-ix/spec-artifacts-iso
   exports:
   - FR
