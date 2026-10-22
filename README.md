@@ -132,3 +132,5 @@ For local install from the cluster PyPI proxy (after `make local-publish`):
 ```bash
 pip install --index-url http://pypi.ix/root/dev/+simple/ spec_artifacts_iso
 ```
+
+<!-- STD-30 language-boundary canary: inert README change. -->
