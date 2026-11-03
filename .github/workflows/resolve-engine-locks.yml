@@ -2,6 +2,9 @@ name: Resolve Quire 0.52.0 module locks
 
 on:
   workflow_dispatch:
+  push:
+    branches:
+      - fix/part-of-inverse
 
 permissions:
   contents: read
