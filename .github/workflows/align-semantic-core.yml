@@ -1,0 +1,67 @@
+name: Align module semantic-core packages
+
+on:
+  push:
+    branches:
+      - fix/part-of-inverse
+
+permissions:
+  contents: read
+
+jobs:
+  align:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/setup-node@v7
+        with:
+          node-version: "22"
+          registry-url: https://npm.pkg.github.com
+          scope: "@agent-ix"
+
+      - name: Check out module branches
+        shell: bash
+        run: |
+          git clone --depth 1 --branch fix/part-of-inverse \
+            https://github.com/agent-ix/spec-artifacts-iso.git modules/iso
+          git clone --depth 1 --branch fix/part-of-inverse \
+            https://github.com/agent-ix/spec-objects-business.git modules/business
+          git clone --depth 1 --branch fix/quire-052 \
+            https://github.com/agent-ix/spec-artifacts-process.git modules/process
+          git clone --depth 1 --branch fix/quire-052 \
+            https://github.com/agent-ix/spec-objects-architecture.git modules/architecture
+
+      - name: Update changed npm locks
+        shell: bash
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.REGISTRY_TOKEN }}
+        run: |
+          (cd modules/business && npm install --package-lock-only --ignore-scripts)
+          (cd modules/architecture && npm install --package-lock-only --ignore-scripts)
+
+      - name: Install semantic toolchains and regenerate schemas
+        shell: bash
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.REGISTRY_TOKEN }}
+        run: |
+          for module in iso business process architecture; do
+            (cd "modules/$module" && make semantic-install && make schemas)
+          done
+
+      - name: Collect generated files
+        shell: bash
+        run: |
+          mkdir -p output/{iso,business,process,architecture}
+          cp modules/iso/spec_artifacts_iso/semantic/package-lock.json output/iso/
+          cp modules/business/package-lock.json output/business/
+          cp modules/process/spec_artifacts_process/semantic/package-lock.json output/process/
+          cp modules/architecture/package-lock.json output/architecture/
+          cp -R modules/iso/spec_artifacts_iso/schemas output/iso/
+          cp -R modules/business/spec_objects_business/schemas output/business/
+          cp -R modules/process/spec_artifacts_process/schemas output/process/
+          cp -R modules/architecture/spec_objects_architecture/schemas output/architecture/
+
+      - uses: actions/upload-artifact@v6
+        with:
+          name: semantic-core-0.3.3-modules
+          path: output/
+          if-no-files-found: error
