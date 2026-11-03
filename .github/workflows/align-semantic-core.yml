@@ -13,6 +13,25 @@ jobs:
   align:
     runs-on: ubuntu-24.04
     steps:
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.13"
+
+      - uses: abatilo/actions-poetry@v3
+        with:
+          poetry-version: 2.3.1
+
+      - name: Configure authenticated internal PyPI
+        shell: bash
+        env:
+          GCP_KEY: ${{ secrets.GCP_SERVICE_ACCOUNT_KEY }}
+        run: |
+          poetry config repositories.internal-pypi \
+            "https://us-west1-python.pkg.dev/agent-ix/internal-pypi/simple/"
+          key64=$(printf '%s' "$GCP_KEY" | base64 -w 0)
+          echo "::add-mask::$key64"
+          poetry config http-basic.internal-pypi _json_key_base64 "$key64"
+
       - uses: actions/setup-node@v7
         with:
           node-version: "22"
@@ -43,9 +62,10 @@ jobs:
         shell: bash
         env:
           NODE_AUTH_TOKEN: ${{ secrets.REGISTRY_TOKEN }}
+          POETRY_KEYRING_ENABLED: "false"
         run: |
           for module in iso business process architecture; do
-            (cd "modules/$module" && make semantic-install && make schemas)
+            (cd "modules/$module" && poetry install --no-interaction && make semantic-install && make schemas)
           done
 
       - name: Collect generated files
