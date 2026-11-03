@@ -1,5 +1,6 @@
 name: Align module semantic-core packages
 
+# One-shot branch helper; remove after collecting the generated artifacts.
 on:
   push:
     branches:
