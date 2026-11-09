@@ -712,5 +712,5 @@ def test_fr004_ac5_the_vocabulary_is_declared_and_a_broken_entry_is_refused(
 
 
 def test_fr004_ac6_specifies_declares_the_specified_by_inverse() -> None:
-    """TC-065: (FR-004-AC-6, PLAT-160) the object-FR -> behavioral-FR edge is readable from the behavioral FR."""
+    """TC-065: (FR-004-AC-6, PLAT-160) the specifies edge is readable inversely."""
     assert _edge_types()["specifies"]["inverse"] == "specified_by"
