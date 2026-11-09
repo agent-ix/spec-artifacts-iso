@@ -887,7 +887,7 @@ edge_types:
   references: { description: "Loose, untyped linkage.", category: traceability }
   constrains: { description: "Imposes a constraint on the target.", category: traceability, inverse: constrained_by }
   supersedes: { description: "Replaces a prior artifact.", category: traceability, inverse: superseded_by }
-  specifies: { description: "Object FR specifies a behavioral FR.", category: traceability }
+  specifies: { description: "Object FR specifies a behavioral FR.", category: traceability, inverse: specified_by }
   satisfied_by: { description: "The generic stakeholder-requirement-to-artifact relationship: this StR is answered by the target. Authorable from either end — the artifact may declare `satisfies` instead.", category: traceability, inverse: satisfies }
   traces_to: { description: "Traceability link (matrix/coverage).", category: traceability }
   verifies: { description: "Test/integration artifact verifies a requirement.", category: traceability }

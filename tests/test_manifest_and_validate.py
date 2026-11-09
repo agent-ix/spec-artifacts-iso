@@ -709,3 +709,8 @@ def test_fr004_ac5_the_vocabulary_is_declared_and_a_broken_entry_is_refused(
         [str(_module_tree(tmp_path / "no-category", broken))]
     ).archetype_names()
     assert not loaded, f"{verb} without a category loaded anyway: {sorted(loaded)}"
+
+
+def test_specifies_declares_the_specified_by_inverse() -> None:
+    """PLAT-160: the object-FR -> behavioral-FR edge is readable from the behavioral FR."""
+    assert _edge_types()["specifies"]["inverse"] == "specified_by"

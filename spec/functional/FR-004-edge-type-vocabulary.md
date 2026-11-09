@@ -15,7 +15,7 @@ relationships:
 ## Description
 
 `manifest.yaml` declares the ecosystem's entire relationship vocabulary — **76 edge verbs across
-7 categories**, 27 of which name an inverse, plus **9 capability roles** — and until this
+7 categories**, 28 of which name an inverse, plus **9 capability roles** — and until this
 requirement no document in this repository described any of it. It is load-bearing and it was
 undocumented: quire-rs FR-040's `allowed_links` normalization reads it, the `UnknownEdgeType`
 advisory is computed against it, and every `spec-objects-*` module's link declarations are written
@@ -54,7 +54,7 @@ A verb with **no** declared inverse is one where the reverse reading has no name
 the relationship is symmetric (`peer`) or because only one direction is meaningful to author
 (`transitions_to`).
 
-An inverse label is a **derived name, not a second declaration**. 25 of the 26 distinct inverse labels
+An inverse label is a **derived name, not a second declaration**. 26 of the 27 distinct inverse labels
 (`part_of`, `called_by`, `implemented_by`, …) appear nowhere as `edge_types` keys, and that is
 correct: quire-rs FR-041-AC-2 type-allows an authored edge whose verb is a declared inverse label
 "even when the label is absent from `edge_types`". Requiring every inverse to be independently
