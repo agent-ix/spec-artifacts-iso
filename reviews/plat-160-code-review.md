@@ -47,3 +47,16 @@ to it is why it drifted.
 | --- | --- | --- | --- |
 | FND-001 | medium | FR-004 says "26 of the 27 distinct inverse labels" are absent from `edge_types`. The head manifest has 28 distinct inverse labels, 27 absent (only `contains` is a key). Correct to "27 of the 28", or drop the number. | spec/functional/FR-004-edge-type-vocabulary.md:57 |
 | FND-002 | low | Stale prose next to the count: "`contains` and `aggregates` both name `part_of`" and "`contains` names `part_of` as its own" are false. `contains` names `contained_in`, and no label is shared. "AC-2 pins the current set" cites an AC that FR-004 no longer has. Pre-existing, but it is why the count above drifted. | spec/functional/FR-004-edge-type-vocabulary.md:64-70 |
+
+## New findings (disposition pass 1)
+
+| ID | Severity | Summary | Refs |
+| --- | --- | --- | --- |
+| FND-003 | low | One fixed count is left in FR-004. "Adding a verb" step 1 still says "**Check the existing 76.**" The number is true today (76 verbs), but it is the same kind of pinned count that FND-001 removed. The fix commit message says the counts were removed. Use "Check the existing verbs." | spec/functional/FR-004-edge-type-vocabulary.md:93 |
+
+## Dispositions
+
+| FND | Outcome | Reason |
+| --- | --- | --- |
+| FND-001 | fixed | Round 1 (83803da): the count is replaced by "Most inverse labels (`part_of`, `called_by`, `implemented_by`, …) appear nowhere as `edge_types` keys". The description line also drops "76 edge verbs", "28 of which" and "9 capability roles". |
+| FND-002 | fixed | Round 1 (83803da): the bullets now say that no label is shared, that `contains` names `contained_in` and `aggregates` names `part_of`, and that `contains` is a forward verb whose own inverse is `contained_in`. I checked each of these against the manifest at the head. The dangling "AC-2 pins the current set" is removed. |

@@ -90,7 +90,7 @@ refuses to load on an unrecognised verb cannot be migrated onto a new one.
 A verb is added when an authored relationship in the corpus has no existing verb that records the
 same **kind** of fact. Before adding one:
 
-1. **Check the existing 76.** A near-synonym is a reason not to add, not a reason to add — see the
+1. **Check the existing verbs.** A near-synonym is a reason not to add, not a reason to add — see the
    finding below.
 2. **State the category**, and check the verb records that kind of fact rather than a different
    one with a similar name.

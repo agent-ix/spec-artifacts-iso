@@ -37,3 +37,15 @@ without the change. It is not traced to any criterion.
 | ID | Severity | Summary | Refs |
 | --- | --- | --- | --- |
 | FND-001 | low | `test_specifies_declares_the_specified_by_inverse` cites only "PLAT-160", with no FR-004 criterion or TC id, and `spec/tests.md` has no row for it. No FR-004 AC states that `specifies` has an inverse. The FR-004 description sentence "SHALL declare ... where the relationship is directional and both readings are authorable — an inverse" is the obligation it backs. Tag it to FR-004 and add a TC row, or fold it into TC-017. | tests/test_manifest_and_validate.py:714-716 |
+
+## New findings (disposition pass 1)
+
+| ID | Severity | Summary | Refs |
+| --- | --- | --- | --- |
+| FND-002 | medium | The TC-065 catalog row is in the wrong table. It sits at spec/tests.md:69 inside "Functional Requirement Coverage", a 4-column table, between the FR-006-AC-9 and FR-006-AC-7 rows, and it has 6 cells. "Test Case Summary" (line 93 onward, which holds TC-017/020/021) has no TC-065 row. Move the row into the Test Case Summary table. `quire validate` does not catch this. | spec/tests.md:69 |
+
+## Dispositions
+
+| FND | Outcome | Reason |
+| --- | --- | --- |
+| FND-001 | fixed | Round 1 (83803da): FR-004-AC-6 is added. The test is renamed `test_fr004_ac6_specifies_declares_the_specified_by_inverse`, its docstring cites "TC-065: (FR-004-AC-6, PLAT-160)", and the coverage row `FR-004 \| FR-004-AC-6 \| TC-065` is added at spec/tests.md:50. The test passes at the head. The misplaced catalog row is FND-002. |
