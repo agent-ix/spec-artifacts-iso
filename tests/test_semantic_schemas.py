@@ -260,11 +260,9 @@ def test_tc041_every_ref_resolves_offline(bundle: dict[str, dict]) -> None:
     schema under the semantic-core base ships.
     """
     core_files = _semantic_core_files()
-    core_version = str(
-        yaml.safe_load(MANIFEST_PATH.read_text(encoding="utf-8"))["semantic"][
-            "semantic_core"
-        ]
-    )
+    core_version = json.loads(
+        (SEMANTIC_DIR / "package.json").read_text(encoding="utf-8")
+    )["dependencies"]["@agent-ix/semantic-core"]
     core_base = f"{SEMANTIC_CORE_BASE}{core_version}/"
 
     for name, schema in bundle.items():

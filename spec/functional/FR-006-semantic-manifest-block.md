@@ -64,14 +64,13 @@ schema: schemas/<Model>.json }`).
 
 ## Outputs
 
-- The `semantic` block: `contract_version: 1.0.0`, `semantic_core` (the declared semantic-core pin),
-  `package: agent-ix/spec-artifacts-iso`, `exports` naming every artifact type
+- The `semantic` block: `contract_version: 1.0.0`, `package: agent-ix/spec-artifacts-iso`, `exports` naming every artifact type
   that carries a `data_schema` reference (`FR`, `NFR`, `StR`, `US`, `IT`, `TC`,
   `master-requirements`, `index`, `Glossary`), `imports: {}`,
   `targets: [json-schema, markdown]`, `mappings: [frontmatter, section, table,
   typed-table, ocl-clause, list, token, provenance]`,
   `compatibility_posture: additive`, and `legacy_forms: warning`. `sweep_report` is absent because `legacy_forms` is
-  `warning`; nine of the ten admitted keys are present. `legacy_forms` governs
+  `warning`; eight of the nine admitted keys are present. `legacy_forms` governs
   the legacy `## Properties` forms quoin FR-074 sweeps — a form none of this
   module's own documents author — so `warning` is the value that changes
   nothing, and promoting it to `error` is what would demand a `sweep_report`.
@@ -91,7 +90,7 @@ schema: schemas/<Model>.json }`).
 
 ## Behavior
 
-- The `semantic` block SHALL carry exactly the nine keys listed in Outputs.
+- The `semantic` block SHALL carry exactly the eight keys listed in Outputs.
 - Every existing `frontmatter_schema_ref`, `body_extraction` locator, and
   `assert` facet SHALL remain byte-for-byte as before this change; the only
   locator addition is the `FR` `invariants` locator of Outputs.
@@ -142,7 +141,7 @@ schema: schemas/<Model>.json }`).
 
 | ID | Criteria | Verification |
 |----|----------|--------------|
-| FR-006-AC-1 | The manifest carries a `semantic` block whose key set equals exactly `{contract_version, semantic_core, package, exports, imports, targets, mappings, compatibility_posture, legacy_forms}` with the values of Outputs. | Test (TC-046) |
+| FR-006-AC-1 | The manifest carries a `semantic` block whose key set equals exactly `{contract_version, package, exports, imports, targets, mappings, compatibility_posture, legacy_forms}` with the values of Outputs. | Test (TC-046) |
 | FR-006-AC-2 | For each of the nine exported artifact types, `data_schema.schema` names an existing file under `spec_artifacts_iso/schemas/` per the FR-005 map, and `exports` equals the set of artifact types carrying a reference. | Test (TC-047) |
 | FR-006-AC-3 | `quire.Registry.load_from` over the module's parent directory lists all ten archetypes with the `semantic` block and the nine `data_schema` references present, and `validate_document` passes every skeleton — adding the block breaks no consumer. | Test (TC-048) |
 | FR-006-AC-6 | `quoin module install path:<module root>` on the published quoin installs the module with no diagnostic, so the block is inert to every quoin a user can install today; the verbatim output is recorded, and the previously installed registry version of this module is restored afterwards. | Demonstration (TC-055) |
