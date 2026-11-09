@@ -4,7 +4,7 @@ title: "Verify checksums on artifact import"
 type: FR
 relationships:
   - target: "ix://agent-ix/example/US-001"
-    type: "implements"
+    type: "satisfies"
 ---
 <!-- FR authoring skeleton (spec-artifacts-iso). Fill every section with
      substantive content. Contract (manifest body_extraction asserts):

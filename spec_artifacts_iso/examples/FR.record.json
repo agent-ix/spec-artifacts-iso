@@ -72,14 +72,14 @@
     "text": "\n- Accepted artifact persisted to the store\n- Rejection error carrying the declared/computed digest pair\n\n"
   },
   "provenance": {
-    "digest": "sha256:e1ae27dfa67ac390bb38f930c68a89371e6fb5b521a1e7e2d14ced30403ad07b",
+    "digest": "sha256:5c10731f6764143683017a8522e3450e664d7fab315ef8f9a4e83aaf1e93b3e8",
     "path": "spec_artifacts_iso/skeletons/fr.md",
     "sourceIdentity": "ix://agent-ix/spec-artifacts-iso/skeletons"
   },
   "relationships": [
     {
       "target": "ix://agent-ix/example/US-001",
-      "type": "implements"
+      "type": "satisfies"
     }
   ],
   "title": "Verify checksums on artifact import",
