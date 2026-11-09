@@ -47,6 +47,7 @@ Method` rows — so NFR rows trace to `NFR-001 (metric n)` (SR-003 FND-006).
 | FR-004 | FR-004-AC-1 | TC-017 | ✅ Complete |
 | FR-004 | FR-004-AC-4 | TC-020 | ✅ Complete |
 | FR-004 | FR-004-AC-5 | TC-021 | ✅ Complete |
+| FR-004 | FR-004-AC-6 | TC-065 | ✅ Complete |
 | FR-005 | FR-005-AC-1 | TC-041 | ✅ Complete |
 | FR-005 | FR-005-AC-2 | TC-041 | ✅ Complete |
 | FR-005 | FR-005-AC-3 | TC-040 | ✅ Complete |
@@ -65,6 +66,7 @@ Method` rows — so NFR rows trace to `NFR-001 (metric n)` (SR-003 FND-006).
 | FR-006 | FR-006-AC-5 | TC-047 | ✅ Complete |
 | FR-006 | FR-006-AC-6 | TC-055 | ✅ Complete |
 | FR-006 | FR-006-AC-9 | TC-064 | ✅ Complete |
+| TC-065 | `specifies` declares inverse `specified_by` (`test_fr004_ac6_specifies_declares_the_specified_by_inverse`) | Unit | P0 | FR-004-AC-6 | ✅ |
 | FR-006 | FR-006-AC-7 | TC-046 | ✅ Complete |
 | FR-006 | FR-006-AC-8 | TC-063 | ✅ Complete |
 | FR-006 | FR-006-CON-1 | TC-046 | ✅ Complete |
