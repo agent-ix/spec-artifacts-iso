@@ -49,3 +49,4 @@ without the change. It is not traced to any criterion.
 | FND | Outcome | Reason |
 | --- | --- | --- |
 | FND-001 | fixed | Round 1 (83803da): FR-004-AC-6 is added. The test is renamed `test_fr004_ac6_specifies_declares_the_specified_by_inverse`, its docstring cites "TC-065: (FR-004-AC-6, PLAT-160)", and the coverage row `FR-004 \| FR-004-AC-6 \| TC-065` is added at spec/tests.md:50. The test passes at the head. The misplaced catalog row is FND-002. |
+| FND-002 | fixed | Round 2 (f9c0d4b): the TC-065 row is gone from the Functional Requirement Coverage table and is now in the Test Case Summary table (spec/tests.md:127). The coverage row `FR-004 \| FR-004-AC-6 \| TC-065` stays at spec/tests.md:50. |

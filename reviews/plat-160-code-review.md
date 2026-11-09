@@ -60,3 +60,4 @@ to it is why it drifted.
 | --- | --- | --- |
 | FND-001 | fixed | Round 1 (83803da): the count is replaced by "Most inverse labels (`part_of`, `called_by`, `implemented_by`, …) appear nowhere as `edge_types` keys". The description line also drops "76 edge verbs", "28 of which" and "9 capability roles". |
 | FND-002 | fixed | Round 1 (83803da): the bullets now say that no label is shared, that `contains` names `contained_in` and `aggregates` names `part_of`, and that `contains` is a forward verb whose own inverse is `contained_in`. I checked each of these against the manifest at the head. The dangling "AC-2 pins the current set" is removed. |
+| FND-003 | fixed | Round 2 (f9c0d4b): FR-004:93 now reads "1. **Check the existing verbs.**" No other pinned count is left in FR-004. |
