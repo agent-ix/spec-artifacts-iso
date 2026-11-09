@@ -4,7 +4,7 @@ title: "Markdown mappings and round-trip policy for the semantic records"
 type: FR
 relationships:
   - target: "ix://agent-ix/spec-artifacts-iso/US-001"
-    type: "implements"
+    type: "satisfies"
   - target: "ix://agent-ix/spec-artifacts-iso/FR-005"
     type: "depends_on"
   - target: "ix://agent-ix/spec-artifacts-iso/FR-002"

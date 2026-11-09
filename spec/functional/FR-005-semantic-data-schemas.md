@@ -4,7 +4,7 @@ title: "Semantic data schemas for ISO artifact types are emitted from TypeSpec"
 type: FR
 relationships:
   - target: "ix://agent-ix/spec-artifacts-iso/US-001"
-    type: "implements"
+    type: "satisfies"
   - target: "ix://agent-ix/spec-artifacts-iso/FR-002"
     type: "depends_on"
   - target: "ix://agent-ix/filament-core-data/spec/functional/FR-031"

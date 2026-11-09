@@ -4,7 +4,7 @@ title: "Verify checksums on artifact import"
 type: FR
 relationships:
   - target: "ix://agent-ix/example/US-001"
-    type: "implements"
+    type: "satisfies"
 ---
 # FR-001: Verify checksums on artifact import
 

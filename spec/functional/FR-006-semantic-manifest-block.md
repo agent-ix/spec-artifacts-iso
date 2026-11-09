@@ -4,7 +4,7 @@ title: "The manifest declares the semantic block"
 type: FR
 relationships:
   - target: "ix://agent-ix/spec-artifacts-iso/US-001"
-    type: "implements"
+    type: "satisfies"
   - target: "ix://agent-ix/spec-artifacts-iso/FR-001"
     type: "depends_on"
   - target: "ix://agent-ix/spec-artifacts-iso/FR-005"
