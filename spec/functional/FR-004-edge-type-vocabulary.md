@@ -14,8 +14,8 @@ relationships:
 
 ## Description
 
-`manifest.yaml` declares the ecosystem's entire relationship vocabulary — **76 edge verbs across
-7 categories**, 27 of which name an inverse, plus **9 capability roles** — and until this
+`manifest.yaml` declares the ecosystem's entire relationship vocabulary — edge verbs across
+7 categories, many of which name an inverse, plus capability roles — and until this
 requirement no document in this repository described any of it. It is load-bearing and it was
 undocumented: quire-rs FR-040's `allowed_links` normalization reads it, the `UnknownEdgeType`
 advisory is computed against it, and every `spec-objects-*` module's link declarations are written
@@ -54,7 +54,7 @@ A verb with **no** declared inverse is one where the reverse reading has no name
 the relationship is symmetric (`peer`) or because only one direction is meaningful to author
 (`transitions_to`).
 
-An inverse label is a **derived name, not a second declaration**. 25 of the 26 distinct inverse labels
+An inverse label is a **derived name, not a second declaration**. Most inverse labels
 (`part_of`, `called_by`, `implemented_by`, …) appear nowhere as `edge_types` keys, and that is
 correct: quire-rs FR-041-AC-2 type-allows an authored edge whose verb is a declared inverse label
 "even when the label is absent from `edge_types`". Requiring every inverse to be independently
@@ -62,12 +62,12 @@ declared would double the vocabulary with entries no author writes.
 
 Two consequences follow, both governed by FR-041-AC-3 rather than forbidden here:
 
-- **A label may be shared.** `contains` and `aggregates` both name `part_of`. Resolution is
-  first-wins with a diagnostic, so which forward verb `part_of` normalizes onto depends on
-  declaration order — and a *new* collision would silently change that. AC-2 pins the current
-  set so a new one has to be deliberate.
-- **A label may also be a forward verb.** `contains` is the only one: `contained_by` names it as
-  its inverse while `contains` names `part_of` as its own. The forward registration governs.
+- **A label may be shared.** Two forward verbs naming the same inverse label resolve
+  first-wins with a diagnostic, so which forward verb the label normalizes onto depends on
+  declaration order. No label is shared today (`contains` names `contained_in`, `aggregates`
+  names `part_of`); a new collision would silently change that, so avoid one.
+- **A label may also be a forward verb.** `contains` is one: `contained_by` names it as
+  its inverse while `contains` names `contained_in` as its own. The forward registration governs.
   Notably `satisfies` is **not** a forward verb — it exists only as `satisfied_by`'s inverse
   label, yet the corpus authors it directly 38 times, which FR-041-AC-2 permits.
 
@@ -90,7 +90,7 @@ refuses to load on an unrecognised verb cannot be migrated onto a new one.
 A verb is added when an authored relationship in the corpus has no existing verb that records the
 same **kind** of fact. Before adding one:
 
-1. **Check the existing 76.** A near-synonym is a reason not to add, not a reason to add — see the
+1. **Check the existing verbs.** A near-synonym is a reason not to add, not a reason to add — see the
    finding below.
 2. **State the category**, and check the verb records that kind of fact rather than a different
    one with a similar name.
@@ -129,6 +129,7 @@ quire-rs FR-058's upward-trace relations follow this decision: they accept `sati
 | FR-004-AC-1 | Every entry in `edge_types` carries a non-empty `description` and a `category` drawn from the seven declared categories. | Test (TC-017) |
 | FR-004-AC-4 | Every entry in `roles` carries a non-empty `description`. | Test (TC-020) |
 | FR-004-AC-5 | The manifest declares both registries, and an `edge_types` entry that loses its `category` costs the module every archetype at load — a broken entry does not load partially. Asserted against the engine that reads the vocabulary, with an unmutated control proving the load is real. | Test (TC-021) |
+| FR-004-AC-6 | `specifies` declares the inverse `specified_by`, so the object-FR to behavioral-FR edge is readable from the behavioral requirement. | Test (TC-065) |
 
 **What FR-004-AC-5 no longer claims.** Until PLAT-902 this criterion was
 verified by validating the manifest against a copy of the FR-035 module-manifest

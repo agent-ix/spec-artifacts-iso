@@ -709,3 +709,8 @@ def test_fr004_ac5_the_vocabulary_is_declared_and_a_broken_entry_is_refused(
         [str(_module_tree(tmp_path / "no-category", broken))]
     ).archetype_names()
     assert not loaded, f"{verb} without a category loaded anyway: {sorted(loaded)}"
+
+
+def test_fr004_ac6_specifies_declares_the_specified_by_inverse() -> None:
+    """TC-065: (FR-004-AC-6, PLAT-160) the specifies edge is readable inversely."""
+    assert _edge_types()["specifies"]["inverse"] == "specified_by"
