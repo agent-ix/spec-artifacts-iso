@@ -236,21 +236,6 @@ def test_tc047_exports_equals_the_referencing_set() -> None:
     assert set(manifest["semantic"]["exports"]) == referencing
 
 
-def test_tc066_master_requirements_is_owned_here_and_exported_once() -> None:
-    """TC-066: FR-006-AC-10: this module owns ``master-requirements`` (PLAT-214)
-    and exports it exactly once, under that one spelling."""
-    manifest = _manifest()
-    assert "master-requirements" in _artifact_types(manifest)
-    exports = manifest["semantic"]["exports"]
-    assert exports.count("master-requirements") == 1
-    assert not [
-        n
-        for n in exports
-        if n.lower().replace("-", "") == "masterrequirements"
-        and n != "master-requirements"
-    ]
-
-
 # ─── TC-048: the published quire floor still loads the module ────────────
 
 

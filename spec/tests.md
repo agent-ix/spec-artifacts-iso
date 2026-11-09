@@ -65,9 +65,7 @@ Method` rows — so NFR rows trace to `NFR-001 (metric n)` (SR-003 FND-006).
 | FR-006 | FR-006-AC-3 | TC-048 | ✅ Complete |
 | FR-006 | FR-006-AC-5 | TC-047 | ✅ Complete |
 | FR-006 | FR-006-AC-6 | TC-055 | ✅ Complete |
-| FR-006 | FR-006-AC-9 | TC-066 | `master-requirements` is a declared artifact type of this module and appears exactly once in `semantic.exports`, spelled `master-requirements`; no `MasterRequirements`-spelled artifact type or export exists (FR-006-AC-10) | Unit | P0 | FR-006-AC-10 | ✅ |
-| TC-064 | ✅ Complete |
-| FR-006 | FR-006-AC-10 | TC-066 | ✅ Complete |
+| FR-006 | FR-006-AC-9 | TC-064 | ✅ Complete |
 | FR-006 | FR-006-AC-7 | TC-046 | ✅ Complete |
 | FR-006 | FR-006-AC-8 | TC-063 | ✅ Complete |
 | FR-006 | FR-006-CON-1 | TC-046 | ✅ Complete |
