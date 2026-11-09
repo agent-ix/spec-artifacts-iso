@@ -35,3 +35,9 @@ the new `allowed_links` entry has no test.
 | ID | Severity | Summary | Refs |
 | --- | --- | --- | --- |
 | FND-001 | low | No test pins `satisfies` in the FR `allowed_links`. Removing it changes the FR authoring contract, which then offers `implements` and not `satisfies`, yet every test still passes, because Tier-1 validation accepts inverse labels anyway. A one-line assertion that `quire.input_contract("FR", PKG_ROOT)` lists `satisfies` would back the entry. | spec_artifacts_iso/manifest.yaml:116 |
+
+## Dispositions
+
+| FND | Outcome | Reason |
+| --- | --- | --- |
+| FND-001 | still-open | Round 1: the new `test_fr_authoring_contract_offers_satisfies` (tests/test_manifest_and_validate.py:466-472) asserts `"satisfies" in json.dumps(quire.input_contract("FR", ...))`. That is vacuous. The contract's `implements` entry carries the description "...uses `satisfies` (inverse `satisfied_by`)", so the substring is present whether or not `satisfies` is an allowed link. Measured: with `satisfies` removed from the FR allowed_links in a scratch copy, the substring check is still True and the verb check is False. The test must assert on the verb, e.g. `any(r["verb"] == "satisfies" for r in contract["relationships"])`. |

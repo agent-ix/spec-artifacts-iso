@@ -53,3 +53,10 @@ breaks it in its own spec (FND-001). Lows concern test fixtures.
 | --- | --- | --- | --- |
 | FND-001 | medium | This repo's own FR-005, FR-006 and FR-007 declare `implements` to `ix://agent-ix/spec-artifacts-iso/US-001` (a `US`). Under FR-004 that is requirement lineage and must be `satisfies`. quire-rs FR-058 will count all three as orphan FRs. They are this repo's share of the PLAT-346 migration and belong in this PR. | spec/functional/FR-005-semantic-data-schemas.md:7, spec/functional/FR-006-semantic-manifest-block.md:7, spec/functional/FR-007-markdown-mappings.md:7 |
 | FND-002 | low | 27 FR mutation fixtures are cut-down copies of the FR skeleton and still author `type: "implements"` to `ix://agent-ix/example/US-001`. The skeleton now teaches `satisfies`. The fixtures diverge from it and keep showing the forbidden spelling. | tests/fixtures/mutations/fr-crlf-source.md:7, tests/fixtures/mutations/invariants/one-clause.md:7 (and 25 siblings, line 7/8) |
+
+## Dispositions
+
+| FND | Outcome | Reason |
+| --- | --- | --- |
+| FND-001 | fixed | Round 1: the fix commit sets the US-001 edge to `satisfies` at line 7 of FR-005, FR-006 and FR-007. The contract-fulfilment `implements` edges are untouched: FR-005:13, FR-006:13/15 (quoin) and FR-001:7/FR-002:7 (filament-core-service FR-035). |
+| FND-002 | fixed | Round 1: all 27 FR mutation fixtures change `implements` to `satisfies`, one line each. No `implements` remains under tests/fixtures. Mapping-failure and invariants suites pass. |

@@ -469,7 +469,8 @@ def test_fr_authoring_contract_offers_satisfies() -> None:
     quire = _quire_doc_validator()
     if quire is None:
         pytest.skip("quire wheel cannot load this module")
-    assert "satisfies" in json.dumps(quire.input_contract("FR", str(PKG_ROOT)))
+    contract = quire.input_contract("FR", str(PKG_ROOT))
+    assert "satisfies" in {r["verb"] for r in contract["relationships"]}
 
 
 def test_it002_ac2_fr_mutations_fail() -> None:
