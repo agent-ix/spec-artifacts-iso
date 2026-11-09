@@ -28,10 +28,9 @@ required key that would break a consumer predating the block.
 
 ## Subtasks
 
-- [ ] **The `semantic` block**: `contract_version: 1.0.0`, `semantic_core:
-  0.1.0`, `package: agent-ix/spec-artifacts-iso`, the ten `exports`,
+- [ ] **The `semantic` block**: `contract_version: 1.0.0`, `package: agent-ix/spec-artifacts-iso`, the ten `exports`,
   `imports: {}`, `targets: [json-schema, markdown]`, the eight `mappings`,
-  `compatibility_posture: additive`, `legacy_forms: warning`. Exactly nine
+  `compatibility_posture: additive`, `legacy_forms: warning`. Exactly eight
   keys; `sweep_report` stays absent.
 - [ ] **Ten `data_schema` references** beside the existing
   `frontmatter_schema_ref` values, using the FR-005 export-name to file map.

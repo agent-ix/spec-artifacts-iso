@@ -2,7 +2,7 @@
 
 Covers TC-046, TC-047 and TC-048 of the FR-006 test matrix:
 
-* TC-046 — the block carries exactly the nine declared keys, and the
+* TC-046 — the block carries exactly the eight declared keys, and the
   legacy form (block and references removed, derived here from this manifest)
   is this manifest with exactly those removals and loads under quire with the
   same ten archetypes
@@ -52,10 +52,9 @@ EXPORT_SCHEMA_FILE = {
     "Glossary": "schemas/Glossary.json",
 }
 
-# FR-006 Outputs: the nine of ten admitted keys the block carries.
+# FR-006 Outputs: the eight of nine admitted keys the block carries.
 SEMANTIC_KEYS = {
     "contract_version",
-    "semantic_core",
     "package",
     "exports",
     "imports",
@@ -159,7 +158,7 @@ def test_tc046_manifest_carries_a_semantic_block() -> None:
 
 
 def test_tc046_semantic_block_key_set_and_values() -> None:
-    """TC-046: FR-006-AC-1: the block's key set is exactly the nine declared
+    """TC-046: FR-006-AC-1: the block's key set is exactly the eight declared
     keys with the values of FR-006 Outputs; ``sweep_report`` stays absent."""
     semantic = _manifest()["semantic"]
     assert set(semantic) == SEMANTIC_KEYS, set(semantic) ^ SEMANTIC_KEYS
