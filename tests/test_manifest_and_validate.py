@@ -463,6 +463,16 @@ def test_it002_ac1_skeleton_validates(name: str) -> None:
     assert res["is_valid"], res["errors"]
 
 
+def test_fr_authoring_contract_offers_satisfies() -> None:
+    """The FR authoring contract offers `satisfies`, the requirement-lineage verb
+    (FR-004), as an allowed link."""
+    quire = _quire_doc_validator()
+    if quire is None:
+        pytest.skip("quire wheel cannot load this module")
+    contract = quire.input_contract("FR", str(PKG_ROOT))
+    assert "satisfies" in {r["verb"] for r in contract["relationships"]}
+
+
 def test_it002_ac2_fr_mutations_fail() -> None:
     """TC-013: IT-002-AC-2: deleting a section, breaking AC columns, breaking an AC id,
     and duplicating a heading each fail validation with the expected reason."""
