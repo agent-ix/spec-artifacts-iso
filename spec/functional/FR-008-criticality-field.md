@@ -45,8 +45,9 @@ tool computes it.
 | FR-008-AC-3 | The TypeSpec `FR`, `NFR`, `StR` and `US` models each declare `criticality?` as the three-value enum, the projected `FR.json`, `NFR.json`, `StR.json` and `US.json` carry it as optional, and `make schemas-check` passes. | Test |
 | FR-008-AC-4 | For each of `StR`, `US`, `FR` and `NFR`, a document that omits `criticality` passes `quire validate` and its mapped record carries no `criticality` value. | Test |
 | FR-008-AC-5 | A document with `criticality: critical` (outside the enumeration) fails `quire validate` with a diagnostic naming the `criticality` field. | Test |
-| FR-008-AC-6 | A document with `criticality: High` (wrong case) or `criticality: ""` fails `quire validate`; neither is normalised nor treated as absent. | Test |
-| FR-008-AC-7 | No frontmatter or record schema carries a `default` for `criticality`. | Inspection |
+| FR-008-AC-6 | A document with `criticality: High` (wrong case) fails `quire validate` with a diagnostic naming the `criticality` field; the value is not normalised. | Test |
+| FR-008-AC-7 | A document with `criticality: ""` fails `quire validate` with a diagnostic naming the `criticality` field; it is not treated as absent. | Test |
+| FR-008-AC-8 | No frontmatter or record schema carries a `default` for `criticality`. | Inspection |
 
 ## Constraints
 

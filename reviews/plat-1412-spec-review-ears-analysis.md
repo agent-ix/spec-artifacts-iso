@@ -25,3 +25,10 @@ AC-4 and AC-6 are each one observable outcome.
 | --- | --- | --- | --- |
 | FND-001 | low | The no-default rule, the requirement's main safety property, is stated in descriptive voice ("is not given a value by the module, by a schema `default`, or by any tool") and not as a SHALL NOT clause. Only the enumeration clause carries SHALL. | spec/functional/FR-008-criticality-field.md:27-30 |
 | FND-002 | low | AC-5 is compound: it has two inputs (`High` and `""`) and two outcomes (rejection, and not treated as absent). A failure does not say which part broke. Split it into two ACs. | spec/functional/FR-008-criticality-field.md:40 |
+
+## Dispositions
+
+| FND | outcome | reason |
+| --- | --- | --- |
+| FND-001 | fixed | Round 1 (42fc231): "The module **SHALL NOT** supply a default for `criticality`." |
+| FND-002 | still-open | Round 1 (42fc231): the criterion was renumbered AC-5 -> AC-6 but not split; it still combines `High` and `""` and two outcomes in one row. |

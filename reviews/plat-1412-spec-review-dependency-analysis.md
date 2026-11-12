@@ -26,3 +26,9 @@ PRs together.
 | ID | Severity | Summary | Refs |
 | --- | --- | --- | --- |
 | FND-001 | medium | FR-008 declares `consumes` to quire-rs FR-082. In this manifest `consumes` is a dataflow verb ("Asynchronous reception from a channel"), not a spec dependency. It also points the wrong way: FR-082 consumes FR-008, and FR-008's own Dependencies section lists FR-082 as Downstream. With FR-082's `consumes` back to FR-008, the graph has a two-node `consumes` cycle. Drop the edge, or use `references`. | spec/functional/FR-008-criticality-field.md:10-11, :51; spec_artifacts_iso/manifest.yaml:846 |
+
+## Dispositions
+
+| FND | outcome | reason |
+| --- | --- | --- |
+| FND-001 | fixed | Round 1 (42fc231): edge to quire-rs FR-082 is now `references`; FR-082 (quire-rs#645) references FR-008 and lands with it. |

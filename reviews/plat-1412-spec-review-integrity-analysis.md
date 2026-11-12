@@ -26,3 +26,9 @@ archetypes the requirement names.
 | ID | Severity | Summary | Refs |
 | --- | --- | --- | --- |
 | FND-001 | low | The FR names four archetypes (`StR`, `US`, `FR`, `NFR`). AC-2 to AC-5 exercise only `FR`. For `StR`, `US` and `NFR`, accept/reject behaviour is backed only by AC-1's schema-shape check, so a typo in one archetype's reference passes AC-1 and nothing tests it. Parametrise AC-2 and AC-4 over the four archetypes. | spec/functional/FR-008-criticality-field.md:36-40 |
+
+## Dispositions
+
+| FND | outcome | reason |
+| --- | --- | --- |
+| FND-001 | fixed | Round 1 (42fc231): AC-2 and AC-4 now run over StR, US, FR and NFR; AC-5/AC-6 apply to any such document. |
