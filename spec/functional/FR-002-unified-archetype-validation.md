@@ -66,7 +66,7 @@ archetype's `body_extraction` asserts.
 | ID | Criteria | Verification |
 |----|----------|--------------|
 | FR-002-AC-1 | Every registered `artifact_types` entry (the eight ISO artifact archetypes plus `master-requirements`) declares `body_extraction` with `assert` facets; none declare `template_ref`, `required_sections`, or `variants` | Schema Test |
-| FR-002-AC-2 | A conformant authored `FR` markdown artifact passes `validate_document`; copies with a missing required section, wrong Acceptance-Criteria columns, or a non-contiguous AC id each fail with a line-numbered diagnostic | Integration Test |
+| FR-002-AC-2 | A conformant authored `FR` markdown artifact passes `validate_document`; copies with a missing required section, or wrong Acceptance-Criteria columns each fail with a diagnostic, line-numbered wherever the offending content exists | Integration Test |
 | FR-002-AC-3 | Acceptance-Criteria id asserts use `{id}` so a row prefixed with a different artifact's id fails | Integration Test |
 | FR-002-AC-4 | Every archetype's declared headings are unique per level across its skeleton | Schema Test |
 | FR-002-AC-5 | Each archetype ships an authoring skeleton that itself passes `validate_document` once filled with substantive content | Integration Test |
