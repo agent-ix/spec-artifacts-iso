@@ -313,7 +313,7 @@ def test_tc040_every_property_is_constrained_or_declared_free_text(
     )
 
 
-@pytest.mark.trace("TC-039", "TC-052", "FR-005-CON-1")
+@pytest.mark.trace("TC-039", "FR-005-CON-1")
 def test_tc039_every_locator_output_has_a_property(bundle: dict[str, dict]) -> None:
     """TC-039: FR-005-CON-1: every `body_extraction` locator of every exported
     archetype has a property on its model, under the camelCase rule.

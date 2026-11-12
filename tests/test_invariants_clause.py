@@ -222,7 +222,6 @@ def test_tc051_prose_invariants_leaves_the_property_absent(
         assert not validation_errors(result.record, "FR.json", bundle), fixture
 
 
-@pytest.mark.trace("TC-051")
 def test_a_prose_clause_heading_yields_no_clause_ref(
     declaration: dict, bundle: dict
 ) -> None:

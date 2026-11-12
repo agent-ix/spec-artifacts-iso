@@ -38,6 +38,7 @@ Method` rows — so NFR rows trace to `NFR-001 (metric n)` (SR-003 FND-006).
 | FR-002 | FR-002-AC-8 | TC-011 | ✅ Complete |
 | FR-003 | FR-003-AC-1 | TC-003 | ✅ Complete |
 | FR-003 | FR-003-AC-2 | TC-004 | ✅ Complete |
+| FR-003 | FR-003-CON-2 | TC-004 | ✅ Complete |
 | FR-003 | FR-003-AC-3 | — | 🚧 Pending |
 | FR-003 | FR-003-AC-4 | — | 🚧 Pending |
 | FR-003 | FR-003-AC-5 | — | 🚧 Pending |
@@ -64,13 +65,11 @@ Method` rows — so NFR rows trace to `NFR-001 (metric n)` (SR-003 FND-006).
 | FR-006 | FR-006-AC-1 | TC-046 | ✅ Complete |
 | FR-006 | FR-006-AC-2 | TC-047 | ✅ Complete |
 | FR-006 | FR-006-AC-3 | TC-048 | ✅ Complete |
-| FR-006 | FR-006-AC-5 | TC-047 | ✅ Complete |
-| FR-006 | FR-006-AC-6 | TC-055 | ✅ Complete |
-| FR-006 | FR-006-AC-9 | TC-064 | ✅ Complete |
+| FR-006 | FR-006-AC-6 | TC-055 | 🚧 Pending (no tagged test) |
+| FR-006 | FR-006-AC-9 | TC-064 | ✅ Complete (manual/inspection, not matrix-bound) |
 | FR-006 | FR-006-AC-7 | TC-046 | ✅ Complete |
-| FR-006 | FR-006-AC-8 | TC-063 | ✅ Complete |
 | FR-006 | FR-006-CON-1 | TC-046 | ✅ Complete |
-| FR-006 | FR-006-CON-2 | TC-047 | ✅ Complete |
+| FR-006 | FR-006-CON-2 | TC-047 | 🚧 Pending (no tagged test) |
 | FR-007 | FR-007-AC-1 | TC-052 | ✅ Complete |
 | FR-007 | FR-007-AC-2 | TC-044 | ✅ Complete |
 | FR-007 | FR-007-AC-3 | TC-053 | ✅ Complete |
@@ -79,7 +78,7 @@ Method` rows — so NFR rows trace to `NFR-001 (metric n)` (SR-003 FND-006).
 | FR-007 | FR-007-AC-7 | TC-052 | ✅ Complete |
 | FR-007 | FR-007-AC-8 | TC-069 | ✅ Complete |
 | FR-007 | FR-007-CON-2 | TC-051 | ✅ Complete |
-| FR-007 | FR-007-CON-3 | TC-059 | ✅ Complete |
+| FR-007 | FR-007-CON-3 | TC-059 | ✅ Complete (manual/inspection, not matrix-bound) |
 | FR-008 | FR-008-AC-1 | TC-066 | ✅ Complete |
 | FR-008 | FR-008-AC-2 | TC-067 | ✅ Complete |
 | FR-008 | FR-008-AC-3 | TC-066 | ✅ Complete |
@@ -87,7 +86,7 @@ Method` rows — so NFR rows trace to `NFR-001 (metric n)` (SR-003 FND-006).
 | FR-008 | FR-008-AC-5 | TC-068 | ✅ Complete |
 | FR-008 | FR-008-AC-6 | TC-068 | ✅ Complete |
 | FR-008 | FR-008-AC-7 | TC-068 | ✅ Complete |
-| FR-008 | FR-008-AC-8 | TC-066 | ✅ Complete |
+| FR-008 | FR-008-AC-8 | TC-066 | ✅ Complete (manual/inspection, not matrix-bound) |
 
 ### Non-Functional Requirement Coverage
 
@@ -102,7 +101,7 @@ Method` rows — so NFR rows trace to `NFR-001 (metric n)` (SR-003 FND-006).
 | Test ID | Title | Type | Priority | Traces To | Status |
 |---------|-------|------|----------|-----------|--------|
 | TC-003 | a ``master-requirements`` artifact_type is declared with a frontmatter_schema_ref and a body_extraction carrying assert facets (`test_fr003_ac1_master_requirements_archetype_registered`) | Unit | P0 | FR-003-AC-1 | ✅ |
-| TC-004 | TC-004): the master-requirements frontmatter schema requires type/name/org/component_type, does NOT require id/title, and constrains component_type to kebab-case ``^[a-z][a-z0-9-]*$`` (`test_fr003_ac2_master_requirements_frontmatter_schema_shape`) | Unit | P0 | FR-003-AC-2 | ✅ |
+| TC-004 | TC-004): the master-requirements frontmatter schema requires type/name/org/component_type, does NOT require id/title, and constrains component_type to kebab-case ``^[a-z][a-z0-9-]*$`` (`test_fr003_ac2_master_requirements_frontmatter_schema_shape`) | Unit | P0 | FR-003-AC-2, FR-003-CON-2 | ✅ |
 | TC-005 | every archetype declares ``body_extraction`` with asserts and declares none of ``template_ref`` / ``required_sections`` / ``variants`` (`test_fr002_ac1_unified_shape_no_retired_fields`) | Unit | P0 | FR-002-AC-1 | ✅ |
 | TC-006 | templates/ is removed and no archetype references one (`test_fr002_ac1_no_template_dir_or_refs`) | Unit | P0 | FR-002-AC-1 | ✅ |
 | TC-007 | declared section headings are unique per level (`test_fr002_ac4_headings_unique_per_level`) | Unit | P0 | FR-002-AC-4 | ✅ |

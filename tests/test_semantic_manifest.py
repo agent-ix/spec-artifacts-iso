@@ -205,7 +205,7 @@ def test_tc046_legacy_fixture_carries_neither_addition() -> None:
         assert "data_schema" not in entry, f"{name} still carries a data_schema"
 
 
-@pytest.mark.trace("TC-046", "FR-006-AC-7")
+@pytest.mark.trace("TC-046", "FR-006-AC-7", "FR-006-CON-1")
 def test_tc046_legacy_fixture_loads_under_quire(tmp_path: pathlib.Path) -> None:
     """TC-046: FR-006-AC-7: the derived legacy form loads under quire with the same
     ten archetypes the current manifest lists."""

@@ -77,7 +77,7 @@ def test_fr003_ac1_master_requirements_archetype_registered() -> None:
     ), "master-requirements has no assert facets"
 
 
-@pytest.mark.trace("TC-004", "FR-003-AC-2")
+@pytest.mark.trace("TC-004", "FR-003-AC-2", "FR-003-CON-2")
 def test_fr003_ac2_master_requirements_frontmatter_schema_shape() -> None:
     """TC-004: FR-003-AC-2: the master-requirements frontmatter schema
     requires type/name/org/component_type, does NOT require id/title, and
@@ -484,7 +484,7 @@ def test_fr_authoring_contract_offers_satisfies() -> None:
     assert "satisfies" in {r["verb"] for r in contract["relationships"]}
 
 
-@pytest.mark.trace("TC-013")
+@pytest.mark.trace("TC-013", "FR-002-AC-2")
 def test_it002_ac2_fr_mutations_fail() -> None:
     """TC-013: IT-002-AC-2: deleting a section, breaking AC columns, breaking an AC id,
     and duplicating a heading each fail validation with the expected reason."""
