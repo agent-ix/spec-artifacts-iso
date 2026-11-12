@@ -151,12 +151,14 @@ def _registry_archetypes(parent: pathlib.Path) -> set[str]:
 # ─── TC-046: the block, its key set, and the derived legacy form ──────────────
 
 
+@pytest.mark.trace("TC-046", "FR-006-AC-1")
 def test_tc046_manifest_carries_a_semantic_block() -> None:
     """TC-046: FR-006-AC-1: the manifest declares a ``semantic`` block."""
     manifest = _manifest()
     assert "semantic" in manifest, "manifest declares no semantic block"
 
 
+@pytest.mark.trace("TC-046", "FR-006-AC-1")
 def test_tc046_semantic_block_key_set_and_values() -> None:
     """TC-046: FR-006-AC-1: the block's key set is exactly the eight declared
     keys with the values of FR-006 Outputs; ``sweep_report`` stays absent."""
@@ -182,6 +184,7 @@ def test_tc046_semantic_block_key_set_and_values() -> None:
     assert semantic["legacy_forms"] == "warning"
 
 
+@pytest.mark.trace("TC-046", "FR-006-AC-7")
 def test_tc046_legacy_fixture_carries_neither_addition() -> None:
     """TC-046: FR-006-AC-7: the derived legacy form is the pre-change form --
     no ``semantic`` block and no ``data_schema`` on any artifact type *or object type*.
@@ -202,6 +205,7 @@ def test_tc046_legacy_fixture_carries_neither_addition() -> None:
         assert "data_schema" not in entry, f"{name} still carries a data_schema"
 
 
+@pytest.mark.trace("TC-046", "FR-006-AC-7")
 def test_tc046_legacy_fixture_loads_under_quire(tmp_path: pathlib.Path) -> None:
     """TC-046: FR-006-AC-7: the derived legacy form loads under quire with the same
     ten archetypes the current manifest lists."""
@@ -212,6 +216,7 @@ def test_tc046_legacy_fixture_loads_under_quire(tmp_path: pathlib.Path) -> None:
 # ─── TC-047: the references ──────────
 
 
+@pytest.mark.trace("TC-047", "FR-006-AC-2")
 def test_tc047_every_export_carries_a_reference_to_its_mapped_file() -> None:
     """TC-047: FR-006-AC-2: each of the nine exported artifact types carries a
     ``data_schema.schema`` naming the existing file the FR-005 map fixes."""
@@ -225,6 +230,7 @@ def test_tc047_every_export_carries_a_reference_to_its_mapped_file() -> None:
         assert (PKG_ROOT / expected).is_file(), f"{name}: {expected} does not exist"
 
 
+@pytest.mark.trace("TC-047", "FR-006-AC-2")
 def test_tc047_exports_equals_the_referencing_set() -> None:
     """TC-047: FR-006-AC-2: ``semantic.exports`` equals the set of artifact types
     carrying a ``data_schema`` reference — in both directions."""
@@ -238,6 +244,7 @@ def test_tc047_exports_equals_the_referencing_set() -> None:
 # ─── TC-048: the published quire floor still loads the module ────────────
 
 
+@pytest.mark.trace("TC-048", "FR-006-AC-3")
 def test_tc048_registry_lists_ten_archetypes_with_the_block_present() -> None:
     """TC-048: FR-006-AC-3: ``Registry.load_from`` over the module's parent
     directory lists all ten archetypes with the ``semantic`` block and the nine
@@ -250,6 +257,7 @@ def test_tc048_registry_lists_ten_archetypes_with_the_block_present() -> None:
     assert _registry_archetypes(PKG_ROOT.parent) == ARCHETYPE_NAMES
 
 
+@pytest.mark.trace("TC-048", "FR-006-AC-3")
 @pytest.mark.parametrize("name", sorted(_SKELETON_FILE), ids=lambda n: n)
 def test_tc048_validate_document_passes_every_skeleton(name: str) -> None:
     """TC-048: FR-006-AC-3: ``validate_document`` passes every skeleton with the

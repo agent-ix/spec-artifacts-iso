@@ -88,6 +88,7 @@ def _skeleton(declaration: dict) -> bytes:
 # ---------------------------------------------------------------------------
 # TC-051 — the clause mapping
 # ---------------------------------------------------------------------------
+@pytest.mark.trace("TC-051", "FR-007-AC-4")
 def test_tc051_skeleton_clause_maps_to_a_clause_ref(
     declaration: dict, bundle: dict
 ) -> None:
@@ -107,6 +108,7 @@ def test_tc051_skeleton_clause_maps_to_a_clause_ref(
     assert not validation_errors(result.record, "FR.json", bundle)
 
 
+@pytest.mark.trace("TC-051", "FR-007-AC-4")
 def test_tc051_source_span_only_with_a_caller_source_identity(
     declaration: dict, bundle: dict
 ) -> None:
@@ -137,6 +139,7 @@ def test_tc051_source_span_only_with_a_caller_source_identity(
     assert not validation_errors(without.record, "FR.json", bundle)
 
 
+@pytest.mark.trace("TC-051", "FR-007-AC-4", "FR-007-CON-2")
 def test_tc051_invariants_text_is_the_fence_body_byte_for_byte(
     declaration: dict,
 ) -> None:
@@ -162,6 +165,7 @@ def test_tc051_invariants_text_is_the_fence_body_byte_for_byte(
     ), "the clause text reached the record; FR-007 keeps it beside the record"
 
 
+@pytest.mark.trace("TC-051", "FR-007-CON-2")
 def test_tc051_clause_text_is_opaque_bytes(declaration: dict) -> None:
     """TC-051: FR-007-CON-2: the clause text is carried as opaque bytes. A body
     that is not OCL at all — that no tokenizer, typechecker or evaluator would
@@ -177,6 +181,7 @@ def test_tc051_clause_text_is_opaque_bytes(declaration: dict) -> None:
     assert "not ocl at all (((" in mutated.invariants_text[0]["text"]
 
 
+@pytest.mark.trace("TC-051", "FR-007-AC-4")
 @pytest.mark.parametrize(
     ("fixture", "line", "needle"),
     [
@@ -201,6 +206,7 @@ def test_tc051_each_clause_defect_fails_naming_the_line(
     assert needle in failure.message
 
 
+@pytest.mark.trace("TC-051", "FR-007-AC-4")
 def test_tc051_prose_invariants_leaves_the_property_absent(
     declaration: dict, bundle: dict
 ) -> None:
@@ -216,6 +222,7 @@ def test_tc051_prose_invariants_leaves_the_property_absent(
         assert not validation_errors(result.record, "FR.json", bundle), fixture
 
 
+@pytest.mark.trace("TC-051")
 def test_a_prose_clause_heading_yields_no_clause_ref(
     declaration: dict, bundle: dict
 ) -> None:
@@ -333,6 +340,7 @@ def _open_violation(
     return []
 
 
+@pytest.mark.trace("TC-059", "FR-007-CON-3")
 def test_tc059_no_module_or_support_file_writes_a_document() -> None:
     """TC-059: FR-007-CON-3: no file in the module tree and no file in the test
     support writes a document — the tree is enumerated, not sampled, so a new
@@ -352,6 +360,7 @@ def test_tc059_no_module_or_support_file_writes_a_document() -> None:
     )
 
 
+@pytest.mark.trace("TC-059", "FR-007-CON-3")
 def test_tc059_the_mapping_opens_every_document_read_only() -> None:
     """TC-059: FR-007-CON-3: the reference mapping reads every document with a
     read-only API and no other file API, so no document it maps can be
@@ -377,6 +386,7 @@ def test_tc059_the_mapping_opens_every_document_read_only() -> None:
     )
 
 
+@pytest.mark.trace("TC-059", "FR-007-CON-3")
 def test_tc059_the_module_ships_no_render_template() -> None:
     """TC-059: FR-007-CON-3: the module carries no render template either — no
     file in the shipped tree can derive Markdown from a record without any

@@ -111,6 +111,7 @@ def _golden(model: str) -> dict:
 # ---------------------------------------------------------------------------
 # Failures the mapping reports, naming the document line
 # ---------------------------------------------------------------------------
+@pytest.mark.trace("TC-045", "FR-007-AC-6")
 def test_tc045_wrong_prefix_row_id_fails_naming_the_line(declaration: dict) -> None:
     """TC-045: FR-007-AC-6: a typed-table row whose id does not match the
     locator's `id_pattern` fails the mapping naming the line, and no record is
@@ -122,6 +123,7 @@ def test_tc045_wrong_prefix_row_id_fails_naming_the_line(declaration: dict) -> N
     assert r"^FR-001-CON-\d+$" in failure.message
 
 
+@pytest.mark.trace("TC-045", "FR-007-AC-6")
 def test_tc045_repeated_row_id_fails_naming_the_line(declaration: dict) -> None:
     """TC-045: FR-007-AC-6: a row id repeated within one table fails the
     mapping naming the repeat's line and the line it first appeared on.
@@ -132,6 +134,7 @@ def test_tc045_repeated_row_id_fails_naming_the_line(declaration: dict) -> None:
     assert "first at line 20" in failure.message
 
 
+@pytest.mark.trace("TC-045", "FR-007-AC-6")
 def test_tc045_duplicated_heading_fails_naming_the_line(declaration: dict) -> None:
     """TC-045: FR-007-AC-6: a level-2 heading the mapping names twice fails
     naming the second occurrence's line.
@@ -141,6 +144,7 @@ def test_tc045_duplicated_heading_fails_naming_the_line(declaration: dict) -> No
     assert "Description" in failure.message
 
 
+@pytest.mark.trace("TC-045", "FR-007-AC-6")
 def test_tc045_malformed_story_fails_naming_the_line(declaration: dict) -> None:
     """TC-045: FR-007-AC-6: a `## Story` section that does not carry the
     As-a / I-want / So-that anchors fails the mapping naming the section's line.
@@ -152,6 +156,7 @@ def test_tc045_malformed_story_fails_naming_the_line(declaration: dict) -> None:
         assert anchor in failure.message
 
 
+@pytest.mark.trace("TC-045")
 def test_tc045_all_failures_in_one_document_are_reported_together(
     declaration: dict,
 ) -> None:
@@ -338,6 +343,7 @@ def test_a_second_subsection_for_one_row_fails_naming_the_line(
 # ---------------------------------------------------------------------------
 # Failures the schema reports, naming the JSON path
 # ---------------------------------------------------------------------------
+@pytest.mark.trace("TC-045", "FR-005-AC-4")
 def test_tc045_extra_property_fails_the_schema_naming_the_path(
     declaration: dict, bundle: dict
 ) -> None:
@@ -353,6 +359,7 @@ def test_tc045_extra_property_fails_the_schema_naming_the_path(
     assert any("notAModelProperty" in error for error in errors)
 
 
+@pytest.mark.trace("TC-045", "FR-005-AC-4")
 def test_tc045_removed_required_section_fails_the_schema(
     declaration: dict, bundle: dict
 ) -> None:
@@ -366,6 +373,7 @@ def test_tc045_removed_required_section_fails_the_schema(
     assert errors == [": 'description' is a required property"]
 
 
+@pytest.mark.trace("TC-045", "FR-005-AC-4")
 def test_tc045_typed_table_with_no_rows_fails_min_items(
     declaration: dict, bundle: dict
 ) -> None:
@@ -380,6 +388,7 @@ def test_tc045_typed_table_with_no_rows_fails_min_items(
     assert errors == ["acceptanceCriteria: [] should be non-empty"]
 
 
+@pytest.mark.trace("TC-045", "FR-005-AC-4")
 def test_tc045_line_zero_fails_the_minimum_boundary(
     declaration: dict, bundle: dict
 ) -> None:
@@ -393,6 +402,7 @@ def test_tc045_line_zero_fails_the_minimum_boundary(
     assert errors == ["acceptanceCriteria/0/line: 0 is less than the minimum of 1"]
 
 
+@pytest.mark.trace("TC-045", "FR-005-AC-4")
 def test_tc045_empty_verification_cell_fails_min_length(
     declaration: dict, bundle: dict
 ) -> None:
@@ -415,6 +425,7 @@ def test_tc045_empty_verification_cell_fails_min_length(
     ]
 
 
+@pytest.mark.trace("TC-045", "FR-005-AC-4")
 def test_tc045_status_outside_its_pattern_fails_the_schema(
     declaration: dict, bundle: dict
 ) -> None:
@@ -432,6 +443,7 @@ def test_tc045_status_outside_its_pattern_fails_the_schema(
 # ---------------------------------------------------------------------------
 # CRLF — both halves
 # ---------------------------------------------------------------------------
+@pytest.mark.trace("TC-045")
 def test_tc045_crlf_document_trims_cells_and_keeps_section_bytes(
     declaration: dict, bundle: dict
 ) -> None:
@@ -478,6 +490,7 @@ def test_tc045_crlf_document_trims_cells_and_keeps_section_bytes(
 # ---------------------------------------------------------------------------
 # Layer attribution
 # ---------------------------------------------------------------------------
+@pytest.mark.trace("TC-045")
 def test_tc045_each_case_is_reported_by_exactly_one_layer(
     declaration: dict, bundle: dict
 ) -> None:

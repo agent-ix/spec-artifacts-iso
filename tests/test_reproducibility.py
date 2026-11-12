@@ -10,6 +10,8 @@ import pathlib
 import subprocess
 import time
 
+import pytest
+
 REPO_ROOT = pathlib.Path(__file__).resolve().parent.parent
 PKG_ROOT = REPO_ROOT / "spec_artifacts_iso"
 SCHEMAS_DIR = PKG_ROOT / "schemas"
@@ -63,6 +65,7 @@ def _restore(snapshot: dict[pathlib.Path, bytes]) -> None:
             path.write_bytes(data)
 
 
+@pytest.mark.trace("TC-047", "TC-056")
 def test_tc056_two_schema_runs_reproduce_the_committed_bundle() -> None:
     """TC-056: NFR-001 metric 1: two consecutive `make schemas` runs on one tree
     produce byte-identical bundles for every emitted file, and that bundle is
@@ -126,6 +129,7 @@ def test_tc056_two_schema_runs_reproduce_the_committed_bundle() -> None:
     )
 
 
+@pytest.mark.trace("TC-058")
 def test_tc058_schemas_check_completes_within_the_threshold() -> None:
     """TC-058: NFR-001 metric 3: `make schemas-check` completes within 30 s on
     the reference machine.

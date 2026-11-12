@@ -78,6 +78,16 @@ registry in the manifest. A module redeclaring a verb another module already dec
 replace it; the first declaration stands and the collision is a non-fatal diagnostic. Load order
 is module load order, so the merged vocabulary is deterministic.
 
+### Archetype `allowed_links` and the NFR `mitigates` edge
+
+Each archetype's `allowed_links` is the set of verbs a document of that archetype may author
+outward; a verb outside it is flagged `disallowed-edge-type` by single-file `quire validate`.
+The `NFR` archetype's `allowed_links` **SHALL** include `mitigates`. A security or safety NFR
+(`quality_attribute` `security` or `safety`) is required by `spec-objects-security` FR-008 and
+`spec-objects-safety` FR-009 to mitigate a threat, hazard or failure mode, so the NFR-to-target
+`mitigates` edge is a legitimate authored edge, not a vocabulary violation. The verb already
+exists (`governance`); this adds it to the NFR's allowance and adds no verb.
+
 ### Unknown verbs are advisory
 
 A relationship whose verb is in no loaded module's vocabulary produces an **advisory**
@@ -130,6 +140,7 @@ quire-rs FR-058's upward-trace relations follow this decision: they accept `sati
 | FR-004-AC-4 | Every entry in `roles` carries a non-empty `description`. | Test (TC-020) |
 | FR-004-AC-5 | The manifest declares both registries, and an `edge_types` entry that loses its `category` costs the module every archetype at load — a broken entry does not load partially. Asserted against the engine that reads the vocabulary, with an unmutated control proving the load is real. | Test (TC-021) |
 | FR-004-AC-6 | `specifies` declares the inverse `specified_by`, so the object-FR to behavioral-FR edge is readable from the behavioral requirement. | Test (TC-065) |
+| FR-004-AC-7 | The `NFR` archetype's `allowed_links` contains `mitigates`: single-file `quire validate` of an NFR carrying a `mitigates` relationship emits no `disallowed-edge-type` for it, while an NFR carrying a verb outside `allowed_links` still does. | Test (TC-070) |
 
 **What FR-004-AC-5 no longer claims.** Until PLAT-902 this criterion was
 verified by validating the manifest against a copy of the FR-035 module-manifest
