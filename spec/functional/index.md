@@ -14,3 +14,4 @@ description: "Index of artifacts in this directory."
 * [FR-005: Semantic data schemas for ISO artifact types are emitted from TypeSpec](./FR-005-semantic-data-schemas.md)
 * [FR-006: The manifest declares the semantic block](./FR-006-semantic-manifest-block.md)
 * [FR-007: Markdown mappings and round-trip policy for the semantic records](./FR-007-markdown-mappings.md)
+* [FR-008: Requirement archetypes carry an optional enumerated criticality field](./FR-008-criticality-field.md)
