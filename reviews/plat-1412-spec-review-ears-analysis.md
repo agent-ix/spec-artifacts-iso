@@ -32,3 +32,4 @@ AC-4 and AC-6 are each one observable outcome.
 | --- | --- | --- |
 | FND-001 | fixed | Round 1 (42fc231): "The module **SHALL NOT** supply a default for `criticality`." |
 | FND-002 | still-open | Round 1 (42fc231): the criterion was renumbered AC-5 -> AC-6 but not split; it still combines `High` and `""` and two outcomes in one row. |
+| FND-002 | fixed | Round 2 (4f05579): split into FR-008-AC-6 (`High`, wrong case, not normalised) and FR-008-AC-7 (`""`, not treated as absent), each with its own diagnostic. |
