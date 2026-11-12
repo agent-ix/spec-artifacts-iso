@@ -40,7 +40,7 @@ The `Spec` archetype (kind `spec`) is a doc-backed container that holds ISO-styl
 
 | Kind | ID pattern | Description |
 |:-----|:-----------|:------------|
-| `FR` | `FR-{next:03d}` | Functional Requirement (ISO/IEC/IEEE 29148): required `## Description` (normative shall/must language) + `## Acceptance Criteria` (`ID \| Criteria \| Verification` table, `{id}-AC-N`) + `## Dependencies`; optional `## Inputs`/`## Outputs`/`## Behavior` and a `## Constraints` table (`{id}-CON-N`). |
+| `FR` | `FR-{next:03d}` | Functional Requirement (ISO/IEC/IEEE 29148): required `## Description` (normative shall/must language) + `## Acceptance Criteria` (`ID \| Criteria \| Verification` table, `{id}-AC-N`) + `## Dependencies`; optional `## Inputs`/`## Outputs`/`## Behavior` and a `## Constraints` table (`{id}-CON-N`). `FR`, `NFR`, `StR` and `US` also accept an optional `criticality` frontmatter field (`low`, `medium` or `high`; never defaulted; see below). |
 | `NFR` | `NFR-{next:03d}` | Non-Functional Requirement / quality constraint (ISO/IEC/IEEE 29148, attribute from ISO 25010): required `## Statement` + `## Measurement and Evaluation` (`Metric \| Target \| Threshold \| Method` table) + `## Verification`; `quality_attribute` is a frontmatter enum. |
 | `StR` | `StR-{next:03d}` | Stakeholder Requirement (ISO/IEC/IEEE 29148 stakeholder triad): required `## Stakeholder Need` + `## Rationale` + `## Validation Criteria`; stakeholders, context, constraints, and traceability are optional. |
 | `US` | `US-{next:03d}` | User Story (ISO/IEC/IEEE 29148): a single required `## Story` matching the "As a … / I want … / So that …" shape; all other sections are contextual and informative. |
@@ -86,6 +86,11 @@ See https://github.com/agent-ix/quire-cli#usage-instructions.
 - **NFR body**: required = `## Statement` + `## Measurement and Evaluation`
   (`Metric|Target|Threshold|Method` table) + `## Verification`;
   `quality_attribute` is a frontmatter enum (ISO 25010), not a section.
+- **`criticality:` frontmatter** is an optional enum (`low`, `medium`, `high`) on
+  `StR`, `US`, `FR` and `NFR`. A person assigns it; the module supplies no
+  default, so an omitted field means no criticality has been assigned. It rates
+  how much a requirement's failure matters and is a separate axis from any
+  software safety class.
 - **AC Verification cells** (FR/NFR) are owned by spec-artifacts-process:
   its lint rule allows the ISO 29148 methods — `Inspection`, `Analysis`,
   `Demonstration`, `Test` — plus every method id in its catalog. Tests bind
