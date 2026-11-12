@@ -13,6 +13,23 @@
       "type": "string",
       "const": "StR"
     },
+    "criticality": {
+      "anyOf": [
+        {
+          "type": "string",
+          "const": "low"
+        },
+        {
+          "type": "string",
+          "const": "medium"
+        },
+        {
+          "type": "string",
+          "const": "high"
+        }
+      ],
+      "description": "Human-assigned consequence of failure; never defaulted."
+    },
     "object": {
       "$ref": "https://schemas.agent-ix.org/agent-ix/spec-artifacts-iso/ObjectTypeName.json"
     },

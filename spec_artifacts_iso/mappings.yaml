@@ -94,6 +94,10 @@ models:
         kind: frontmatter
         source: {key: type}
         lossless: false
+      criticality:
+        kind: frontmatter
+        source: {key: criticality}
+        lossless: false
       object:
         kind: frontmatter
         source: {key: object}
@@ -195,6 +199,10 @@ models:
         kind: frontmatter
         source: {key: quality_attribute}
         lossless: false
+      criticality:
+        kind: frontmatter
+        source: {key: criticality}
+        lossless: false
       object:
         kind: frontmatter
         source: {key: object}
@@ -284,6 +292,10 @@ models:
       type:
         kind: frontmatter
         source: {key: type}
+        lossless: false
+      criticality:
+        kind: frontmatter
+        source: {key: criticality}
         lossless: false
       object:
         kind: frontmatter
@@ -382,6 +394,10 @@ models:
       type:
         kind: frontmatter
         source: {key: type}
+        lossless: false
+      criticality:
+        kind: frontmatter
+        source: {key: criticality}
         lossless: false
       object:
         kind: frontmatter
