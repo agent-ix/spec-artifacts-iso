@@ -76,8 +76,17 @@ Method` rows — so NFR rows trace to `NFR-001 (metric n)` (SR-003 FND-006).
 | FR-007 | FR-007-AC-4 | TC-051 | ✅ Complete |
 | FR-007 | FR-007-AC-6 | TC-045 | ✅ Complete |
 | FR-007 | FR-007-AC-7 | TC-052 | ✅ Complete |
+| FR-007 | FR-007-AC-8 | TC-069 | ✅ Complete |
 | FR-007 | FR-007-CON-2 | TC-051 | ✅ Complete |
 | FR-007 | FR-007-CON-3 | TC-059 | ✅ Complete |
+| FR-008 | FR-008-AC-1 | TC-066 | ✅ Complete |
+| FR-008 | FR-008-AC-2 | TC-067 | ✅ Complete |
+| FR-008 | FR-008-AC-3 | TC-066 | ✅ Complete |
+| FR-008 | FR-008-AC-4 | TC-067 | ✅ Complete |
+| FR-008 | FR-008-AC-5 | TC-068 | ✅ Complete |
+| FR-008 | FR-008-AC-6 | TC-068 | ✅ Complete |
+| FR-008 | FR-008-AC-7 | TC-068 | ✅ Complete |
+| FR-008 | FR-008-AC-8 | TC-066 | ✅ Complete |
 
 ### Non-Functional Requirement Coverage
 
@@ -125,6 +134,10 @@ Method` rows — so NFR rows trace to `NFR-001 (metric n)` (SR-003 FND-006).
 | TC-055 | `quoin module install path:<module root>` on the published quoin installs the module with no diagnostic, so the block is inert to every quoin a user can install today; output recorded verbatim and the previous registry version restored (FR-006-AC-6) | Manual | P1 | FR-006-AC-6 | ✅ |
 | TC-064 | quoin main resolves `semantic.exports` and `data_schema` against `object_types` only (`src/semantic/manifest.ts:175-186,258`), so an artifact-type export yields `semantic.unknown-export` and `semantic.export-without-schema`; a source reading, because no quoin carrying it is published (agent-ix/quoin#336) (FR-006-AC-9) | Manual | P2 | FR-006-AC-9 | ✅ |
 | TC-065 | `specifies` declares inverse `specified_by` (`test_fr004_ac6_specifies_declares_the_specified_by_inverse`) | Unit | P0 | FR-004-AC-6 | ✅ |
+| TC-066 | The `FR`, `NFR`, `StR` and `US` frontmatter schemas each declare an optional inline `criticality` enum `low`, `medium`, `high` with no shared enumeration file; the projected record schemas carry it as optional; neither schema family gives it a `default` (`test_criticality::test_fr008_ac1_*`, `test_fr008_ac3_*`, `test_fr008_ac8_*`) | Integration | P1 | FR-008-AC-1, FR-008-AC-3, FR-008-AC-8 | ✅ |
+| TC-067 | Each enumerated `criticality` value validates for all four archetypes, and a document omitting it validates (`test_criticality::test_fr008_ac2_*`, `test_fr008_ac4_*`) | Integration | P1 | FR-008-AC-2, FR-008-AC-4 | ✅ |
+| TC-068 | `criticality` values `critical`, `High` and `""` fail `quire validate` for all four archetypes with a diagnostic naming the field (`test_criticality::test_fr008_invalid_values_*`) | Integration | P1 | FR-008-AC-5, FR-008-AC-6, FR-008-AC-7 | ✅ |
+| TC-069 | `mappings.yaml` maps `criticality` as written for all four archetypes, and a document without the key yields a record without it (`test_criticality::test_fr007_ac8_*`) | Integration | P1 | FR-007-AC-8 | ✅ |
 | TC-056 | Two consecutive `make schemas` runs on one tree produce byte-identical bundles for every emitted file (NFR-001 metric 1) | Property | P1 | NFR-001 (metric 1) | ✅ |
 | TC-057 | `make schemas-check` and `make test` exit 0 with the network namespace disabled after `npm ci` and `poetry install` (NFR-001 metric 2) | Manual | P2 | NFR-001 (metric 2) | ✅ |
 | TC-058 | `make schemas-check` completes within 30 s on the reference machine (NFR-001 metric 3) | Benchmark | P3 | NFR-001 (metric 3) | ✅ |

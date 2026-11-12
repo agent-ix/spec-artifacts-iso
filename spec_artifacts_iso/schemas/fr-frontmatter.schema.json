@@ -19,6 +19,14 @@
     "type": {
       "const": "FR"
     },
+    "criticality": {
+      "description": "Human-assigned criticality; optional, never defaulted",
+      "enum": [
+        "low",
+        "medium",
+        "high"
+      ]
+    },
     "object": {
       "type": "string"
     },

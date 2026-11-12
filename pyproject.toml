@@ -132,6 +132,7 @@ filterwarnings = ["error"]
 
 markers = [
     "integration: Integration tests (require Kind cluster)",
+    "trace: criterion ids the test verifies (read by quire matrix)",
 ]
 
 [tool.ruff]

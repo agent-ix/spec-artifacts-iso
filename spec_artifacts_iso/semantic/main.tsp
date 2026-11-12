@@ -292,6 +292,8 @@ model FR {
   id: FRId;
   title: NonEmptyText;
   type: "FR";
+  /** Human-assigned consequence of failure; never defaulted. */
+  criticality?: "low" | "medium" | "high";
   object?: ObjectTypeName;
   status?: ArtifactStatus;
   relationships: Relationship[];
@@ -313,6 +315,8 @@ model NFR {
   title: NonEmptyText;
   type: "NFR";
   qualityAttribute?: QualityAttribute;
+  /** Human-assigned consequence of failure; never defaulted. */
+  criticality?: "low" | "medium" | "high";
   object?: ObjectTypeName;
   status?: ArtifactStatus;
   relationships: Relationship[];
@@ -332,6 +336,8 @@ model StR {
   id: StRId;
   title: NonEmptyText;
   type: "StR";
+  /** Human-assigned consequence of failure; never defaulted. */
+  criticality?: "low" | "medium" | "high";
   object?: ObjectTypeName;
   status?: ArtifactStatus;
   relationships: Relationship[];
@@ -353,6 +359,8 @@ model US {
   id: USId;
   title: NonEmptyText;
   type: "US";
+  /** Human-assigned consequence of failure; never defaulted. */
+  criticality?: "low" | "medium" | "high";
   object?: ObjectTypeName;
   status?: ArtifactStatus;
   relationships: Relationship[];

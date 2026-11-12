@@ -19,6 +19,14 @@
     "type": {
       "const": "NFR"
     },
+    "criticality": {
+      "description": "Human-assigned criticality; optional, never defaulted",
+      "enum": [
+        "low",
+        "medium",
+        "high"
+      ]
+    },
     "quality_attribute": {
       "description": "ISO 25010 quality attribute (replaces the retired '## Quality Attribute' body section — format-walkthrough decision #9)",
       "enum": [
