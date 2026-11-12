@@ -85,6 +85,7 @@ def _build(model: str, declaration: dict, source_identity: str | None = ...):
 # ---------------------------------------------------------------------------
 # TC-044 — the golden records
 # ---------------------------------------------------------------------------
+@pytest.mark.trace("TC-044", "FR-005-AC-4", "FR-007-AC-2")
 def test_tc044_every_skeleton_reproduces_its_golden_record(
     declaration: dict, bundle: dict
 ) -> None:
@@ -115,6 +116,7 @@ def test_tc044_every_skeleton_reproduces_its_golden_record(
         assert not errors, f"{model} record does not validate: {errors}"
 
 
+@pytest.mark.trace("TC-044", "FR-007-AC-2")
 def test_tc044_golden_filenames_are_the_archetype_names(declaration: dict) -> None:
     """TC-044: FR-007-AC-2: `examples/<type>.record.json` is named by the
     archetype name — `master-requirements`, `index`, `Glossary` — not the model
@@ -129,6 +131,7 @@ def test_tc044_golden_filenames_are_the_archetype_names(declaration: dict) -> No
         assert model_declaration["example"] == f"examples/{model}.record.json"
 
 
+@pytest.mark.trace("TC-044")
 def test_tc044_provenance_carries_the_bytes_as_read(declaration: dict) -> None:
     """TC-044: FR-007 Behavior: `provenance.digest` is the SHA-256 of the
     document bytes as read with no line-ending normalization, `path` is the
@@ -159,6 +162,7 @@ def test_tc044_provenance_carries_the_bytes_as_read(declaration: dict) -> None:
 # ---------------------------------------------------------------------------
 # TC-052 — the declaration
 # ---------------------------------------------------------------------------
+@pytest.mark.trace("TC-052", "FR-007-AC-1")
 def test_tc052_mappings_validates_against_its_own_schema(declaration: dict) -> None:
     """TC-052: FR-007-AC-1: `mappings.yaml` validates against
     `mappings.schema.json`, so a malformed mapping is a schema error rather
@@ -175,6 +179,7 @@ def test_tc052_mappings_validates_against_its_own_schema(declaration: dict) -> N
     assert not errors, f"mappings.yaml does not validate: {errors}"
 
 
+@pytest.mark.trace("TC-052", "FR-007-AC-1")
 def test_tc052_every_model_property_is_declared_exactly_once(
     declaration: dict, bundle: dict, manifest: dict
 ) -> None:
@@ -201,6 +206,7 @@ def test_tc052_every_model_property_is_declared_exactly_once(
         )
 
 
+@pytest.mark.trace("TC-052", "FR-007-AC-1")
 def test_tc052_only_the_eight_kinds_and_each_is_used(
     declaration: dict, manifest: dict
 ) -> None:
@@ -226,6 +232,7 @@ def test_tc052_only_the_eight_kinds_and_each_is_used(
     ), f"kinds the manifest lists and nothing uses: {sorted(set(eight) - used)}"
 
 
+@pytest.mark.trace("TC-052", "FR-007-AC-1")
 def test_tc052_table_columns_equal_the_locator_columns(
     declaration: dict, manifest: dict
 ) -> None:
@@ -266,6 +273,7 @@ def test_tc052_table_columns_equal_the_locator_columns(
     )
 
 
+@pytest.mark.trace("TC-052", "FR-007-AC-1")
 def test_tc052_row_id_patterns_match_the_locator_patterns(
     declaration: dict, manifest: dict
 ) -> None:
@@ -297,6 +305,7 @@ def test_tc052_row_id_patterns_match_the_locator_patterns(
             assert entry["row_id"]["column"] == locator["assert"]["id_column"]
 
 
+@pytest.mark.trace("TC-052", "FR-007-AC-7")
 def test_tc052_round_trip_policy_and_lossless_flags(declaration: dict) -> None:
     """TC-052: FR-007-AC-7: every model records `authority: markdown` and
     `round_trip: derived`; `section` and `ocl-clause` properties carry
@@ -314,6 +323,7 @@ def test_tc052_round_trip_policy_and_lossless_flags(declaration: dict) -> None:
             )
 
 
+@pytest.mark.trace("TC-052", "FR-007-AC-7")
 def test_tc052_dropped_frontmatter_keys_are_declared(
     declaration: dict, bundle: dict
 ) -> None:
@@ -375,6 +385,7 @@ def test_tc052_dropped_frontmatter_keys_are_declared(
 # ---------------------------------------------------------------------------
 # TC-053 — the Verification split and the constraint row
 # ---------------------------------------------------------------------------
+@pytest.mark.trace("TC-053", "FR-007-AC-3")
 def test_tc053_acceptance_rows_split_the_verification_cell(
     declaration: dict,
 ) -> None:
@@ -397,6 +408,7 @@ def test_tc053_acceptance_rows_split_the_verification_cell(
     assert criteria[0]["line"] < criteria[1]["line"], "rows are in authored order"
 
 
+@pytest.mark.trace("TC-053", "FR-007-AC-3")
 def test_tc053_constraint_row_carries_its_type_and_validation(
     declaration: dict,
 ) -> None:
@@ -415,6 +427,7 @@ def test_tc053_constraint_row_carries_its_type_and_validation(
     }, "a cell with no parentheses is `method` alone, with no `annotation`"
 
 
+@pytest.mark.trace("TC-053", "FR-007-AC-3")
 def test_tc053_verification_split_keeps_every_byte() -> None:
     """TC-053: FR-007-AC-3: the split keeps every byte the author wrote —
     `annotation` is the text between the first `(` and the last `)` verbatim,

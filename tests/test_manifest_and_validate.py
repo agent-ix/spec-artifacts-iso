@@ -23,6 +23,7 @@ import json
 import pathlib
 import re
 import shutil
+import subprocess
 
 import pytest
 import yaml
@@ -58,6 +59,7 @@ def _artifact_types():
 # ─── FR-003: master-requirements archetype ───────────────────────────────
 
 
+@pytest.mark.trace("TC-003", "FR-003-AC-1")
 def test_fr003_ac1_master_requirements_archetype_registered() -> None:
     """TC-003: FR-003-AC-1: a ``master-requirements`` artifact_type is declared with a
     frontmatter_schema_ref and a body_extraction carrying assert facets."""
@@ -75,6 +77,7 @@ def test_fr003_ac1_master_requirements_archetype_registered() -> None:
     ), "master-requirements has no assert facets"
 
 
+@pytest.mark.trace("TC-004", "FR-003-AC-2", "FR-003-CON-2")
 def test_fr003_ac2_master_requirements_frontmatter_schema_shape() -> None:
     """TC-004: FR-003-AC-2: the master-requirements frontmatter schema
     requires type/name/org/component_type, does NOT require id/title, and
@@ -248,6 +251,7 @@ _PLACEHOLDER_TOKENS = ("TODO", "TBD", "{{", "}}", "placeholder", "none specified
 # ─── Unified shape (FR-002-AC-1 / AC-4) ──────────────────────────────────
 
 
+@pytest.mark.trace("TC-005", "FR-002-AC-1")
 @pytest.mark.parametrize("at", _artifact_types(), ids=lambda at: at["name"])
 def test_fr002_ac1_unified_shape_no_retired_fields(at: dict) -> None:
     """TC-005.
@@ -265,6 +269,7 @@ def test_fr002_ac1_unified_shape_no_retired_fields(at: dict) -> None:
     ), f"{at['name']} has no assert facets"
 
 
+@pytest.mark.trace("TC-006", "FR-002-AC-1")
 def test_fr002_ac1_no_template_dir_or_refs() -> None:
     """TC-006: FR-002-AC-1: templates/ is removed and no archetype references one."""
     assert not (PKG_ROOT / "templates").exists(), "templates/ directory still present"
@@ -273,6 +278,7 @@ def test_fr002_ac1_no_template_dir_or_refs() -> None:
     assert ".md.j2" not in raw, "manifest still references a .md.j2 template"
 
 
+@pytest.mark.trace("TC-007", "FR-002-AC-4")
 @pytest.mark.parametrize("at", _artifact_types(), ids=lambda at: at["name"])
 def test_fr002_ac4_headings_unique_per_level(at: dict) -> None:
     """TC-007: FR-002-AC-4: declared section headings are unique per level."""
@@ -286,6 +292,7 @@ def test_fr002_ac4_headings_unique_per_level(at: dict) -> None:
 # ─── Skeleton presence (FR-002-AC-5 structural half) ─────────────────────
 
 
+@pytest.mark.trace("TC-008")
 @pytest.mark.parametrize("name", sorted(_SKELETON_FILE), ids=lambda n: n)
 def test_fr002_skeleton_exists_and_has_required_headings(name: str) -> None:
     """TC-008.
@@ -303,6 +310,7 @@ def test_fr002_skeleton_exists_and_has_required_headings(name: str) -> None:
 # ─── I1: assert ↔ skeleton parity (FR-002-AC-6) ──────────────────────────
 
 
+@pytest.mark.trace("TC-009", "FR-002-AC-6")
 @pytest.mark.parametrize("name", sorted(_SKELETON_FILE), ids=lambda n: n)
 def test_fr002_ac6_asserts_derived_from_skeleton(name: str) -> None:
     """TC-009: FR-002-AC-6 (I1): the manifest asserts are consistent with / derived from
@@ -350,6 +358,7 @@ def test_fr002_ac6_asserts_derived_from_skeleton(name: str) -> None:
 # ─── I2: literal consistency, both directions (FR-002-AC-7) ──────────────
 
 
+@pytest.mark.trace("TC-010", "FR-002-AC-7")
 @pytest.mark.parametrize("name", sorted(_SKELETON_FILE), ids=lambda n: n)
 def test_fr002_ac7_literal_consistency_both_directions(name: str) -> None:
     """TC-010.
@@ -384,6 +393,7 @@ def test_fr002_ac7_literal_consistency_both_directions(name: str) -> None:
 # ─── I3: locator-kind distinction + substantive bodies (FR-002-AC-8) ─────
 
 
+@pytest.mark.trace("TC-011", "FR-002-AC-8")
 @pytest.mark.parametrize("name", sorted(_SKELETON_FILE), ids=lambda n: n)
 def test_fr002_ac8_locator_kinds_and_substantive_bodies(name: str) -> None:
     """TC-011: FR-002-AC-8 (I3): heading-presence locators are distinguished from
@@ -449,6 +459,7 @@ def _quire_doc_validator():
     return quire
 
 
+@pytest.mark.trace("TC-012", "FR-002-AC-5")
 @pytest.mark.parametrize("name", sorted(_SKELETON_FILE), ids=lambda n: n)
 def test_it002_ac1_skeleton_validates(name: str) -> None:
     """TC-012: IT-002-AC-1 / FR-002-AC-5: a filled skeleton passes validate_document.
@@ -473,6 +484,7 @@ def test_fr_authoring_contract_offers_satisfies() -> None:
     assert "satisfies" in {r["verb"] for r in contract["relationships"]}
 
 
+@pytest.mark.trace("TC-013", "FR-002-AC-2", "FR-002-AC-3")
 def test_it002_ac2_fr_mutations_fail() -> None:
     """TC-013: IT-002-AC-2: deleting a section, breaking AC columns, breaking an AC id,
     and duplicating a heading each fail validation with the expected reason."""
@@ -482,9 +494,14 @@ def test_it002_ac2_fr_mutations_fail() -> None:
     base = _skeleton_text("FR")
     root = str(PKG_ROOT)
 
-    def reasons(doc: str) -> set[str]:
+    def reasons(doc: str, lined: bool = True) -> set[str]:
         res = quire.validate_document("FR", root, doc)
         assert not res["is_valid"], doc
+        # FR-002-AC-2: a diagnostic about present content is line-numbered. A
+        # deleted section has no line to point at, so it is exempt.
+        assert not lined or all(
+            isinstance(e.get("line"), int) and e["line"] > 0 for e in res["errors"]
+        ), res["errors"]
         return {e["reason"] for e in res["errors"]}
 
     # a. delete the Acceptance Criteria section
@@ -496,13 +513,14 @@ def test_it002_ac2_fr_mutations_fail() -> None:
     assert (
         "## Acceptance Criteria" not in deleted and deleted != base
     ), "AC-deletion mutation did not apply (section order changed?)"
-    assert "missing" in reasons(deleted)
+    assert "missing" in reasons(deleted, lined=False)
     # b. break an Acceptance-Criteria column header
     bad_cols = base.replace(
         "| ID | Criteria | Verification |", "| ID | Criterion | Verification |"
     )
     assert "assert" in reasons(bad_cols)
-    # c. renumber an AC id to a non-matching prefix ({id} interpolation)
+    # c. FR-002-AC-3: a row prefixed with a different artifact's id ({id}
+    #    interpolation) fails
     bad_id = base.replace("| FR-001-AC-1 |", "| FR-999-AC-1 |")
     assert "assert" in reasons(bad_id)
     # d. duplicate a heading at the same level
@@ -512,6 +530,7 @@ def test_it002_ac2_fr_mutations_fail() -> None:
     assert "duplicate-heading" in reasons(dup)
 
 
+@pytest.mark.trace("TC-014")
 def test_str_validation_criteria_table_is_binding() -> None:
     """TC-014: StR binding criteria are addressable rows under `## Validation Criteria`.
 
@@ -552,6 +571,7 @@ def test_str_validation_criteria_table_is_binding() -> None:
     assert "assert" in reasons(base.replace("StR-001-VC-1", "StR-001-AC-1"))
 
 
+@pytest.mark.trace("TC-015")
 def test_nfr_acceptance_criteria_is_absent_or_well_formed() -> None:
     """TC-015.
 
@@ -588,6 +608,7 @@ def test_nfr_acceptance_criteria_is_absent_or_well_formed() -> None:
     assert quire.validate_document("NFR", root, base)["is_valid"]
 
 
+@pytest.mark.trace("TC-016")
 @pytest.mark.parametrize("name", sorted(_SKELETON_FILE), ids=lambda n: n)
 def test_it002_ac3_extract_yields_record(name: str) -> None:
     """TC-016: IT-002-AC-3: extract over the conformant skeleton yields a record whose
@@ -629,6 +650,7 @@ def _roles() -> dict:
     return manifest.get("roles") or {}
 
 
+@pytest.mark.trace("TC-017", "FR-004-AC-1")
 def test_fr004_ac1_every_edge_type_has_a_description_and_known_category() -> None:
     """TC-017: (FR-004-AC-1).
 
@@ -649,6 +671,36 @@ def test_fr004_ac1_every_edge_type_has_a_description_and_known_category() -> Non
         )
 
 
+@pytest.mark.trace("TC-070", "FR-004-AC-7")
+@pytest.mark.skipif(shutil.which("quire") is None, reason="quire CLI not installed")
+def test_fr004_ac7_nfr_allows_a_mitigates_edge(tmp_path: pathlib.Path) -> None:
+    """TC-070: (FR-004-AC-7) an NFR may author ``mitigates``; other verbs still warn.
+
+    Single-file ``quire validate`` over the NFR skeleton with its one relationship
+    verb swapped. ``blocks`` is the control: it is not in NFR ``allowed_links``,
+    so the same file warns, which proves the check ran.
+    """
+    skeleton = (SKELETONS_DIR / "nfr.md").read_text(encoding="utf-8")
+    assert 'type: "constrains"' in skeleton
+
+    def warnings(verb: str) -> str:
+        doc = tmp_path / f"{verb}" / "NFR-001.md"
+        doc.parent.mkdir()
+        doc.write_text(skeleton.replace('type: "constrains"', f'type: "{verb}"'))
+        done = subprocess.run(
+            ["quire", "validate", "--module", str(PKG_ROOT), str(doc)],
+            capture_output=True,
+            text=True,
+            check=False,
+        )
+        return done.stdout + done.stderr
+
+    assert "disallowed-edge-type" not in warnings("mitigates")
+    control = warnings("blocks")
+    assert "disallowed-edge-type" in control and "'blocks'" in control
+
+
+@pytest.mark.trace("TC-020", "FR-004-AC-4")
 def test_fr004_ac4_every_role_has_a_description() -> None:
     """TC-020: (FR-004-AC-4)."""
     roles = _roles()
@@ -676,6 +728,7 @@ def _module_tree(parent: pathlib.Path, manifest: dict) -> pathlib.Path:
     return parent
 
 
+@pytest.mark.trace("TC-021", "FR-004-AC-5")
 def test_fr004_ac5_the_vocabulary_is_declared_and_a_broken_entry_is_refused(
     tmp_path: pathlib.Path,
 ) -> None:
@@ -711,6 +764,7 @@ def test_fr004_ac5_the_vocabulary_is_declared_and_a_broken_entry_is_refused(
     assert not loaded, f"{verb} without a category loaded anyway: {sorted(loaded)}"
 
 
+@pytest.mark.trace("TC-065", "FR-004-AC-6")
 def test_fr004_ac6_specifies_declares_the_specified_by_inverse() -> None:
     """TC-065: (FR-004-AC-6, PLAT-160) the specifies edge is readable inversely."""
     assert _edge_types()["specifies"]["inverse"] == "specified_by"

@@ -235,6 +235,7 @@ def bundle() -> dict[str, dict]:
     return {name: _load(path) for name, path in files.items()}
 
 
+@pytest.mark.trace("TC-041", "FR-005-AC-1")
 def test_tc041_exported_schemas_exist_with_stable_ids(
     bundle: dict[str, dict],
 ) -> None:
@@ -254,6 +255,7 @@ def test_tc041_exported_schemas_exist_with_stable_ids(
         )
 
 
+@pytest.mark.trace("TC-041", "FR-005-AC-2", "FR-005-CON-2")
 def test_tc041_every_ref_resolves_offline(bundle: dict[str, dict]) -> None:
     """TC-041: FR-005-AC-2, FR-005-CON-2: every `$ref` across the bundle points
     at a shipped sibling or at a file of the semantic-core bundle, and no
@@ -290,6 +292,7 @@ def test_tc041_every_ref_resolves_offline(bundle: dict[str, dict]) -> None:
                 )
 
 
+@pytest.mark.trace("TC-040", "FR-005-AC-3", "FR-005-CON-1")
 def test_tc040_every_property_is_constrained_or_declared_free_text(
     bundle: dict[str, dict],
 ) -> None:
@@ -310,6 +313,7 @@ def test_tc040_every_property_is_constrained_or_declared_free_text(
     )
 
 
+@pytest.mark.trace("TC-039", "FR-005-CON-1")
 def test_tc039_every_locator_output_has_a_property(bundle: dict[str, dict]) -> None:
     """TC-039: FR-005-CON-1: every `body_extraction` locator of every exported
     archetype has a property on its model, under the camelCase rule.
@@ -398,6 +402,7 @@ def _expected_properties(archetype: dict) -> dict[str, str | None]:
     return expected
 
 
+@pytest.mark.trace("TC-043", "FR-005-AC-6", "FR-005-CON-4")
 def test_tc043_no_execution_result_property(bundle: dict[str, dict]) -> None:
     """TC-043: FR-005-AC-6, FR-005-CON-4: no emitted property models an
     execution result, and `TC.json` says so in words.
@@ -420,6 +425,7 @@ def test_tc043_no_execution_result_property(bundle: dict[str, dict]) -> None:
     ), "TC.json's description does not say that execution results are not modelled"
 
 
+@pytest.mark.trace("TC-060", "FR-005-AC-8")
 def test_tc060_object_schemas_declare_properties_inline(
     bundle: dict[str, dict],
 ) -> None:
@@ -446,6 +452,7 @@ def test_tc060_object_schemas_declare_properties_inline(
     assert not offenders, f"object schemas that are not declared inline: {offenders}"
 
 
+@pytest.mark.trace("TC-060", "FR-005-AC-8")
 def test_tc060_python_validator_accepts_every_golden_record(
     bundle: dict[str, dict],
 ) -> None:
@@ -495,6 +502,7 @@ def _registry(bundle: dict[str, dict]):
     return Registry().with_resources(resources)
 
 
+@pytest.mark.trace("TC-042", "FR-005-AC-5")
 def test_tc042_schemas_check_passes_clean_and_fails_on_drift(
     tmp_path: pathlib.Path,
 ) -> None:

@@ -230,6 +230,7 @@ artifact_types:
   - extends
   - uses
   - derives_from
+  - mitigates
   examples: []
   lint_rules_ref: []
   # Format-walkthrough decision #9 (2026-06-11): required NFR core is

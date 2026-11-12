@@ -26,6 +26,8 @@ import subprocess
 import tarfile
 import tomllib
 
+import pytest
+
 REPO_ROOT = pathlib.Path(__file__).resolve().parent.parent
 PKG_ROOT = REPO_ROOT / "spec_artifacts_iso"
 SEMANTIC_DIR = PKG_ROOT / "semantic"
@@ -117,6 +119,7 @@ def _payload_members(names: list[str], strip: str) -> set[str]:
 # --------------------------------------------------------------------------
 
 
+@pytest.mark.trace("TC-054", "FR-005-CON-3")
 def test_package_lock_is_committed() -> None:
     """TC-054: FR-005-CON-3: ``package-lock.json`` is present, and not ignored."""
     assert SEMANTIC_PACKAGE_LOCK.is_file(), (
@@ -132,6 +135,7 @@ def test_package_lock_is_committed() -> None:
     ), f"{SEMANTIC_PACKAGE_LOCK} is gitignored, so it can never be committed"
 
 
+@pytest.mark.trace("TC-054", "FR-005-CON-3")
 def test_no_dependency_uses_a_file_or_link_reference() -> None:
     """TC-054: FR-005-CON-3: no ``file:`` or ``link:`` reference anywhere.
 
@@ -163,6 +167,7 @@ def test_no_dependency_uses_a_file_or_link_reference() -> None:
     assert not offenders, offenders
 
 
+@pytest.mark.trace("TC-054", "FR-005-CON-3")
 def test_no_npmrc_exists_anywhere_in_the_repository() -> None:
     """TC-054: FR-005-CON-3: no ``.npmrc`` in the repository tree.
 
@@ -207,6 +212,7 @@ def test_poetry_lock_names_no_local_registry_source() -> None:
 # --------------------------------------------------------------------------
 
 
+@pytest.mark.trace("TC-062", "FR-005-AC-9")
 def test_pyproject_include_names_every_shipped_payload_entry() -> None:
     """TC-062: FR-005-AC-9: the sdist/wheel ``include`` list covers the payload."""
     declared = _pyproject_include_paths()
@@ -221,6 +227,7 @@ def test_pyproject_include_names_every_shipped_payload_entry() -> None:
     )
 
 
+@pytest.mark.trace("TC-062", "FR-005-AC-9")
 def test_pyproject_include_names_no_typespec_toolchain_file() -> None:
     """TC-062: FR-005-AC-9: the toolchain is a build input and must not ship."""
     declared = _pyproject_include_paths()
@@ -230,6 +237,7 @@ def test_pyproject_include_names_no_typespec_toolchain_file() -> None:
     assert not offenders, offenders
 
 
+@pytest.mark.trace("TC-062", "FR-005-AC-9")
 def test_npm_files_names_every_shipped_payload_entry() -> None:
     """TC-062: FR-005-AC-9: the npm ``files`` list covers the same payload."""
     declared = _npm_files()
@@ -243,6 +251,7 @@ def test_npm_files_names_every_shipped_payload_entry() -> None:
     ), f"package.json files names no path covering {missing}; declared: {declared}"
 
 
+@pytest.mark.trace("TC-062", "FR-005-AC-9")
 def test_npm_files_names_no_typespec_toolchain_file() -> None:
     """TC-062: FR-005-AC-9: the npm list carries no toolchain file either."""
     declared = _npm_files()
@@ -252,6 +261,7 @@ def test_npm_files_names_no_typespec_toolchain_file() -> None:
     assert not offenders, offenders
 
 
+@pytest.mark.trace("TC-062", "FR-005-AC-9")
 def test_sdist_and_npm_tarball_carry_the_same_payload_entry_set(tmp_path) -> None:
     """TC-062: FR-005-AC-9: a built sdist and a packed tarball agree.
 

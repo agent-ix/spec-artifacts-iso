@@ -30,7 +30,7 @@ Method` rows — so NFR rows trace to `NFR-001 (metric n)` (SR-003 FND-006).
 | FR-001 | FR-001-AC-4 | — | 🚧 Pending |
 | FR-002 | FR-002-AC-1 | TC-005, TC-006, TC-014, TC-015, TC-016 | ✅ Complete |
 | FR-002 | FR-002-AC-2 | TC-013 | ✅ Complete |
-| FR-002 | FR-002-AC-3 | — | 🚧 Pending |
+| FR-002 | FR-002-AC-3 | TC-013 | ✅ Complete |
 | FR-002 | FR-002-AC-4 | TC-007 | ✅ Complete |
 | FR-002 | FR-002-AC-5 | TC-008, TC-012 | ✅ Complete |
 | FR-002 | FR-002-AC-6 | TC-009 | ✅ Complete |
@@ -38,6 +38,7 @@ Method` rows — so NFR rows trace to `NFR-001 (metric n)` (SR-003 FND-006).
 | FR-002 | FR-002-AC-8 | TC-011 | ✅ Complete |
 | FR-003 | FR-003-AC-1 | TC-003 | ✅ Complete |
 | FR-003 | FR-003-AC-2 | TC-004 | ✅ Complete |
+| FR-003 | FR-003-CON-2 | TC-004 | ✅ Complete |
 | FR-003 | FR-003-AC-3 | — | 🚧 Pending |
 | FR-003 | FR-003-AC-4 | — | 🚧 Pending |
 | FR-003 | FR-003-AC-5 | — | 🚧 Pending |
@@ -48,6 +49,7 @@ Method` rows — so NFR rows trace to `NFR-001 (metric n)` (SR-003 FND-006).
 | FR-004 | FR-004-AC-4 | TC-020 | ✅ Complete |
 | FR-004 | FR-004-AC-5 | TC-021 | ✅ Complete |
 | FR-004 | FR-004-AC-6 | TC-065 | ✅ Complete |
+| FR-004 | FR-004-AC-7 | TC-070 | ✅ Complete |
 | FR-005 | FR-005-AC-1 | TC-041 | ✅ Complete |
 | FR-005 | FR-005-AC-2 | TC-041 | ✅ Complete |
 | FR-005 | FR-005-AC-3 | TC-040 | ✅ Complete |
@@ -63,13 +65,11 @@ Method` rows — so NFR rows trace to `NFR-001 (metric n)` (SR-003 FND-006).
 | FR-006 | FR-006-AC-1 | TC-046 | ✅ Complete |
 | FR-006 | FR-006-AC-2 | TC-047 | ✅ Complete |
 | FR-006 | FR-006-AC-3 | TC-048 | ✅ Complete |
-| FR-006 | FR-006-AC-5 | TC-047 | ✅ Complete |
-| FR-006 | FR-006-AC-6 | TC-055 | ✅ Complete |
-| FR-006 | FR-006-AC-9 | TC-064 | ✅ Complete |
+| FR-006 | FR-006-AC-6 | TC-055 | 🚧 Pending (no tagged test) |
+| FR-006 | FR-006-AC-9 | TC-064 | ✅ Complete (manual/inspection, not matrix-bound) |
 | FR-006 | FR-006-AC-7 | TC-046 | ✅ Complete |
-| FR-006 | FR-006-AC-8 | TC-063 | ✅ Complete |
 | FR-006 | FR-006-CON-1 | TC-046 | ✅ Complete |
-| FR-006 | FR-006-CON-2 | TC-047 | ✅ Complete |
+| FR-006 | FR-006-CON-2 | TC-047 | 🚧 Pending (no tagged test) |
 | FR-007 | FR-007-AC-1 | TC-052 | ✅ Complete |
 | FR-007 | FR-007-AC-2 | TC-044 | ✅ Complete |
 | FR-007 | FR-007-AC-3 | TC-053 | ✅ Complete |
@@ -78,7 +78,7 @@ Method` rows — so NFR rows trace to `NFR-001 (metric n)` (SR-003 FND-006).
 | FR-007 | FR-007-AC-7 | TC-052 | ✅ Complete |
 | FR-007 | FR-007-AC-8 | TC-069 | ✅ Complete |
 | FR-007 | FR-007-CON-2 | TC-051 | ✅ Complete |
-| FR-007 | FR-007-CON-3 | TC-059 | ✅ Complete |
+| FR-007 | FR-007-CON-3 | TC-059 | ✅ Complete (manual/inspection, not matrix-bound) |
 | FR-008 | FR-008-AC-1 | TC-066 | ✅ Complete |
 | FR-008 | FR-008-AC-2 | TC-067 | ✅ Complete |
 | FR-008 | FR-008-AC-3 | TC-066 | ✅ Complete |
@@ -86,7 +86,7 @@ Method` rows — so NFR rows trace to `NFR-001 (metric n)` (SR-003 FND-006).
 | FR-008 | FR-008-AC-5 | TC-068 | ✅ Complete |
 | FR-008 | FR-008-AC-6 | TC-068 | ✅ Complete |
 | FR-008 | FR-008-AC-7 | TC-068 | ✅ Complete |
-| FR-008 | FR-008-AC-8 | TC-066 | ✅ Complete |
+| FR-008 | FR-008-AC-8 | TC-066 | ✅ Complete (manual/inspection, not matrix-bound) |
 
 ### Non-Functional Requirement Coverage
 
@@ -101,7 +101,7 @@ Method` rows — so NFR rows trace to `NFR-001 (metric n)` (SR-003 FND-006).
 | Test ID | Title | Type | Priority | Traces To | Status |
 |---------|-------|------|----------|-----------|--------|
 | TC-003 | a ``master-requirements`` artifact_type is declared with a frontmatter_schema_ref and a body_extraction carrying assert facets (`test_fr003_ac1_master_requirements_archetype_registered`) | Unit | P0 | FR-003-AC-1 | ✅ |
-| TC-004 | TC-004): the master-requirements frontmatter schema requires type/name/org/component_type, does NOT require id/title, and constrains component_type to kebab-case ``^[a-z][a-z0-9-]*$`` (`test_fr003_ac2_master_requirements_frontmatter_schema_shape`) | Unit | P0 | FR-003-AC-2 | ✅ |
+| TC-004 | TC-004): the master-requirements frontmatter schema requires type/name/org/component_type, does NOT require id/title, and constrains component_type to kebab-case ``^[a-z][a-z0-9-]*$`` (`test_fr003_ac2_master_requirements_frontmatter_schema_shape`) | Unit | P0 | FR-003-AC-2, FR-003-CON-2 | ✅ |
 | TC-005 | every archetype declares ``body_extraction`` with asserts and declares none of ``template_ref`` / ``required_sections`` / ``variants`` (`test_fr002_ac1_unified_shape_no_retired_fields`) | Unit | P0 | FR-002-AC-1 | ✅ |
 | TC-006 | templates/ is removed and no archetype references one (`test_fr002_ac1_no_template_dir_or_refs`) | Unit | P0 | FR-002-AC-1 | ✅ |
 | TC-007 | declared section headings are unique per level (`test_fr002_ac4_headings_unique_per_level`) | Unit | P0 | FR-002-AC-4 | ✅ |
@@ -110,7 +110,7 @@ Method` rows — so NFR rows trace to `NFR-001 (metric n)` (SR-003 FND-006).
 | TC-010 | I2): the skeleton's heading set and literal table header rows match the archetype's asserts exactly — a diff in either direction fails. Forward: skeleton ⊇ asserts (covered by AC-6). Reverse: every *asserted-level* skeleton headin (`test_fr002_ac7_literal_consistency_both_directions`) | Unit | P0 | FR-002-AC-7 | ✅ |
 | TC-011 | I3): heading-presence locators are distinguished from ``section_body`` locators; the skeleton supplies substantive (non-empty, non-placeholder) body for every ``section_body``-asserted section (`test_fr002_ac8_locator_kinds_and_substantive_bodies`) | Unit | P0 | FR-002-AC-8 | ✅ |
 | TC-012 | a filled skeleton passes validate_document. Skips when the installed quire wheel predates the markdown-default validator (FR-032); build/install a local quire-rs wheel to exercise it (`test_it002_ac1_skeleton_validates`) | Unit | P0 | FR-002-AC-5 | ✅ |
-| TC-013 | deleting a section, breaking AC columns, breaking an AC id, and duplicating a heading each fail validation with the expected reason (`test_it002_ac2_fr_mutations_fail`) | Unit | P0 | FR-002-AC-2 | ✅ |
+| TC-013 | deleting a section, breaking AC columns, breaking an AC id, and duplicating a heading each fail validation with the expected reason (`test_it002_ac2_fr_mutations_fail`) | Unit | P0 | FR-002-AC-2, FR-002-AC-3 | ✅ |
 | TC-014 | StR binding criteria are addressable rows under `## Validation Criteria`. The heading and the `Validation` column are deliberately NOT renamed to the FR spelling: ISO/IEC/IEEE 29148 validates a stakeholder requirement against the  (`test_str_validation_criteria_table_is_binding`) | Unit | P0 | FR-002-AC-1 | ✅ |
 | TC-015 | NFR's AC section stays optional but takes the FR table shape when present. A *measurable* NFR's criteria are its `Metric \| Target \| Threshold \| Method` rows and it omits the section; a *policy* NFR authors the table. What is no (`test_nfr_acceptance_criteria_is_absent_or_well_formed`) | Unit | P0 | FR-002-AC-1 | ✅ |
 | TC-016 | extract over the conformant skeleton yields a record whose fields match the archetype's body_extraction (validate + extract share one declaration) (`test_it002_ac3_extract_yields_record`) | Unit | P0 | FR-002-AC-1 | ✅ |
@@ -134,6 +134,7 @@ Method` rows — so NFR rows trace to `NFR-001 (metric n)` (SR-003 FND-006).
 | TC-055 | `quoin module install path:<module root>` on the published quoin installs the module with no diagnostic, so the block is inert to every quoin a user can install today; output recorded verbatim and the previous registry version restored (FR-006-AC-6) | Manual | P1 | FR-006-AC-6 | ✅ |
 | TC-064 | quoin main resolves `semantic.exports` and `data_schema` against `object_types` only (`src/semantic/manifest.ts:175-186,258`), so an artifact-type export yields `semantic.unknown-export` and `semantic.export-without-schema`; a source reading, because no quoin carrying it is published (agent-ix/quoin#336) (FR-006-AC-9) | Manual | P2 | FR-006-AC-9 | ✅ |
 | TC-065 | `specifies` declares inverse `specified_by` (`test_fr004_ac6_specifies_declares_the_specified_by_inverse`) | Unit | P0 | FR-004-AC-6 | ✅ |
+| TC-070 | A single NFR file with a `mitigates` relationship validates with no `disallowed-edge-type`; the same file with an unrelated disallowed verb still warns, so the allowance is a membership check and not a disabled one (`test_fr004_ac7_nfr_allows_a_mitigates_edge`) | Integration | P1 | FR-004-AC-7 | ✅ |
 | TC-066 | The `FR`, `NFR`, `StR` and `US` frontmatter schemas each declare an optional inline `criticality` enum `low`, `medium`, `high` with no shared enumeration file; the projected record schemas carry it as optional; neither schema family gives it a `default` (`test_criticality::test_fr008_ac1_*`, `test_fr008_ac3_*`, `test_fr008_ac8_*`) | Integration | P1 | FR-008-AC-1, FR-008-AC-3, FR-008-AC-8 | ✅ |
 | TC-067 | Each enumerated `criticality` value validates for all four archetypes, and a document omitting it validates (`test_criticality::test_fr008_ac2_*`, `test_fr008_ac4_*`) | Integration | P1 | FR-008-AC-2, FR-008-AC-4 | ✅ |
 | TC-068 | `criticality` values `critical`, `High` and `""` fail `quire validate` for all four archetypes with a diagnostic naming the field (`test_criticality::test_fr008_invalid_values_*`) | Integration | P1 | FR-008-AC-5, FR-008-AC-6, FR-008-AC-7 | ✅ |
