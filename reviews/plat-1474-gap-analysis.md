@@ -64,3 +64,21 @@ pre-existing).
 | FND-004 | low | FR-003-CON-2 (`component_type` SHALL match `^[a-z][a-z0-9-]*$`, validated by Schema Test) computes `untagged`. `test_fr003_ac2_master_requirements_frontmatter_schema_shape` asserts that exact pattern on the schema. | tests/test_manifest_and_validate.py:80 |
 | FND-005 | low | FR-006-CON-1 ("the suite carries a legacy-manifest fixture ... that loads under quire") computes `untagged`. `test_tc046_legacy_fixture_loads_under_quire` asserts that half, and tests.md traces TC-046 to FR-006-CON-1. | tests/test_semantic_manifest.py:208 |
 | FND-006 | medium | `spec/tests.md` Functional Requirement Coverage, which is pre-existing and extended by this PR, marks rows ✅ Complete that the computed matrix reports untagged (FR-002-AC-2, FR-006-CON-1, FR-006-CON-2, and the three NFR-001 rows). It also lists FR-006-AC-5, FR-006-AC-8 and TC-063, none of which exist in FR-006 or the Test Case Summary. A hand-kept coverage table duplicates `quire matrix` and has drifted from it. The table's presence is required by the spec-artifacts-process `TestMatrix` archetype (`functional_coverage`, `required: true`). | spec/tests.md:23 |
+
+## Dispositions
+
+| FND | Outcome | Reason |
+| --- | --- | --- |
+| FND-001 | fixed | Round 1 (6411c75): `test_it002_ac2_fr_mutations_fail` is tagged `TC-013`, `FR-002-AC-2`, and FR-002-AC-2 computes `tagged`. |
+| FND-002 | fixed | Round 1: `test_tc056_...` is tagged `TC-056`, `NFR-001-M-1`, and NFR-001-M-1 computes `tagged`. |
+| FND-003 | fixed | Round 1: `test_tc058_...` is tagged `TC-058`, `NFR-001-M-3`, and NFR-001-M-3 computes `tagged`. |
+| FND-004 | fixed | Round 1: `test_fr003_ac2_...` is tagged with `FR-003-CON-2`, the test asserts that exact pattern, and the TC-004 row traces to FR-003-CON-2. |
+| FND-005 | fixed | Round 1: `test_tc046_legacy_fixture_loads_under_quire` is tagged with `FR-006-CON-1`. It asserts the legacy-fixture half of the constraint; the no-new-required-key half is asserted by TC-046's other tests. |
+| FND-006 | fixed | Round 1: the phantom rows (FR-006-AC-5, FR-006-AC-8 / TC-063) are removed, untagged rows (FR-006-AC-6, FR-006-CON-2) read Pending, and inspection/analysis rows are labelled as such. Every row now agrees with `quire matrix`. The archetype-level duplication is in spec-artifacts-process and is filed as PLAT-1499. |
+| FND-007 | still-open | New in round 1, low and non-blocking. The test asserts only `reason` values, with no line-numbered diagnostic and no non-contiguous id case; case (c) exercises FR-002-AC-3. It can be strengthened or deferred by the lead. |
+
+## New findings (disposition pass 1)
+
+| ID | Severity | Summary | Refs |
+| --- | --- | --- | --- |
+| FND-007 | low | The new binding of `test_it002_ac2_fr_mutations_fail` to FR-002-AC-2 is partial. The AC requires a *line-numbered* diagnostic and a *non-contiguous* AC id case. The test asserts only `reason` values, and case (c) renumbers to a wrong prefix (`FR-999-AC-1`), which is FR-002-AC-3's case. FR-002-AC-3 stays Pending although this test exercises it. Not a wrong trace; a test-strength gap. It is fixable later and does not block the merge. | tests/test_manifest_and_validate.py:487 |

@@ -484,7 +484,7 @@ def test_fr_authoring_contract_offers_satisfies() -> None:
     assert "satisfies" in {r["verb"] for r in contract["relationships"]}
 
 
-@pytest.mark.trace("TC-013", "FR-002-AC-2")
+@pytest.mark.trace("TC-013", "FR-002-AC-2", "FR-002-AC-3")
 def test_it002_ac2_fr_mutations_fail() -> None:
     """TC-013: IT-002-AC-2: deleting a section, breaking AC columns, breaking an AC id,
     and duplicating a heading each fail validation with the expected reason."""
@@ -494,9 +494,14 @@ def test_it002_ac2_fr_mutations_fail() -> None:
     base = _skeleton_text("FR")
     root = str(PKG_ROOT)
 
-    def reasons(doc: str) -> set[str]:
+    def reasons(doc: str, lined: bool = True) -> set[str]:
         res = quire.validate_document("FR", root, doc)
         assert not res["is_valid"], doc
+        # FR-002-AC-2: a diagnostic about present content is line-numbered. A
+        # deleted section has no line to point at, so it is exempt.
+        assert not lined or all(
+            isinstance(e.get("line"), int) and e["line"] > 0 for e in res["errors"]
+        ), res["errors"]
         return {e["reason"] for e in res["errors"]}
 
     # a. delete the Acceptance Criteria section
@@ -508,13 +513,14 @@ def test_it002_ac2_fr_mutations_fail() -> None:
     assert (
         "## Acceptance Criteria" not in deleted and deleted != base
     ), "AC-deletion mutation did not apply (section order changed?)"
-    assert "missing" in reasons(deleted)
+    assert "missing" in reasons(deleted, lined=False)
     # b. break an Acceptance-Criteria column header
     bad_cols = base.replace(
         "| ID | Criteria | Verification |", "| ID | Criterion | Verification |"
     )
     assert "assert" in reasons(bad_cols)
-    # c. renumber an AC id to a non-matching prefix ({id} interpolation)
+    # c. FR-002-AC-3: a row prefixed with a different artifact's id ({id}
+    #    interpolation) fails
     bad_id = base.replace("| FR-001-AC-1 |", "| FR-999-AC-1 |")
     assert "assert" in reasons(bad_id)
     # d. duplicate a heading at the same level

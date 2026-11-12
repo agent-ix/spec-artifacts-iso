@@ -72,3 +72,11 @@ says "Untagged: TC-051 ...". Each fix is a one-line marker edit.
 | FND-001 | medium | `test_a_prose_clause_heading_yields_no_clause_ref` is tagged `TC-051`, but its docstring says "Untagged: TC-051 enumerates a prose `## Invariants` *section*, not a prose clause heading". The script copied a mention that explicitly disclaims the binding. `quire trace --id TC-051` now lists this test as `verifies`. | tests/test_invariants_clause.py:225 |
 | FND-002 | medium | `test_tc056_two_schema_runs_reproduce_the_committed_bundle` is tagged `TC-047`. The docstring mentions TC-047 only as a test the restore protects ("without also leaving the checkout drifted for TC-047"). TC-047 is the FR-006 data_schema reference test, and `quire trace --id TC-047` now lists the NFR-001 reproducibility test as verifying it. | tests/test_reproducibility.py:68 |
 | FND-003 | medium | `test_tc039_every_locator_output_has_a_property` is tagged `TC-052`. The docstring says the reverse direction "is TC-052's", which means this test does not cover it. `quire trace --id TC-052` now lists it as `verifies`. | tests/test_semantic_schemas.py:316 |
+
+## Dispositions
+
+| FND | Outcome | Reason |
+| --- | --- | --- |
+| FND-001 | fixed | Round 1 (6411c75): marker removed from `test_a_prose_clause_heading_yields_no_clause_ref`; `quire trace --id TC-051` now lists it only as a mention, not a claim. |
+| FND-002 | fixed | Round 1 (6411c75): marker is now `@pytest.mark.trace("TC-056", "NFR-001-M-1")`; TC-047 is a mention only. |
+| FND-003 | fixed | Round 1 (6411c75): marker is now `@pytest.mark.trace("TC-039", "FR-005-CON-1")`; TC-052 is a mention only. |
