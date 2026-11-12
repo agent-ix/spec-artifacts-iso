@@ -20,7 +20,9 @@ SCHEMAS = PKG_ROOT / "schemas"
 
 ARCHETYPES = ["FR", "NFR", "StR", "US"]
 SKELETON = {"FR": "fr", "NFR": "nfr", "StR": "str", "US": "us"}
-FRONTMATTER = {a: SCHEMAS / f"{SKELETON[a]}-frontmatter.schema.json" for a in ARCHETYPES}
+FRONTMATTER = {
+    a: SCHEMAS / f"{SKELETON[a]}-frontmatter.schema.json" for a in ARCHETYPES
+}
 
 needs_quire = pytest.mark.skipif(
     shutil.which("quire") is None, reason="quire CLI not installed"
@@ -123,7 +125,7 @@ def test_fr007_ac8_criticality_maps_into_the_record_as_written(
 def test_fr008_invalid_values_fail_naming_the_field(
     archetype: str, line: str, ac: str, tmp_path: pathlib.Path
 ) -> None:
-    """FR-008-AC-5, FR-008-AC-6, FR-008-AC-7 (value is neither normalised nor treated as absent)."""
+    """FR-008-AC-5, FR-008-AC-6, FR-008-AC-7: no normalising, not treated as absent."""
     result = _validate(tmp_path, _doc(archetype, line))
     assert result.returncode != 0
     assert "criticality" in result.stderr
