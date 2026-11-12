@@ -225,6 +225,9 @@ Sections and tables:
   `## Invariants` section; the clause text is never parsed.
 - The `NFR` model SHALL declare `qualityAttribute` as the twelve-value enum the
   NFR frontmatter schema declares.
+- The `FR`, `NFR`, `StR` and `US` models SHALL each declare `criticality?` as the three-value
+  enum `low | medium | high` the frontmatter schemas declare ([FR-008](./FR-008-criticality-field.md)),
+  with no default.
 - No model SHALL restate a constraint more loosely than the frontmatter schema
   beside it.
 
