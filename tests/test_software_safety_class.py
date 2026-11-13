@@ -2,7 +2,7 @@
 
 Frontmatter acceptance runs through the `quire validate` binary against this
 module; the TypeSpec projection and mapping are checked on the committed files.
-The `traceability.carried_fields` entry (FR-009-AC-14) is read by the engine;
+The `traceability.carried_fields` entry is read by the engine;
 its coverage row loads this module beside spec-artifacts-process, which declares
 the trace targets that mint the matrix rows (installed filament modules,
 `IX_FILAMENT_MODULES_PATH`, default `~/.ix/filament/modules`).
