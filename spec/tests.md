@@ -87,6 +87,19 @@ Method` rows — so NFR rows trace to `NFR-001 (metric n)` (SR-003 FND-006).
 | FR-008 | FR-008-AC-6 | TC-068 | ✅ Complete |
 | FR-008 | FR-008-AC-7 | TC-068 | ✅ Complete |
 | FR-008 | FR-008-AC-8 | TC-066 | ✅ Complete (manual/inspection, not matrix-bound) |
+| FR-009 | FR-009-AC-1 | TC-071 | ✅ Complete |
+| FR-009 | FR-009-AC-2 | TC-072 | ✅ Complete |
+| FR-009 | FR-009-AC-3 | TC-071 | ✅ Complete |
+| FR-009 | FR-009-AC-4 | TC-072 | ✅ Complete |
+| FR-009 | FR-009-AC-5 | TC-073 | ✅ Complete |
+| FR-009 | FR-009-AC-6 | TC-073 | ✅ Complete |
+| FR-009 | FR-009-AC-7 | TC-073 | ✅ Complete |
+| FR-009 | FR-009-AC-8 | TC-071 | ✅ Complete (manual/inspection, not matrix-bound) |
+| FR-009 | FR-009-AC-9 | TC-074 | ✅ Complete |
+| FR-009 | FR-009-AC-10 | TC-075 | ✅ Complete |
+| FR-009 | FR-009-AC-11 | TC-077 | ✅ Complete |
+| FR-009 | FR-009-AC-12 | TC-077 | ✅ Complete |
+| FR-009 | FR-009-AC-13 | TC-076 | ✅ Complete |
 
 ### Non-Functional Requirement Coverage
 
@@ -139,6 +152,13 @@ Method` rows — so NFR rows trace to `NFR-001 (metric n)` (SR-003 FND-006).
 | TC-067 | Each enumerated `criticality` value validates for all four archetypes, and a document omitting it validates (`test_criticality::test_fr008_ac2_*`, `test_fr008_ac4_*`) | Integration | P1 | FR-008-AC-2, FR-008-AC-4 | ✅ |
 | TC-068 | `criticality` values `critical`, `High` and `""` fail `quire validate` for all four archetypes with a diagnostic naming the field (`test_criticality::test_fr008_invalid_values_*`) | Integration | P1 | FR-008-AC-5, FR-008-AC-6, FR-008-AC-7 | ✅ |
 | TC-069 | `mappings.yaml` maps `criticality` as written for all four archetypes, and a document without the key yields a record without it (`test_criticality::test_fr007_ac8_*`) | Integration | P1 | FR-007-AC-8 | ✅ |
+| TC-071 | `FR`, `NFR`, `StR` and `US` frontmatter schemas each declare optional `software_safety_class` (inline enum `class-1`, `class-2`, `class-3`) with non-empty assigner and rationale, none required and none defaulted; the projected record schemas carry the three as optional (`test_software_safety_class::test_fr009_ac1_*`, `test_fr009_ac3_*`, `test_fr009_ac8_*`) | Integration | P1 | FR-009-AC-1, FR-009-AC-3, FR-009-AC-8 | ✅ |
+| TC-072 | Each enumerated class with assigner and rationale validates for all four archetypes, and a document omitting all three validates and maps to a record without them (`test_fr009_ac2_*`, `test_fr009_ac4_*`) | Integration | P1 | FR-009-AC-2, FR-009-AC-4 | ✅ |
+| TC-073 | `class-9`, `Class-1` and `""` fail `quire validate` for all four archetypes with a diagnostic naming the field (`test_fr009_invalid_class_values_*`) | Integration | P1 | FR-009-AC-5, FR-009-AC-6, FR-009-AC-7 | ✅ |
+| TC-074 | `mappings.yaml` maps the three class keys as written for all four archetypes (`test_fr009_ac9_*`) | Integration | P1 | FR-009-AC-9 | ✅ |
+| TC-075 | A document carrying `criticality` and a class, in either combination, validates (`test_fr009_ac10_*`) | Integration | P1 | FR-009-AC-10 | ✅ |
+| TC-076 | A class without assigner or rationale, an empty assigner or rationale, or an assigner or rationale without a class fails `quire validate` naming the field (`test_fr009_ac13_*`) | Integration | P1 | FR-009-AC-13 | ✅ |
+| TC-077 | Schemas, mappings and skeletons keep class and `criticality` separate, and no skeleton carries a class field (`test_fr009_ac11_*`, `test_fr009_skeletons_carry_none_of_the_fields`) | Integration | P1 | FR-009-AC-11, FR-009-AC-12 | ✅ |
 | TC-056 | Two consecutive `make schemas` runs on one tree produce byte-identical bundles for every emitted file (NFR-001 metric 1) | Property | P1 | NFR-001 (metric 1) | ✅ |
 | TC-057 | `make schemas-check` and `make test` exit 0 with the network namespace disabled after `npm ci` and `poetry install` (NFR-001 metric 2) | Manual | P2 | NFR-001 (metric 2) | ✅ |
 | TC-058 | `make schemas-check` completes within 30 s on the reference machine (NFR-001 metric 3) | Benchmark | P3 | NFR-001 (metric 3) | ✅ |

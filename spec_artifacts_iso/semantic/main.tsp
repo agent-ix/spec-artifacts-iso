@@ -294,6 +294,12 @@ model FR {
   type: "FR";
   /** Human-assigned consequence of failure; never defaulted. */
   criticality?: "low" | "medium" | "high";
+  /** Human-assigned software safety class, ordered lowest to highest rigour; never defaulted. */
+  softwareSafetyClass?: "class-1" | "class-2" | "class-3";
+  /** Person who assigned the software safety class. */
+  softwareSafetyClassAssignedBy?: NonEmptyText;
+  /** That person's reason for the class. */
+  softwareSafetyClassRationale?: NonEmptyText;
   object?: ObjectTypeName;
   status?: ArtifactStatus;
   relationships: Relationship[];
@@ -317,6 +323,12 @@ model NFR {
   qualityAttribute?: QualityAttribute;
   /** Human-assigned consequence of failure; never defaulted. */
   criticality?: "low" | "medium" | "high";
+  /** Human-assigned software safety class, ordered lowest to highest rigour; never defaulted. */
+  softwareSafetyClass?: "class-1" | "class-2" | "class-3";
+  /** Person who assigned the software safety class. */
+  softwareSafetyClassAssignedBy?: NonEmptyText;
+  /** That person's reason for the class. */
+  softwareSafetyClassRationale?: NonEmptyText;
   object?: ObjectTypeName;
   status?: ArtifactStatus;
   relationships: Relationship[];
@@ -338,6 +350,12 @@ model StR {
   type: "StR";
   /** Human-assigned consequence of failure; never defaulted. */
   criticality?: "low" | "medium" | "high";
+  /** Human-assigned software safety class, ordered lowest to highest rigour; never defaulted. */
+  softwareSafetyClass?: "class-1" | "class-2" | "class-3";
+  /** Person who assigned the software safety class. */
+  softwareSafetyClassAssignedBy?: NonEmptyText;
+  /** That person's reason for the class. */
+  softwareSafetyClassRationale?: NonEmptyText;
   object?: ObjectTypeName;
   status?: ArtifactStatus;
   relationships: Relationship[];
@@ -361,6 +379,12 @@ model US {
   type: "US";
   /** Human-assigned consequence of failure; never defaulted. */
   criticality?: "low" | "medium" | "high";
+  /** Human-assigned software safety class, ordered lowest to highest rigour; never defaulted. */
+  softwareSafetyClass?: "class-1" | "class-2" | "class-3";
+  /** Person who assigned the software safety class. */
+  softwareSafetyClassAssignedBy?: NonEmptyText;
+  /** That person's reason for the class. */
+  softwareSafetyClassRationale?: NonEmptyText;
   object?: ObjectTypeName;
   status?: ArtifactStatus;
   relationships: Relationship[];

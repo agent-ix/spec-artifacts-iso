@@ -98,6 +98,18 @@ models:
         kind: frontmatter
         source: {key: criticality}
         lossless: false
+      softwareSafetyClass:
+        kind: frontmatter
+        source: {key: software_safety_class}
+        lossless: false
+      softwareSafetyClassAssignedBy:
+        kind: frontmatter
+        source: {key: software_safety_class_assigned_by}
+        lossless: false
+      softwareSafetyClassRationale:
+        kind: frontmatter
+        source: {key: software_safety_class_rationale}
+        lossless: false
       object:
         kind: frontmatter
         source: {key: object}
@@ -203,6 +215,18 @@ models:
         kind: frontmatter
         source: {key: criticality}
         lossless: false
+      softwareSafetyClass:
+        kind: frontmatter
+        source: {key: software_safety_class}
+        lossless: false
+      softwareSafetyClassAssignedBy:
+        kind: frontmatter
+        source: {key: software_safety_class_assigned_by}
+        lossless: false
+      softwareSafetyClassRationale:
+        kind: frontmatter
+        source: {key: software_safety_class_rationale}
+        lossless: false
       object:
         kind: frontmatter
         source: {key: object}
@@ -296,6 +320,18 @@ models:
       criticality:
         kind: frontmatter
         source: {key: criticality}
+        lossless: false
+      softwareSafetyClass:
+        kind: frontmatter
+        source: {key: software_safety_class}
+        lossless: false
+      softwareSafetyClassAssignedBy:
+        kind: frontmatter
+        source: {key: software_safety_class_assigned_by}
+        lossless: false
+      softwareSafetyClassRationale:
+        kind: frontmatter
+        source: {key: software_safety_class_rationale}
         lossless: false
       object:
         kind: frontmatter
@@ -398,6 +434,18 @@ models:
       criticality:
         kind: frontmatter
         source: {key: criticality}
+        lossless: false
+      softwareSafetyClass:
+        kind: frontmatter
+        source: {key: software_safety_class}
+        lossless: false
+      softwareSafetyClassAssignedBy:
+        kind: frontmatter
+        source: {key: software_safety_class_assigned_by}
+        lossless: false
+      softwareSafetyClassRationale:
+        kind: frontmatter
+        source: {key: software_safety_class_rationale}
         lossless: false
       object:
         kind: frontmatter
