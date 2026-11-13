@@ -2,7 +2,7 @@
 
 Frontmatter acceptance runs through the `quire validate` binary against this
 module; the TypeSpec projection and mapping are checked on the committed files.
-The `traceability.carried_fields` entry (FR-009-AC-14) is not declared yet: the
+The `traceability.carried_fields` manifest entry is not declared yet: the
 installed engine rejects the key until quire-rs implements FR-090 (PLAT-1578).
 """
 
@@ -78,7 +78,7 @@ def _record(text: str) -> dict:
     ).record
 
 
-@pytest.mark.trace("FR-009-AC-1")
+@pytest.mark.trace("TC-071", "FR-009-AC-1")
 @pytest.mark.parametrize("archetype", ARCHETYPES)
 def test_fr009_ac1_frontmatter_schema_declares_optional_inline_enum(
     archetype: str,
@@ -94,7 +94,7 @@ def test_fr009_ac1_frontmatter_schema_declares_optional_inline_enum(
     assert not list(SCHEMAS.glob("*[Ss]afety*"))
 
 
-@pytest.mark.trace("FR-009-AC-3")
+@pytest.mark.trace("TC-071", "FR-009-AC-3")
 @pytest.mark.parametrize("archetype", ARCHETYPES)
 def test_fr009_ac3_projected_record_schema_carries_optional_class(
     archetype: str,
@@ -111,7 +111,7 @@ def test_fr009_ac3_projected_record_schema_carries_optional_class(
         assert key not in schema.get("required", [])
 
 
-@pytest.mark.trace("FR-009-AC-8")
+@pytest.mark.trace("TC-071", "FR-009-AC-8")
 @pytest.mark.parametrize("archetype", ARCHETYPES)
 def test_fr009_ac8_no_default_in_any_schema(archetype: str) -> None:
     for path, keys in (
@@ -123,7 +123,7 @@ def test_fr009_ac8_no_default_in_any_schema(archetype: str) -> None:
             assert "default" not in schema["properties"][key]
 
 
-@pytest.mark.trace("FR-009-AC-2")
+@pytest.mark.trace("TC-072", "FR-009-AC-2")
 @needs_quire
 @pytest.mark.parametrize("archetype", ARCHETYPES)
 @pytest.mark.parametrize("value", CLASSES)
@@ -134,7 +134,7 @@ def test_fr009_ac2_each_class_with_assigner_and_rationale_validates(
     assert result.returncode == 0, result.stderr
 
 
-@pytest.mark.trace("FR-009-AC-4")
+@pytest.mark.trace("TC-072", "FR-009-AC-4")
 @needs_quire
 @pytest.mark.parametrize("archetype", ARCHETYPES)
 def test_fr009_ac4_omitted_class_validates_and_maps_to_no_value(
@@ -149,7 +149,7 @@ def test_fr009_ac4_omitted_class_validates_and_maps_to_no_value(
         assert key not in record
 
 
-@pytest.mark.trace("FR-009-AC-9")
+@pytest.mark.trace("TC-074", "FR-009-AC-9")
 @pytest.mark.parametrize("archetype", ARCHETYPES)
 def test_fr009_ac9_class_maps_into_the_record_as_written(archetype: str) -> None:
     record = _record(_doc(archetype, _full("class-2")))
@@ -160,7 +160,7 @@ def test_fr009_ac9_class_maps_into_the_record_as_written(archetype: str) -> None
     )
 
 
-@pytest.mark.trace("FR-009-AC-5", "FR-009-AC-6", "FR-009-AC-7")
+@pytest.mark.trace("TC-073", "FR-009-AC-5", "FR-009-AC-6", "FR-009-AC-7")
 @needs_quire
 @pytest.mark.parametrize("archetype", ARCHETYPES)
 @pytest.mark.parametrize("value", ["class-9", "Class-1", '""'])
@@ -172,7 +172,7 @@ def test_fr009_invalid_class_values_fail_naming_the_field(
     assert "software_safety_class" in result.stderr
 
 
-@pytest.mark.trace("FR-009-AC-10")
+@pytest.mark.trace("TC-075", "FR-009-AC-10")
 @needs_quire
 @pytest.mark.parametrize("archetype", ARCHETYPES)
 @pytest.mark.parametrize("criticality,value", [("high", "class-1"), ("low", "class-3")])
@@ -184,7 +184,7 @@ def test_fr009_ac10_class_is_independent_of_criticality(
     assert result.returncode == 0, result.stderr
 
 
-@pytest.mark.trace("FR-009-AC-13")
+@pytest.mark.trace("TC-076", "FR-009-AC-13")
 @needs_quire
 @pytest.mark.parametrize("archetype", ARCHETYPES)
 @pytest.mark.parametrize(
@@ -237,10 +237,30 @@ def test_fr009_ac13_assigned_class_needs_assigner_and_rationale(
     assert named in result.stderr
 
 
-@pytest.mark.trace("FR-009-AC-11", "FR-009-AC-12")
+@pytest.mark.trace("TC-077", "FR-009-AC-12")
 @pytest.mark.parametrize("archetype", ARCHETYPES)
 def test_fr009_skeletons_carry_none_of_the_fields(archetype: str) -> None:
     text = (PKG_ROOT / "skeletons" / f"{SKELETON[archetype]}.md").read_text(
         encoding="utf-8"
     )
     assert "software_safety_class" not in text
+
+
+@pytest.mark.trace("TC-077", "FR-009-AC-11")
+@pytest.mark.parametrize("archetype", ARCHETYPES)
+def test_fr009_ac11_class_and_criticality_never_refer_to_each_other(
+    archetype: str,
+) -> None:
+    schema = json.loads(FRONTMATTER[archetype].read_text(encoding="utf-8"))
+    record = json.loads((SCHEMAS / f"{archetype}.json").read_text(encoding="utf-8"))
+    for key in KEYS:
+        assert "criticality" not in json.dumps(schema["properties"][key])
+    for key in RECORD_KEYS:
+        assert "criticality" not in json.dumps(record["properties"][key])
+    assert "software" not in json.dumps(schema["properties"]["criticality"])
+    assert "software" not in json.dumps(record["properties"]["criticality"])
+    assert "oftware" not in (
+        (PKG_ROOT / "skeletons" / f"{SKELETON[archetype]}.md")
+        .read_text(encoding="utf-8")
+        .partition("criticality")[2]
+    )
