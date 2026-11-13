@@ -740,7 +740,7 @@ def test_fr004_ac5_the_vocabulary_is_declared_and_a_broken_entry_is_refused(
     entry cannot load partially. An unmutated control proves the load is real —
     without it the refusal half passes on any copy that fails to load at all.
 
-    An ``edge_types`` entry gaining an *unknown key* loads all ten
+    An ``edge_types`` entry gaining an *unknown key* loads all nine
     archetypes, so that half of the old criterion is not asserted here and
     FR-004-AC-5 no longer claims it.
     """
@@ -758,10 +758,10 @@ def test_fr004_ac5_the_vocabulary_is_declared_and_a_broken_entry_is_refused(
     broken = copy.deepcopy(manifest)
     verb = next(iter(broken["edge_types"]))
     broken["edge_types"][verb].pop("category", None)
-    loaded = quire.Registry.load_from(
-        [str(_module_tree(tmp_path / "no-category", broken))]
-    ).archetype_names()
-    assert not loaded, f"{verb} without a category loaded anyway: {sorted(loaded)}"
+    with pytest.raises(quire.QuireSchemaError, match="category"):
+        quire.Registry.load_from(
+            [str(_module_tree(tmp_path / "no-category", broken))]
+        ).archetype_names()
 
 
 @pytest.mark.trace("TC-065", "FR-004-AC-6")

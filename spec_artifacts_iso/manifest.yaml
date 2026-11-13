@@ -943,6 +943,14 @@ roles:
 # document is individually well-formed; what is wrong is the SET, and no
 # per-document check can see that.
 traceability:
+  # FR-009-AC-14: the software safety class a person states on a requirement
+  # reaches the coverage report as written, and its ordered vocabulary is the
+  # `enum` of the frontmatter schemas. `criticality` is its own axis and is
+  # not carried here.
+  carried_fields:
+  - name: software_safety_class
+    key: software_safety_class
+    from: [StR, US, FR, NFR]
   vocabulary_coverage:
   - name: quality-characteristics
     from: NFR

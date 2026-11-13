@@ -5,14 +5,14 @@ Covers TC-046, TC-047 and TC-048 of the FR-006 test matrix:
 * TC-046 — the block carries exactly the eight declared keys, and the
   legacy form (block and references removed, derived here from this manifest)
   is this manifest with exactly those removals and loads under quire with the
-  same ten archetypes
+  same nine archetypes
   (FR-006-AC-1, AC-7, CON-1). CON-1's "adds no required key" is now carried by
   that load rather than by reading the schema's ``required`` lists: a manifest
   with neither addition loading unchanged is the consumer-facing fact the
   constraint is about;
 * TC-047 — every exported artifact type carries a ``schema`` reference to an
   existing file and ``exports`` equals the referencing set (FR-006-AC-2);
-* TC-048 — ``Registry.load_from`` lists all ten archetypes with the block and the
+* TC-048 — ``Registry.load_from`` lists all nine archetypes with the block and the
   nine references present, and ``validate_document`` passes every skeleton
   (FR-006-AC-3);
 
@@ -64,9 +64,9 @@ SEMANTIC_KEYS = {
     "legacy_forms",
 }
 
-# The ten archetypes quire lists for this module: the ``Spec`` container
-# archetype plus the nine artifact types.
-ARCHETYPE_NAMES = {"Spec", *EXPORT_SCHEMA_FILE}
+# The archetypes quire lists for this module: the nine artifact types (the
+# engine 0.60 registry no longer lists a ``Spec`` container archetype).
+ARCHETYPE_NAMES = set(EXPORT_SCHEMA_FILE)
 
 _SKELETON_FILE = {
     "FR": "fr",
@@ -208,7 +208,7 @@ def test_tc046_legacy_fixture_carries_neither_addition() -> None:
 @pytest.mark.trace("TC-046", "FR-006-AC-7", "FR-006-CON-1")
 def test_tc046_legacy_fixture_loads_under_quire(tmp_path: pathlib.Path) -> None:
     """TC-046: FR-006-AC-7: the derived legacy form loads under quire with the same
-    ten archetypes the current manifest lists."""
+    nine archetypes the current manifest lists."""
     _module_tree(tmp_path, yaml.safe_dump(_derive_legacy(_manifest())))
     assert _registry_archetypes(tmp_path) == ARCHETYPE_NAMES
 
@@ -245,9 +245,9 @@ def test_tc047_exports_equals_the_referencing_set() -> None:
 
 
 @pytest.mark.trace("TC-048", "FR-006-AC-3")
-def test_tc048_registry_lists_ten_archetypes_with_the_block_present() -> None:
+def test_tc048_registry_lists_nine_archetypes_with_the_block_present() -> None:
     """TC-048: FR-006-AC-3: ``Registry.load_from`` over the module's parent
-    directory lists all ten archetypes with the ``semantic`` block and the nine
+    directory lists all nine archetypes with the ``semantic`` block and the nine
     ``data_schema``
     references present — adding the block breaks no consumer.
 
