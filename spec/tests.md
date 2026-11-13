@@ -98,8 +98,10 @@ Method` rows — so NFR rows trace to `NFR-001 (metric n)` (SR-003 FND-006).
 | FR-009 | FR-009-AC-9 | TC-074 | ✅ Complete |
 | FR-009 | FR-009-AC-10 | TC-075 | ✅ Complete |
 | FR-009 | FR-009-AC-11 | TC-077 | ✅ Complete |
+| TC-078 | The manifest declares the `software_safety_class` `carried_fields` entry for `StR`, `US`, `FR`, `NFR` and none for `criticality`; the coverage report carries a stated class as written under `carried`, carries none for a document stating none, and exposes the ordered vocabulary as `carried_vocabulary` (`test_fr009_ac14_*`) | Integration | P1 | FR-009-AC-14 | ✅ |
 | FR-009 | FR-009-AC-12 | TC-077 | ✅ Complete |
 | FR-009 | FR-009-AC-13 | TC-076 | ✅ Complete |
+| FR-009 | FR-009-AC-14 | TC-078 | ✅ Complete |
 
 ### Non-Functional Requirement Coverage
 

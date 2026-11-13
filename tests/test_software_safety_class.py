@@ -2,18 +2,22 @@
 
 Frontmatter acceptance runs through the `quire validate` binary against this
 module; the TypeSpec projection and mapping are checked on the committed files.
-The `traceability.carried_fields` manifest entry is not declared yet: the
-installed engine rejects the key until the quire-rs engine work lands (PLAT-1578).
+The `traceability.carried_fields` entry (FR-009-AC-14) is read by the engine;
+its coverage row loads this module beside spec-artifacts-process, which declares
+the trace targets that mint the matrix rows (installed filament modules,
+`IX_FILAMENT_MODULES_PATH`, default `~/.ix/filament/modules`).
 """
 
 from __future__ import annotations
 
 import json
+import os
 import pathlib
 import shutil
 import subprocess
 
 import pytest
+import yaml
 from support import reference_mapping as rm
 
 REPO_ROOT = pathlib.Path(__file__).resolve().parent.parent
@@ -264,3 +268,59 @@ def test_fr009_ac11_class_and_criticality_never_refer_to_each_other(
     for key in RECORD_KEYS:
         assert "criticality" not in json.dumps(fields[key])
     assert "software" not in json.dumps(fields["criticality"])
+
+
+@pytest.mark.trace("TC-078", "FR-009-AC-14")
+def test_fr009_ac14_manifest_carries_the_class_and_never_criticality() -> None:
+    manifest = yaml.safe_load((PKG_ROOT / "manifest.yaml").read_text(encoding="utf-8"))
+    carried = manifest["traceability"]["carried_fields"]
+    assert carried == [
+        {
+            "name": "software_safety_class",
+            "key": "software_safety_class",
+            "from": ["StR", "US", "FR", "NFR"],
+        }
+    ]
+
+
+@pytest.mark.trace("TC-078", "FR-009-AC-14")
+@needs_quire
+def test_fr009_ac14_coverage_carries_the_class_as_written_with_its_vocabulary(
+    tmp_path: pathlib.Path,
+) -> None:
+    modules = pathlib.Path(
+        os.environ.get("IX_FILAMENT_MODULES_PATH")
+        or pathlib.Path.home() / ".ix" / "filament" / "modules"
+    )
+    process = modules / "spec-artifacts-process"
+    assert (process / "manifest.yaml").is_file(), f"{process} is not installed"
+    spec = tmp_path / "spec"
+    spec.mkdir()
+    (spec / "FR-001.md").write_text(
+        _doc("FR", ["criticality: high", *_full("class-2")]), encoding="utf-8"
+    )
+    (spec / "FR-002.md").write_text(
+        _doc("FR", ["criticality: low"]).replace("FR-001", "FR-002"), encoding="utf-8"
+    )
+    result = subprocess.run(
+        [
+            "quire",
+            "coverage",
+            "--json",
+            "--module",
+            str(PKG_ROOT),
+            "--module",
+            str(process),
+            "--scope",
+            str(tmp_path),
+        ],
+        capture_output=True,
+        text=True,
+        check=False,
+    )
+    assert result.returncode == 0, result.stderr
+    report = json.loads(result.stdout)
+    assert report["carried_vocabulary"] == {"software_safety_class": CLASSES}
+    carried = {r["document"]: r.get("carried") for r in report["coverage_matrix"]}
+    assert carried["spec/FR-001.md"] == {"software_safety_class": "class-2"}
+    assert "spec/FR-002.md" not in carried or carried["spec/FR-002.md"] is None
