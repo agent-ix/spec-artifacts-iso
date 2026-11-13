@@ -45,3 +45,10 @@ test-intent gap.
 | --- | --- | --- | --- |
 | FND-001 | high | FR-009-AC-14 is `untagged` in the computed matrix on the PR head, and both tagged tests draw `criterion-tagged-outside-row` ("This tag does not provide backing"). The TC-078 row sits in the Functional Requirement Coverage table, not the Test Case Summary, so no matrix row cites the criterion. spec/tests.md also marks it `✅ Complete`, which the matrix contradicts. | spec/tests.md:101-104 |
 | FND-002 | low | The "carries none for a document stating none" half asserts `"spec/FR-002.md" not in carried or carried[...] is None`. The first disjunct passes when the row is missing, so the assertion holds even if the engine drops the document. The row is present today (measured). Assert that the row exists and has no `carried` key. | tests/test_software_safety_class.py:326 |
+
+## Dispositions
+
+| FND | Outcome | Reason |
+| --- | --- | --- |
+| FND-001 | fixed | Round 1 (head 09532d5): with TC-078 in the Test Case Summary, `quire matrix` (quire-cli 0.45.0) lists FR-009-AC-14 as `tagged`, bound to tests/test_software_safety_class.py:274 and :288, and no `criterion-tagged-outside-row` warning names FR-009-AC-14. |
+| FND-002 | fixed | Round 1: the vacuous disjunct is split into `assert "spec/FR-002.md" in carried` and `assert carried["spec/FR-002.md"] is None` (tests/test_software_safety_class.py:326-327). Passes on the head. |
