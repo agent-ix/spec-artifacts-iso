@@ -64,9 +64,9 @@ SEMANTIC_KEYS = {
     "legacy_forms",
 }
 
-# The ten archetypes quire lists for this module: the ``Spec`` container
-# archetype plus the nine artifact types.
-ARCHETYPE_NAMES = {"Spec", *EXPORT_SCHEMA_FILE}
+# The archetypes quire lists for this module: the nine artifact types (the
+# engine 0.60 registry no longer lists a ``Spec`` container archetype).
+ARCHETYPE_NAMES = set(EXPORT_SCHEMA_FILE)
 
 _SKELETON_FILE = {
     "FR": "fr",

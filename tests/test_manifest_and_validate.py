@@ -758,9 +758,12 @@ def test_fr004_ac5_the_vocabulary_is_declared_and_a_broken_entry_is_refused(
     broken = copy.deepcopy(manifest)
     verb = next(iter(broken["edge_types"]))
     broken["edge_types"][verb].pop("category", None)
-    loaded = quire.Registry.load_from(
-        [str(_module_tree(tmp_path / "no-category", broken))]
-    ).archetype_names()
+    try:
+        loaded = quire.Registry.load_from(
+            [str(_module_tree(tmp_path / "no-category", broken))]
+        ).archetype_names()
+    except quire.QuireSchemaError:
+        return
     assert not loaded, f"{verb} without a category loaded anyway: {sorted(loaded)}"
 
 
