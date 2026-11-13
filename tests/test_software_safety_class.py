@@ -323,4 +323,5 @@ def test_fr009_ac14_coverage_carries_the_class_as_written_with_its_vocabulary(
     assert report["carried_vocabulary"] == {"software_safety_class": CLASSES}
     carried = {r["document"]: r.get("carried") for r in report["coverage_matrix"]}
     assert carried["spec/FR-001.md"] == {"software_safety_class": "class-2"}
-    assert "spec/FR-002.md" not in carried or carried["spec/FR-002.md"] is None
+    assert "spec/FR-002.md" in carried
+    assert carried["spec/FR-002.md"] is None
