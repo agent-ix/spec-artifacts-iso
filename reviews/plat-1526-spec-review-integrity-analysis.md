@@ -40,3 +40,4 @@ declaration (AC-12). The AC-3/AC-9 record-key contradiction is recorded in SR-03
 | --- | --- | --- |
 | FND-001 | fixed | Verified at head 833128e (round 1) |
 | FND-002 | fixed | Verified at head 833128e (round 1) |
+| FND-003 | fixed | Verified at head 0ece6d8 (round 2) |

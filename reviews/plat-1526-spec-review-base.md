@@ -60,3 +60,4 @@ requirement-level class, and that value has no named assigner and no rationale.
 | FND-001 | fixed | Verified at head 833128e (round 1) |
 | FND-002 | fixed | Verified at head 833128e (round 1) |
 | FND-003 | fixed | Verified at head 833128e (round 1) |
+| FND-004 | fixed | Verified at head 0ece6d8 (round 2) |
