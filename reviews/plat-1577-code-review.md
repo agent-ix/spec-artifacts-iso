@@ -50,3 +50,10 @@ name"). The widening is not justified.
 | --- | --- | --- | --- |
 | FND-001 | medium | `softwareSafetyClassAssignedBy` and `softwareSafetyClassRationale` are declared as bare `string` in the four `main.tsp` models, so the record schemas accept `""` while the frontmatter schemas require `minLength: 1`. To get past the FR-005-AC-3 constraint test the PR adds both names to `FREE_TEXT_PROPERTIES`, but FR-005-AC-3 enumerates the closed list in the spec and the test's own comment says widening it "is a spec change, not a test change"; no spec change was made. Use the existing `NonEmptyText` scalar (`@minLength(1)`, "the base of every prose cell and every name") for both properties, regenerate, and revert the two allow-list lines. | spec_artifacts_iso/semantic/main.tsp:299-302, tests/test_semantic_schemas.py:75-76 |
 | FND-002 | low | The PR adds `quire matrix` `trace-id-outside-marker` warnings: the `# FR-009: ...` comments on the two allow-list lines and the `FR-009-AC-14` mention in the test module docstring. The comment pair goes away with the FND-001 fix; reword the docstring line to name the gap without the criterion id, or accept the one warning. | tests/test_semantic_schemas.py:75-76, tests/test_software_safety_class.py:5 |
+
+## Dispositions
+
+| FND | Outcome | Reason |
+| --- | --- | --- |
+| FND-001 | fixed | Round 1 (d5fc873): all four `main.tsp` models declare `softwareSafetyClassAssignedBy?: NonEmptyText` and `softwareSafetyClassRationale?: NonEmptyText`; the regenerated record schemas `$ref` `NonEmptyText.json`; the two `FREE_TEXT_PROPERTIES` lines are reverted. `make schemas-check` up to date (45 files); focused tests 88 passed. |
+| FND-002 | fixed | Round 1 (d5fc873): the `# FR-009:` comments went with the allow-list revert, and the docstring no longer names `FR-009-AC-14`. The docstring still names quire-rs `FR-090`, which draws one `trace-id-outside-marker` warning of the same kind several pre-existing FR-008 docstrings draw; it names no criterion of this repo, so it is accepted as is. |

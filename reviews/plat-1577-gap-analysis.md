@@ -55,3 +55,16 @@ markers, as FR-008 did.
 | --- | --- | --- | --- |
 | FND-001 | medium | All ten tested `Test`-method FR-009 criteria (AC-1..7, AC-9, AC-10, AC-13) are `untagged` in the computed matrix: the markers carry only criterion ids, and `spec/tests.md` has no TC row tracing any FR-009 criterion, so quire reports `criterion-tagged-outside-row` on every marker and binds nothing. Add TC rows (next free id is TC-071) tracing the FR-009 criteria and put the TC id on each marker, as `tests/test_criticality.py` does for FR-008. | tests/test_software_safety_class.py:81-242, spec/tests.md:82-89 |
 | FND-002 | low | `test_fr009_skeletons_carry_none_of_the_fields` is tagged `FR-009-AC-11` but asserts only that skeletons omit the keys, which is AC-12. AC-11 (no schema, mapping or skeleton relates a class key to `criticality`) holds by inspection but nothing asserts it. Drop AC-11 from the marker, or add an assertion that no class key's schema or mapping entry mentions `criticality` and vice versa. | tests/test_software_safety_class.py:240-246 |
+
+## New findings (disposition pass 1)
+
+| ID | Severity | Summary | Refs |
+| --- | --- | --- | --- |
+| FND-003 | low | The new `test_fr009_ac11_class_and_criticality_never_refer_to_each_other` asserts the schema half of FR-009-AC-11 but not the mapping half: `mappings.yaml` is never read. Its skeleton check is vacuous: no skeleton contains `criticality`, so `.partition("criticality")[2]` is always `""`. The skeleton half is already implied by AC-12's test. Add a check that no class mapping entry names `criticality` and the `criticality` entry names no class key, and drop the vacuous skeleton assertion. Inspection confirms AC-11 holds today. | tests/test_software_safety_class.py:249-266 |
+
+## Dispositions
+
+| FND | Outcome | Reason |
+| --- | --- | --- |
+| FND-001 | fixed | Round 1 (d5fc873): TC-071..TC-077 rows added to `spec/tests.md` and every marker carries its TC id. `quire matrix` (engine 0.59.1): FR-009 AC-1..7, AC-9, AC-10, AC-13 `tagged`; AC-8, AC-11, AC-12 `method-without-symbol` (Inspection, bound), AC-14 `untagged` (out of scope). No `criterion-tagged-outside-row` warning remains. |
+| FND-002 | fixed | Round 1 (d5fc873): the skeleton test now carries only `TC-077`, `FR-009-AC-12`; a new test carries `TC-077`, `FR-009-AC-11` (its own gap is FND-003). |

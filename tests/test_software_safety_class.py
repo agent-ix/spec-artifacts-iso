@@ -3,7 +3,7 @@
 Frontmatter acceptance runs through the `quire validate` binary against this
 module; the TypeSpec projection and mapping are checked on the committed files.
 The `traceability.carried_fields` manifest entry is not declared yet: the
-installed engine rejects the key until quire-rs implements FR-090 (PLAT-1578).
+installed engine rejects the key until the quire-rs engine work lands (PLAT-1578).
 """
 
 from __future__ import annotations
@@ -259,8 +259,8 @@ def test_fr009_ac11_class_and_criticality_never_refer_to_each_other(
         assert "criticality" not in json.dumps(record["properties"][key])
     assert "software" not in json.dumps(schema["properties"]["criticality"])
     assert "software" not in json.dumps(record["properties"]["criticality"])
-    assert "oftware" not in (
-        (PKG_ROOT / "skeletons" / f"{SKELETON[archetype]}.md")
-        .read_text(encoding="utf-8")
-        .partition("criticality")[2]
-    )
+    mapping = rm.load_mappings()["models"][archetype]
+    fields = mapping["properties"]
+    for key in RECORD_KEYS:
+        assert "criticality" not in json.dumps(fields[key])
+    assert "software" not in json.dumps(fields["criticality"])
