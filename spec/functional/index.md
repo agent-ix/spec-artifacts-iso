@@ -15,4 +15,4 @@ description: "Index of artifacts in this directory."
 * [FR-006: The manifest declares the semantic block](./FR-006-semantic-manifest-block.md)
 * [FR-007: Markdown mappings and round-trip policy for the semantic records](./FR-007-markdown-mappings.md)
 * [FR-008: Requirement archetypes carry an optional enumerated criticality field](./FR-008-criticality-field.md)
-* [FR-009: Requirement archetypes carry an optional software safety class field with a module-declared ordered vocabulary](./FR-009-software-safety-class-field.md)
+* [FR-009: Requirement archetypes carry an optional human-assigned software safety class with assigner and rationale, over a module-declared ordered vocabulary](./FR-009-software-safety-class-field.md)
