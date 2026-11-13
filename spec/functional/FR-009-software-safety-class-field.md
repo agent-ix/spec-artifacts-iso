@@ -52,8 +52,10 @@ inline into the record schemas. The four `enum`s are identical, in the same orde
 the highest rigour; the position is the order and no value carries a numeric weight. The shipped tokens are neutral
 labels. They name no standard and quote no text of one. Another rigour scheme is supported by replacing the list in
 the module data, with no change to any engine, because every consumer reads the order from the `enum` and holds no
-copy of it. This module is the one place the list is declared; the architecture module repeats it only as a test
-fixture of its own conformance ([spec-objects-architecture FR-012](ix://agent-ix/spec-objects-architecture/FR-012)-AC-9).
+copy of it. This module is the one place the list is declared and no consumer holds a copy: the architecture module's part-side value is held to the
+vocabulary the engine exposes as `carried_vocabulary` ([quire-rs FR-090](ix://agent-ix/quire-rs/FR-090)), which is this module's
+`enum`, by the `vocabulary` rule of [quire-rs FR-091](ix://agent-ix/quire-rs/FR-091), and an out-of-vocabulary value is reported there,
+naming the document and the value.
 
 The frontmatter keys are snake_case and the mapped record keys are camelCase (`softwareSafetyClass`,
 `softwareSafetyClassAssignedBy`, `softwareSafetyClassRationale`), as `quality_attribute` maps to `qualityAttribute`.
@@ -78,7 +80,7 @@ among related requirements; a person authors it.
 | FR-009-AC-7 | A document with `software_safety_class: ""` fails `quire validate` with a diagnostic naming the field; it is not treated as absent. | Test |
 | FR-009-AC-8 | No frontmatter or record schema carries a `default` for any of the three fields. | Inspection |
 | FR-009-AC-9 | `mappings.yaml` maps `softwareSafetyClass`, `softwareSafetyClassAssignedBy` and `softwareSafetyClassRationale` for `FR`, `NFR`, `StR` and `US` with `kind: frontmatter`, `source: {key: <snake_case key>}`, `lossless: false`, as FR-007 maps `criticality`; a document without the keys yields a record without them. | Test |
-| FR-009-AC-10 | A document carrying `criticality: high` and `software_safety_class: class-1` with assigner and rationale, and one carrying `criticality: low` and `software_safety_class: class-3`, both pass `quire validate`. | Test |
+| FR-009-AC-10 | A document carrying `criticality: high` and `software_safety_class: class-1`, and one carrying `criticality: low` and `software_safety_class: class-3`, each with a non-empty assigner and rationale, both pass `quire validate`. | Test |
 | FR-009-AC-11 | No schema, mapping or skeleton in the module refers to `criticality` from a class property or to a class property from `criticality`. | Inspection |
 | FR-009-AC-12 | No skeleton under `skeletons/` carries any of the three fields. | Inspection |
 | FR-009-AC-13 | A document with `software_safety_class` and no `software_safety_class_rationale`, one with no `software_safety_class_assigned_by`, and one with an empty-string assigner or rationale each fail `quire validate` naming the missing or empty field; a document with an assigner or rationale and no `software_safety_class` fails naming `software_safety_class`. | Test |

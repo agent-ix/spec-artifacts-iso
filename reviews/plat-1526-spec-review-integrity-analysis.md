@@ -27,3 +27,16 @@ declaration (AC-12). The AC-3/AC-9 record-key contradiction is recorded in SR-03
 | --- | --- | --- | --- |
 | FND-001 | low | AC-3 asks for `software_safety_class?` "as the ordered enum" and for the projected order to equal the frontmatter order, but does not say which TypeSpec form it means. The module's `criticality` is a string-literal union, which projects inline as `anyOf` of `const`. A TypeSpec `enum`, like `QualityAttribute`, projects to a `$ref` to a separate generated schema file. Two implementers would produce different projected shapes, and "the enumeration order in the projected schemas" is checked in a different place in each. | spec/functional/FR-009-software-safety-class-field.md:59 |
 | FND-002 | low | AC-10 is compound. A Test half (two documents pass `quire validate`) is joined to an Inspection half ("no schema, mapping or skeleton relates the two fields") under the single Verification `Test`. The second half is the independence claim, and no test of the first half can fail on it. | spec/functional/FR-009-software-safety-class-field.md:66 |
+
+## New findings (disposition pass 1)
+
+| ID | Severity | Summary | Refs |
+| --- | --- | --- | --- |
+| FND-003 | low | AC-10's second document (`criticality: low`, `software_safety_class: class-3`) is not stated to carry an assigner and rationale; read literally it fails `quire validate` under AC-13 (class without rationale/assigner), so the AC asserts a pass that the spec forbids. Say "each with assigner and rationale". | spec/functional/FR-009-software-safety-class-field.md:81 |
+
+## Dispositions
+
+| FND | outcome | reason |
+| --- | --- | --- |
+| FND-001 | fixed | Verified at head 833128e (round 1) |
+| FND-002 | fixed | Verified at head 833128e (round 1) |

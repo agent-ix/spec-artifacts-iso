@@ -27,3 +27,9 @@ so this is low.
 | ID | Severity | Summary | Refs |
 | --- | --- | --- | --- |
 | FND-001 | low | FR-009 has no SHALL statement for its main obligation. The field, its optionality and the ordered inline enum are described ("This requirement adds", "The permitted values are") but never stated as "The `StR`, `US`, `FR` and `NFR` frontmatter schemas **SHALL** declare an optional `software_safety_class` ...", the way FR-008 does. Only the no-default prohibition is normative. | spec/functional/FR-009-software-safety-class-field.md:29,38 |
+
+## Dispositions
+
+| FND | outcome | reason |
+| --- | --- | --- |
+| FND-001 | fixed | Verified at head 833128e (round 1) |
