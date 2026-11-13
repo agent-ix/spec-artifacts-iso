@@ -72,6 +72,8 @@ FREE_TEXT_PROPERTIES = frozenset(
         "summary",  # an index entry's trailing summary
         "description",  # the frontmatter description of index/Glossary
         "annotation",  # the parenthesized remainder of a verification cell
+        "softwareSafetyClassAssignedBy",  # FR-009: the assigner's name
+        "softwareSafetyClassRationale",  # FR-009: the assigner's reason
     }
 )
 

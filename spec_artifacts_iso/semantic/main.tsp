@@ -294,6 +294,12 @@ model FR {
   type: "FR";
   /** Human-assigned consequence of failure; never defaulted. */
   criticality?: "low" | "medium" | "high";
+  /** Human-assigned software safety class, ordered lowest to highest rigour; never defaulted. */
+  softwareSafetyClass?: "class-1" | "class-2" | "class-3";
+  /** free text: a person's name, assigned by a human and verified by the signed git history of the file, not by this module. */
+  softwareSafetyClassAssignedBy?: string;
+  /** free text: the assigner's reason for the class; judged by a human reviewer, not by a schema. */
+  softwareSafetyClassRationale?: string;
   object?: ObjectTypeName;
   status?: ArtifactStatus;
   relationships: Relationship[];
@@ -317,6 +323,12 @@ model NFR {
   qualityAttribute?: QualityAttribute;
   /** Human-assigned consequence of failure; never defaulted. */
   criticality?: "low" | "medium" | "high";
+  /** Human-assigned software safety class, ordered lowest to highest rigour; never defaulted. */
+  softwareSafetyClass?: "class-1" | "class-2" | "class-3";
+  /** free text: a person's name, assigned by a human and verified by the signed git history of the file, not by this module. */
+  softwareSafetyClassAssignedBy?: string;
+  /** free text: the assigner's reason for the class; judged by a human reviewer, not by a schema. */
+  softwareSafetyClassRationale?: string;
   object?: ObjectTypeName;
   status?: ArtifactStatus;
   relationships: Relationship[];
@@ -338,6 +350,12 @@ model StR {
   type: "StR";
   /** Human-assigned consequence of failure; never defaulted. */
   criticality?: "low" | "medium" | "high";
+  /** Human-assigned software safety class, ordered lowest to highest rigour; never defaulted. */
+  softwareSafetyClass?: "class-1" | "class-2" | "class-3";
+  /** free text: a person's name, assigned by a human and verified by the signed git history of the file, not by this module. */
+  softwareSafetyClassAssignedBy?: string;
+  /** free text: the assigner's reason for the class; judged by a human reviewer, not by a schema. */
+  softwareSafetyClassRationale?: string;
   object?: ObjectTypeName;
   status?: ArtifactStatus;
   relationships: Relationship[];
@@ -361,6 +379,12 @@ model US {
   type: "US";
   /** Human-assigned consequence of failure; never defaulted. */
   criticality?: "low" | "medium" | "high";
+  /** Human-assigned software safety class, ordered lowest to highest rigour; never defaulted. */
+  softwareSafetyClass?: "class-1" | "class-2" | "class-3";
+  /** free text: a person's name, assigned by a human and verified by the signed git history of the file, not by this module. */
+  softwareSafetyClassAssignedBy?: string;
+  /** free text: the assigner's reason for the class; judged by a human reviewer, not by a schema. */
+  softwareSafetyClassRationale?: string;
   object?: ObjectTypeName;
   status?: ArtifactStatus;
   relationships: Relationship[];

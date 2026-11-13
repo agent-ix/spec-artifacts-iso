@@ -33,6 +33,31 @@
       ],
       "description": "Human-assigned consequence of failure; never defaulted."
     },
+    "softwareSafetyClass": {
+      "anyOf": [
+        {
+          "type": "string",
+          "const": "class-1"
+        },
+        {
+          "type": "string",
+          "const": "class-2"
+        },
+        {
+          "type": "string",
+          "const": "class-3"
+        }
+      ],
+      "description": "Human-assigned software safety class, ordered lowest to highest rigour; never defaulted."
+    },
+    "softwareSafetyClassAssignedBy": {
+      "type": "string",
+      "description": "free text: a person's name, assigned by a human and verified by the signed git history of the file, not by this module."
+    },
+    "softwareSafetyClassRationale": {
+      "type": "string",
+      "description": "free text: the assigner's reason for the class; judged by a human reviewer, not by a schema."
+    },
     "object": {
       "$ref": "https://schemas.agent-ix.org/agent-ix/spec-artifacts-iso/ObjectTypeName.json"
     },
