@@ -68,3 +68,4 @@ markers, as FR-008 did.
 | --- | --- | --- |
 | FND-001 | fixed | Round 1 (d5fc873): TC-071..TC-077 rows added to `spec/tests.md` and every marker carries its TC id. `quire matrix` (engine 0.59.1): FR-009 AC-1..7, AC-9, AC-10, AC-13 `tagged`; AC-8, AC-11, AC-12 `method-without-symbol` (Inspection, bound), AC-14 `untagged` (out of scope). No `criterion-tagged-outside-row` warning remains. |
 | FND-002 | fixed | Round 1 (d5fc873): the skeleton test now carries only `TC-077`, `FR-009-AC-12`; a new test carries `TC-077`, `FR-009-AC-11` (its own gap is FND-003). |
+| FND-003 | fixed | Round 2 (eaabd2d): the AC-11 test now reads `mappings.yaml` and asserts both directions (no class mapping entry names `criticality`, the `criticality` entry names no class key); the vacuous skeleton assertion is gone. Mutation: pointing FR's `softwareSafetyClass` source key at `criticality` fails the FR case. 4 passed on head. |
