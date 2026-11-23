@@ -700,6 +700,39 @@ def test_fr004_ac7_nfr_allows_a_mitigates_edge(tmp_path: pathlib.Path) -> None:
     assert "disallowed-edge-type" in control and "'blocks'" in control
 
 
+@pytest.mark.trace("TC-079", "FR-004-AC-8")
+@pytest.mark.skipif(shutil.which("quire") is None, reason="quire CLI not installed")
+def test_fr004_ac8_control_verification_verbs_are_authorable(
+    tmp_path: pathlib.Path,
+) -> None:
+    """TC-079: (FR-004-AC-8) both verbs are declared and allowed on NFR, IT and TC."""
+    manifest = yaml.safe_load(MANIFEST_PATH.read_text(encoding="utf-8"))
+    for verb in ("verifies", "verifies_implementation", "verifies_effectiveness"):
+        assert manifest["edge_types"][verb]["category"] == "traceability", verb
+    ix = "ix://agent-ix/spec-objects-safety/CTRL-001"
+
+    def warnings(kind: str, verb: str) -> str:
+        text = (SKELETONS_DIR / f"{kind}.md").read_text(encoding="utf-8")
+        text = re.sub(r"^relationships:\n(?:  .*\n)+", "", text, count=1, flags=re.M)
+        block = f"relationships:\n  - target: {ix}\n    type: {verb}\n"
+        text = re.sub(r"\n---\n", f"\n{block}---\n", text, count=1)
+        doc = tmp_path / f"{kind}-{verb}" / f"{kind.upper()}-001.md"
+        doc.parent.mkdir()
+        doc.write_text(text)
+        done = subprocess.run(
+            ["quire", "validate", "--module", str(PKG_ROOT), str(doc)],
+            capture_output=True,
+            text=True,
+            check=False,
+        )
+        return done.stdout + done.stderr
+
+    for kind in ("nfr", "it", "tc"):
+        for verb in ("verifies_implementation", "verifies_effectiveness"):
+            assert "disallowed-edge-type" not in warnings(kind, verb), (kind, verb)
+        assert "disallowed-edge-type" in warnings(kind, "blocks"), kind
+
+
 @pytest.mark.trace("TC-020", "FR-004-AC-4")
 def test_fr004_ac4_every_role_has_a_description() -> None:
     """TC-020: (FR-004-AC-4)."""

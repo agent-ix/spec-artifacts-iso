@@ -50,6 +50,7 @@ Method` rows — so NFR rows trace to `NFR-001 (metric n)` (SR-003 FND-006).
 | FR-004 | FR-004-AC-5 | TC-021 | ✅ Complete |
 | FR-004 | FR-004-AC-6 | TC-065 | ✅ Complete |
 | FR-004 | FR-004-AC-7 | TC-070 | ✅ Complete |
+| FR-004 | FR-004-AC-8 | TC-079 | ✅ Complete |
 | FR-005 | FR-005-AC-1 | TC-041 | ✅ Complete |
 | FR-005 | FR-005-AC-2 | TC-041 | ✅ Complete |
 | FR-005 | FR-005-AC-3 | TC-040 | ✅ Complete |
@@ -101,6 +102,7 @@ Method` rows — so NFR rows trace to `NFR-001 (metric n)` (SR-003 FND-006).
 | FR-009 | FR-009-AC-12 | TC-077 | ✅ Complete |
 | FR-009 | FR-009-AC-13 | TC-076 | ✅ Complete |
 | FR-009 | FR-009-AC-14 | TC-078 | ✅ Complete |
+| TC-079 | The two control verification verbs are declared as `traceability` verbs beside `verifies`, and an `NFR`, `IT` or `TC` file carrying either verb validates with no `disallowed-edge-type` while a verb outside `allowed_links` still warns (`test_fr004_ac8_control_verification_verbs_are_authorable`) | Integration | P1 | FR-004-AC-8 | ✅ |
 
 ### Non-Functional Requirement Coverage
 

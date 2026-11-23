@@ -88,6 +88,15 @@ The `NFR` archetype's `allowed_links` **SHALL** include `mitigates`. A security 
 `mitigates` edge is a legitimate authored edge, not a vocabulary violation. The verb already
 exists (`governance`); this adds it to the NFR's allowance and adds no verb.
 
+### Control verification verbs
+
+A control is verified in two different ways: that it was built as specified, and that it does its
+job. One `verifies` edge cannot say which, so the vocabulary declares two further `traceability`
+verbs, `verifies_implementation` and `verifies_effectiveness`. They record a fact about the
+specification, name no inverse, and sit beside `verifies`, which stays as it was. The `NFR`, `IT`
+and `TC` archetypes, which may author `verifies`, may author both. Whether a given control needs
+either edge is a rule in the module that owns the control, not here.
+
 ### Unknown verbs are advisory
 
 A relationship whose verb is in no loaded module's vocabulary produces an **advisory**
@@ -141,6 +150,7 @@ quire-rs FR-058's upward-trace relations follow this decision: they accept `sati
 | FR-004-AC-5 | The manifest declares both registries, and an `edge_types` entry that loses its `category` costs the module every archetype at load — a broken entry does not load partially. Asserted against the engine that reads the vocabulary, with an unmutated control proving the load is real. | Test (TC-021) |
 | FR-004-AC-6 | `specifies` declares the inverse `specified_by`, so the object-FR to behavioral-FR edge is readable from the behavioral requirement. | Test (TC-065) |
 | FR-004-AC-7 | The `NFR` archetype's `allowed_links` contains `mitigates`: single-file `quire validate` of an NFR carrying a `mitigates` relationship emits no `disallowed-edge-type` for it, while an NFR carrying a verb outside `allowed_links` still does. | Test (TC-070) |
+| FR-004-AC-8 | The manifest declares `verifies_implementation` and `verifies_effectiveness` in the `traceability` category, and `verifies` is still declared. Single-file `quire validate` of an `NFR`, `IT` and `TC` carrying either verb to a control emits no `disallowed-edge-type`, while a verb outside `allowed_links` on the same file still does. | Test (TC-079) |
 
 **What FR-004-AC-5 no longer claims.** Until PLAT-902 this criterion was
 verified by validating the manifest against a copy of the FR-035 module-manifest
@@ -156,7 +166,7 @@ asserted here rather than being asserted against a copy.
 
 | ID | Constraint | Type | Validation |
 |----|-----------|------|------------|
-| FR-004-CON-1 | This requirement describes the vocabulary and may **clarify** an existing entry's description; it adds and removes no verb. Additions belong to the module that needs them (`spec-objects-security#5` owns the safety-chain verbs) and follow the criteria above. | Process | Inspection |
+| FR-004-CON-1 | This requirement describes the vocabulary and may **clarify** an existing entry's description; it adds and removes no verb other than the two control verification verbs of FR-004-AC-8. Additions belong to the module that needs them (`spec-objects-security#5` owns the safety-chain verbs) and follow the criteria above. | Process | Inspection |
 | FR-004-CON-2 | An unrecognised verb SHALL stay advisory. Making `UnknownEdgeType` fatal would make the vocabulary unmigratable — every rename would break every document using the old verb before any could be updated. | Design | Inspection |
 
 ## Dependencies
