@@ -55,3 +55,4 @@ Sound, with one wording defect in CON-1.
 | --- | --- | --- |
 | FND-001 | fixed | Round 1, head 3084a3d. CON-1 now reads: "A verb is declared by the module that needs it, unless several modules consume it, in which case it is shared vocabulary here, as the control verification verbs of FR-004-AC-8 are. Every addition follows the criteria above." That is a sound ownership rule. The list of exceptions and the conflicting "Additions belong to the module that needs them" sentence are gone. The residual "adds … no verb" clause is recorded separately as FND-002. |
 | FND-002 | still-open | New in disposition pass 1. No fix has landed yet: CON-1 still says "adds and removes no verb" while line 100 and AC-8 require two new verbs. |
+| FND-002 | fixed | Round 2, head 779564f. CON-1 now reads "...; it removes no verb. A verb is declared by the module that needs it, unless several modules consume it, ...". This is consistent with the SHALL at line 100 and with AC-8. |
