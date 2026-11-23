@@ -26,3 +26,9 @@ Conformant except that the new section is not normative.
 | ID | Severity | Summary | Refs |
 | --- | --- | --- | --- |
 | FND-001 | low | The new section uses no SHALL. It describes the state ("the vocabulary declares two further `traceability` verbs … The `NFR`, `IT` and `TC` archetypes … may author both"). The sibling section for the NFR `mitigates` allowance states its obligation as "The `NFR` archetype's `allowed_links` **SHALL** include `mitigates`". Add the matching ubiquitous statements, for example "The module SHALL declare `verifies_implementation` and `verifies_effectiveness` as `traceability` verbs, and the `NFR`, `IT` and `TC` archetypes' `allowed_links` SHALL include both." | spec/functional/FR-004-edge-type-vocabulary.md:91-98 |
+
+## Dispositions
+
+| FND | outcome | reason |
+| --- | --- | --- |
+| FND-001 | fixed | Round 1, head 3084a3d. FR-004 line 100 adds: "The vocabulary SHALL declare `verifies_implementation` and `verifies_effectiveness` as `traceability` verbs, and the `NFR`, `IT` and `TC` archetypes SHALL allow both in `allowed_links`." This matches the form of the sibling `mitigates` statement. |

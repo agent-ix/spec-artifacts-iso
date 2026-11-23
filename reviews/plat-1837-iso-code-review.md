@@ -52,3 +52,10 @@ this module, and the test can fail. The TC-079 row is in the wrong table in
 | --- | --- | --- | --- |
 | FND-001 | medium | The TC-079 test-case row (6 cells: Test ID, Title, Type, Priority, Traces To, Status) is appended to the end of the 4-column Functional Requirement Coverage table, after the FR-009-AC-14 row. It should be in the Test Case Summary after TC-078. The Test Case Summary has no TC-079 row, and the coverage table now has a row whose requirement column is `TC-079`. quire-cli 0.52.0 no longer reports row-width for this, but SR-037 FND-001 saw the same misplacement fail `quire validate` under engine 0.60. | spec/tests.md:105 |
 | FND-002 | low | The new test declares a nested helper named `warnings`. The AC-7 test above it also declares one, and `quire matrix` now reports `symbol-id-collision: 2 declarations of function warnings` (tests/test_manifest_and_validate.py:686 and :714). The name also shadows the stdlib module. Rename the new helper, for example `validate_warnings`. | tests/test_manifest_and_validate.py:714 |
+
+## Dispositions
+
+| FND | outcome | reason |
+| --- | --- | --- |
+| FND-001 | fixed | Round 1, head 3084a3d. The TC-079 row is removed from the Functional Requirement Coverage table and now sits in the Test Case Summary directly after TC-078 (spec/tests.md:165). The coverage table ends at FR-009-AC-14. `quire validate spec/tests.md` exits 0. |
+| FND-002 | fixed | Round 1, head 3084a3d. The helper is renamed `def validate_warnings(kind: str, verb: str) -> str:` (tests/test_manifest_and_validate.py:714). `quire matrix --scope .` no longer reports a collision for `warnings`; the only remaining one is the pre-existing `reasons` (497/547). `-k fr004`: 5 passed, and the only failure is the pre-existing `test_fr004_ac5_*`. Dropping `verifies_effectiveness` from TC `allowed_links` still makes `test_fr004_ac8_*` fail. ruff and black pass. |

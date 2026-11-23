@@ -168,7 +168,7 @@ asserted here rather than being asserted against a copy.
 
 | ID | Constraint | Type | Validation |
 |----|-----------|------|------------|
-| FR-004-CON-1 | This requirement describes the vocabulary and may **clarify** an existing entry's description; it adds and removes no verb. A verb is declared by the module that needs it, unless several modules consume it, in which case it is shared vocabulary here, as the control verification verbs of FR-004-AC-8 are. Every addition follows the criteria above. | Process | Inspection |
+| FR-004-CON-1 | This requirement describes the vocabulary and may **clarify** an existing entry's description; it removes no verb. A verb is declared by the module that needs it, unless several modules consume it, in which case it is shared vocabulary here, as the control verification verbs of FR-004-AC-8 are. Every addition follows the criteria above. | Process | Inspection |
 | FR-004-CON-2 | An unrecognised verb SHALL stay advisory. Making `UnknownEdgeType` fatal would make the vocabulary unmigratable — every rename would break every document using the old verb before any could be updated. | Design | Inspection |
 
 ## Dependencies
