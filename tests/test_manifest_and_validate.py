@@ -711,7 +711,7 @@ def test_fr004_ac8_control_verification_verbs_are_authorable(
         assert manifest["edge_types"][verb]["category"] == "traceability", verb
     ix = "ix://agent-ix/spec-objects-safety/CTRL-001"
 
-    def warnings(kind: str, verb: str) -> str:
+    def validate_validate_warnings(kind: str, verb: str) -> str:
         text = (SKELETONS_DIR / f"{kind}.md").read_text(encoding="utf-8")
         text = re.sub(r"^relationships:\n(?:  .*\n)+", "", text, count=1, flags=re.M)
         block = f"relationships:\n  - target: {ix}\n    type: {verb}\n"
@@ -729,8 +729,11 @@ def test_fr004_ac8_control_verification_verbs_are_authorable(
 
     for kind in ("nfr", "it", "tc"):
         for verb in ("verifies_implementation", "verifies_effectiveness"):
-            assert "disallowed-edge-type" not in warnings(kind, verb), (kind, verb)
-        assert "disallowed-edge-type" in warnings(kind, "blocks"), kind
+            assert "disallowed-edge-type" not in validate_warnings(kind, verb), (
+                kind,
+                verb,
+            )
+        assert "disallowed-edge-type" in validate_warnings(kind, "blocks"), kind
 
 
 @pytest.mark.trace("TC-020", "FR-004-AC-4")

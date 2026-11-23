@@ -97,6 +97,8 @@ specification, name no inverse, and sit beside `verifies`, which stays as it was
 and `TC` archetypes, which may author `verifies`, may author both. Whether a given control needs
 either edge is a rule in the module that owns the control, not here.
 
+The vocabulary SHALL declare `verifies_implementation` and `verifies_effectiveness` as `traceability` verbs, and the `NFR`, `IT` and `TC` archetypes SHALL allow both in `allowed_links`.
+
 ### Unknown verbs are advisory
 
 A relationship whose verb is in no loaded module's vocabulary produces an **advisory**
@@ -166,7 +168,7 @@ asserted here rather than being asserted against a copy.
 
 | ID | Constraint | Type | Validation |
 |----|-----------|------|------------|
-| FR-004-CON-1 | This requirement describes the vocabulary and may **clarify** an existing entry's description; it adds and removes no verb other than the two control verification verbs of FR-004-AC-8. Additions belong to the module that needs them (`spec-objects-security#5` owns the safety-chain verbs) and follow the criteria above. | Process | Inspection |
+| FR-004-CON-1 | This requirement describes the vocabulary and may **clarify** an existing entry's description; it adds and removes no verb. A verb is declared by the module that needs it, unless several modules consume it, in which case it is shared vocabulary here, as the control verification verbs of FR-004-AC-8 are. Every addition follows the criteria above. | Process | Inspection |
 | FR-004-CON-2 | An unrecognised verb SHALL stay advisory. Making `UnknownEdgeType` fatal would make the vocabulary unmigratable — every rename would break every document using the old verb before any could be updated. | Design | Inspection |
 
 ## Dependencies
