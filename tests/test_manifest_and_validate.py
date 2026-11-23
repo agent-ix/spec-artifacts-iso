@@ -711,7 +711,7 @@ def test_fr004_ac8_control_verification_verbs_are_authorable(
         assert manifest["edge_types"][verb]["category"] == "traceability", verb
     ix = "ix://agent-ix/spec-objects-safety/CTRL-001"
 
-    def validate_validate_warnings(kind: str, verb: str) -> str:
+    def validate_warnings(kind: str, verb: str) -> str:
         text = (SKELETONS_DIR / f"{kind}.md").read_text(encoding="utf-8")
         text = re.sub(r"^relationships:\n(?:  .*\n)+", "", text, count=1, flags=re.M)
         block = f"relationships:\n  - target: {ix}\n    type: {verb}\n"
