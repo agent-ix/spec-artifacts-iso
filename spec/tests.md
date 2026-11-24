@@ -51,7 +51,7 @@ Method` rows — so NFR rows trace to `NFR-001 (metric n)` (SR-003 FND-006).
 | FR-004 | FR-004-AC-6 | TC-065 | ✅ Complete |
 | FR-004 | FR-004-AC-7 | TC-070 | ✅ Complete |
 | FR-004 | FR-004-AC-8 | TC-079 | ✅ Complete |
-| FR-004 | FR-004-AC-9 | TC-080 | `FR` and `NFR` allow `soup_requirement_for` in `allowed_links`, the manifest declares neither it nor `has_soup_requirement`, and a file carrying the verb validates with no `disallowed-edge-type` while a verb outside `allowed_links` still warns (`test_fr004_ac9_soup_requirement_verbs_are_authorable`) | Integration | P1 | FR-004-AC-9 | ✅ |
+| FR-004 | FR-004-AC-9 | TC-080 | ✅ Complete |
 | FR-005 | FR-005-AC-1 | TC-041 | ✅ Complete |
 | FR-005 | FR-005-AC-2 | TC-041 | ✅ Complete |
 | FR-005 | FR-005-AC-3 | TC-040 | ✅ Complete |
