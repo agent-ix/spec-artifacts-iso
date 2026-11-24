@@ -9,6 +9,8 @@ relationships:
     type: "consumes"
   - target: "ix://agent-ix/quire-rs/spec/functional/FR-041"
     type: "consumes"
+  - target: "ix://agent-ix/spec-objects-security/FR-030"
+    type: "references"
 ---
 # FR-004: The edge-type and role vocabulary is declared module data
 
@@ -99,18 +101,24 @@ either edge is a rule in the module that owns the control, not here.
 
 The vocabulary SHALL declare `verifies_implementation` and `verifies_effectiveness` as `traceability` verbs, and the `NFR`, `IT` and `TC` archetypes SHALL allow both in `allowed_links`.
 
-### SOUP requirement verbs
+### SOUP requirement verb
 
 A requirement a third-party (SOUP) record serves is asked for the requirements placed on that SOUP item. The verb
-`soup_requirement_for` and its inverse `has_soup_requirement` belong to `spec-objects-security`
-[FR-030](ix://agent-ix/spec-objects-security/FR-030), which declares them in its own `edge_types`. This
-vocabulary declares neither, so the module declaring them stays their single owner. The `FR` and `NFR` archetypes
-author the facts, so their `allowed_links` SHALL include both verbs; otherwise a statement that authors
-`soup_requirement_for`, or a served requirement that authors `has_soup_requirement`, draws an advisory
-`disallowed-edge-type` finding although the security module's relation counts the edge. Where the security module
-is not loaded the two verbs are in no loaded vocabulary and draw the advisory `UnknownEdgeType`.
+`soup_requirement_for` belongs to `spec-objects-security`
+[FR-030](ix://agent-ix/spec-objects-security/FR-030), which declares it, with its inverse `has_soup_requirement`, in its
+own `edge_types`. This vocabulary declares neither, so the module declaring them stays their single owner. The `FR` and
+`NFR` archetypes author the statement, so their `allowed_links` SHALL include `soup_requirement_for`; otherwise a
+statement that authors it draws an advisory `disallowed-edge-type` finding although the security module's relation counts
+the edge. The inverse `has_soup_requirement` is not listed: an inverse label a loaded module declares is allowed on every
+archetype (quire-rs FR-041-AC-2, as the Inverses section above states).
 
-The `FR` and `NFR` archetypes SHALL allow `soup_requirement_for` and `has_soup_requirement` in `allowed_links`, and the vocabulary SHALL NOT declare either verb in `edge_types`.
+Listing a verb that this vocabulary does not declare has a cost, accepted because the security module and this one are
+default modules released together: whenever `soup_requirement_for` is in no loaded vocabulary (this module loaded without
+spec-objects-security, or with a security version that predates its declaration) every load prints the advisory
+`UnknownEdgeType` for it, once per archetype, whether or not a document uses the verb. The advisory leaves the exit status
+unchanged and goes away when a module that declares the verb is loaded.
+
+The `FR` and `NFR` archetypes SHALL allow `soup_requirement_for` in `allowed_links`, and the vocabulary SHALL NOT declare it or `has_soup_requirement` in `edge_types`.
 
 ### Unknown verbs are advisory
 
@@ -166,7 +174,7 @@ quire-rs FR-058's upward-trace relations follow this decision: they accept `sati
 | FR-004-AC-6 | `specifies` declares the inverse `specified_by`, so the object-FR to behavioral-FR edge is readable from the behavioral requirement. | Test (TC-065) |
 | FR-004-AC-7 | The `NFR` archetype's `allowed_links` contains `mitigates`: single-file `quire validate` of an NFR carrying a `mitigates` relationship emits no `disallowed-edge-type` for it, while an NFR carrying a verb outside `allowed_links` still does. | Test (TC-070) |
 | FR-004-AC-8 | The manifest declares `verifies_implementation` and `verifies_effectiveness` in the `traceability` category, and `verifies` is still declared. Single-file `quire validate` of an `NFR`, `IT` and `TC` carrying either verb to a control emits no `disallowed-edge-type`, while a verb outside `allowed_links` on the same file still does. | Test (TC-079) |
-| FR-004-AC-9 | The `FR` and `NFR` archetypes' `allowed_links` contain `soup_requirement_for` and `has_soup_requirement`, and the manifest's `edge_types` declares neither. Single-file `quire validate` of an `FR` and of an `NFR` carrying either verb to a requirement emits no `disallowed-edge-type`, while a verb outside `allowed_links` on the same file still does. | Test (TC-080) |
+| FR-004-AC-9 | The `FR` and `NFR` archetypes' `allowed_links` contain `soup_requirement_for`, and the manifest's `edge_types` declares neither it nor `has_soup_requirement`. Single-file `quire validate` of an `FR` and of an `NFR` carrying the verb to a requirement emits no `disallowed-edge-type`, while a verb outside `allowed_links` on the same file still does. | Test (TC-080) |
 
 **What FR-004-AC-5 no longer claims.** Until PLAT-902 this criterion was
 verified by validating the manifest against a copy of the FR-035 module-manifest
@@ -189,3 +197,4 @@ asserted here rather than being asserted against a copy.
 
 - **Upstream**: [StR-001](../stakeholder/StR-001-module-activation.md)
 - **Downstream**: quire-rs FR-040 (`allowed_links` normalization and `UnknownEdgeType`), quire-rs FR-041 (authorable inverse edges), quire-rs FR-058 (upward-trace relations, which take their verbs from the decision above), `spec-objects-*` link declarations
+- **Cross-repository**: spec-objects-security [FR-030](ix://agent-ix/spec-objects-security/FR-030) declares `soup_requirement_for` and its inverse; this module only allows the forward verb on `FR` and `NFR`.
