@@ -51,6 +51,7 @@ Method` rows — so NFR rows trace to `NFR-001 (metric n)` (SR-003 FND-006).
 | FR-004 | FR-004-AC-6 | TC-065 | ✅ Complete |
 | FR-004 | FR-004-AC-7 | TC-070 | ✅ Complete |
 | FR-004 | FR-004-AC-8 | TC-079 | ✅ Complete |
+| FR-004 | FR-004-AC-9 | TC-080 | ✅ Complete |
 | FR-005 | FR-005-AC-1 | TC-041 | ✅ Complete |
 | FR-005 | FR-005-AC-2 | TC-041 | ✅ Complete |
 | FR-005 | FR-005-AC-3 | TC-040 | ✅ Complete |
@@ -163,6 +164,7 @@ Method` rows — so NFR rows trace to `NFR-001 (metric n)` (SR-003 FND-006).
 | TC-077 | Schemas, mappings and skeletons keep class and `criticality` separate, and no skeleton carries a class field (`test_fr009_ac11_*`, `test_fr009_skeletons_carry_none_of_the_fields`) | Integration | P1 | FR-009-AC-11, FR-009-AC-12 | ✅ |
 | TC-078 | The manifest declares the `software_safety_class` `carried_fields` entry for `StR`, `US`, `FR`, `NFR` and none for `criticality`; the coverage report carries a stated class as written under `carried`, carries none for a document stating none, and exposes the ordered vocabulary as `carried_vocabulary` (`test_fr009_ac14_*`) | Integration | P1 | FR-009-AC-14 | ✅ |
 | TC-079 | The two control verification verbs are declared as `traceability` verbs beside `verifies`, and an `NFR`, `IT` or `TC` file carrying either verb validates with no `disallowed-edge-type` while a verb outside `allowed_links` still warns (`test_fr004_ac8_control_verification_verbs_are_authorable`) | Integration | P1 | FR-004-AC-8 | ✅ |
+| TC-080 | `FR` and `NFR` allow `soup_requirement_for` and `has_soup_requirement` in `allowed_links`, the manifest declares neither verb, and a file carrying either validates with no `disallowed-edge-type` while a verb outside `allowed_links` still warns (`test_fr004_ac9_soup_requirement_verbs_are_authorable`) | Integration | P1 | FR-004-AC-9 | ✅ |
 | TC-056 | Two consecutive `make schemas` runs on one tree produce byte-identical bundles for every emitted file (NFR-001 metric 1) | Property | P1 | NFR-001 (metric 1) | ✅ |
 | TC-057 | `make schemas-check` and `make test` exit 0 with the network namespace disabled after `npm ci` and `poetry install` (NFR-001 metric 2) | Manual | P2 | NFR-001 (metric 2) | ✅ |
 | TC-058 | `make schemas-check` completes within 30 s on the reference machine (NFR-001 metric 3) | Benchmark | P3 | NFR-001 (metric 3) | ✅ |

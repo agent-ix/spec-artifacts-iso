@@ -132,6 +132,8 @@ artifact_types:
   - projection_of
   - delegates_to
   - manages
+  - soup_requirement_for
+  - has_soup_requirement
   examples: []
   lint_rules_ref: []
   # Format-walkthrough decisions #1-#4 (2026-06-11): the `## Specification`
@@ -233,6 +235,8 @@ artifact_types:
   - uses
   - derives_from
   - mitigates
+  - soup_requirement_for
+  - has_soup_requirement
   examples: []
   lint_rules_ref: []
   # Format-walkthrough decision #9 (2026-06-11): required NFR core is

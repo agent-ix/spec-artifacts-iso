@@ -99,6 +99,19 @@ either edge is a rule in the module that owns the control, not here.
 
 The vocabulary SHALL declare `verifies_implementation` and `verifies_effectiveness` as `traceability` verbs, and the `NFR`, `IT` and `TC` archetypes SHALL allow both in `allowed_links`.
 
+### SOUP requirement verbs
+
+A requirement a third-party (SOUP) record serves is asked for the requirements placed on that SOUP item. The verb
+`soup_requirement_for` and its inverse `has_soup_requirement` belong to `spec-objects-security`
+[FR-030](ix://agent-ix/spec-objects-security/FR-030), which declares them in its own `edge_types`. This
+vocabulary declares neither, so the module declaring them stays their single owner. The `FR` and `NFR` archetypes
+author the facts, so their `allowed_links` SHALL include both verbs; otherwise a statement that authors
+`soup_requirement_for`, or a served requirement that authors `has_soup_requirement`, draws an advisory
+`disallowed-edge-type` finding although the security module's relation counts the edge. Where the security module
+is not loaded the two verbs are in no loaded vocabulary and draw the advisory `UnknownEdgeType`.
+
+The `FR` and `NFR` archetypes SHALL allow `soup_requirement_for` and `has_soup_requirement` in `allowed_links`, and the vocabulary SHALL NOT declare either verb in `edge_types`.
+
 ### Unknown verbs are advisory
 
 A relationship whose verb is in no loaded module's vocabulary produces an **advisory**
@@ -153,6 +166,7 @@ quire-rs FR-058's upward-trace relations follow this decision: they accept `sati
 | FR-004-AC-6 | `specifies` declares the inverse `specified_by`, so the object-FR to behavioral-FR edge is readable from the behavioral requirement. | Test (TC-065) |
 | FR-004-AC-7 | The `NFR` archetype's `allowed_links` contains `mitigates`: single-file `quire validate` of an NFR carrying a `mitigates` relationship emits no `disallowed-edge-type` for it, while an NFR carrying a verb outside `allowed_links` still does. | Test (TC-070) |
 | FR-004-AC-8 | The manifest declares `verifies_implementation` and `verifies_effectiveness` in the `traceability` category, and `verifies` is still declared. Single-file `quire validate` of an `NFR`, `IT` and `TC` carrying either verb to a control emits no `disallowed-edge-type`, while a verb outside `allowed_links` on the same file still does. | Test (TC-079) |
+| FR-004-AC-9 | The `FR` and `NFR` archetypes' `allowed_links` contain `soup_requirement_for` and `has_soup_requirement`, and the manifest's `edge_types` declares neither. Single-file `quire validate` of an `FR` and of an `NFR` carrying either verb to a requirement emits no `disallowed-edge-type`, while a verb outside `allowed_links` on the same file still does. | Test (TC-080) |
 
 **What FR-004-AC-5 no longer claims.** Until PLAT-902 this criterion was
 verified by validating the manifest against a copy of the FR-035 module-manifest

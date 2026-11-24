@@ -736,6 +736,48 @@ def test_fr004_ac8_control_verification_verbs_are_authorable(
         assert "disallowed-edge-type" in validate_warnings(kind, "blocks"), kind
 
 
+@pytest.mark.trace("TC-080", "FR-004-AC-9")
+@pytest.mark.skipif(shutil.which("quire") is None, reason="quire CLI not installed")
+def test_fr004_ac9_soup_requirement_verbs_are_authorable(
+    tmp_path: pathlib.Path,
+) -> None:
+    """TC-080: (FR-004-AC-9) FR and NFR allow both SOUP verbs; the owner declares them."""
+    manifest = yaml.safe_load(MANIFEST_PATH.read_text(encoding="utf-8"))
+    verbs = ("soup_requirement_for", "has_soup_requirement")
+    for verb in verbs:
+        assert verb not in manifest["edge_types"], verb
+    for kind in ("FR", "NFR"):
+        links = next(a for a in manifest["artifact_types"] if a["name"] == kind)[
+            "allowed_links"
+        ]
+        assert set(verbs) <= set(links), kind
+    target = "ix://agent-ix/spec-objects-security/FR-100"
+
+    def validate_warnings(kind: str, verb: str) -> str:
+        text = (SKELETONS_DIR / f"{kind}.md").read_text(encoding="utf-8")
+        text = re.sub(r"^relationships:\n(?:  .*\n)+", "", text, count=1, flags=re.M)
+        block = f"relationships:\n  - target: {target}\n    type: {verb}\n"
+        text = re.sub(r"\n---\n", f"\n{block}---\n", text, count=1)
+        doc = tmp_path / f"{kind}-{verb}" / f"{kind.upper()}-001.md"
+        doc.parent.mkdir()
+        doc.write_text(text)
+        done = subprocess.run(
+            ["quire", "validate", "--module", str(PKG_ROOT), str(doc)],
+            capture_output=True,
+            text=True,
+            check=False,
+        )
+        return done.stdout + done.stderr
+
+    for kind in ("fr", "nfr"):
+        for verb in verbs:
+            assert "disallowed-edge-type" not in validate_warnings(kind, verb), (
+                kind,
+                verb,
+            )
+        assert "disallowed-edge-type" in validate_warnings(kind, "blocks"), kind
+
+
 @pytest.mark.trace("TC-020", "FR-004-AC-4")
 def test_fr004_ac4_every_role_has_a_description() -> None:
     """TC-020: (FR-004-AC-4)."""
