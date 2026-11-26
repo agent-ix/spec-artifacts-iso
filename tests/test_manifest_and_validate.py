@@ -651,7 +651,6 @@ def _roles() -> dict:
 
 
 @pytest.mark.trace("TC-017", "FR-004-AC-1")
-@pytest.mark.trace("TC-017", "FR-004-AC-1")
 def test_fr004_ac1_every_edge_type_has_a_description_and_known_category() -> None:
     """TC-017: (FR-004-AC-1).
 
