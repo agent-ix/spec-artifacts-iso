@@ -39,12 +39,13 @@ Method` rows — so NFR rows trace to `NFR-001 (metric n)` (SR-003 FND-006).
 | FR-003 | FR-003-AC-1 | TC-003 | ✅ Complete |
 | FR-003 | FR-003-AC-2 | TC-004 | ✅ Complete |
 | FR-003 | FR-003-CON-2 | TC-004 | ✅ Complete |
-| FR-003 | FR-003-AC-3 | — | 🚧 Pending |
-| FR-003 | FR-003-AC-4 | — | 🚧 Pending |
-| FR-003 | FR-003-AC-5 | — | 🚧 Pending |
-| FR-003 | FR-003-AC-6 | — | 🚧 Pending |
-| FR-003 | FR-003-AC-7 | — | 🚧 Pending |
-| FR-003 | FR-003-AC-8 | — | 🚧 Pending |
+| FR-003 | FR-003-AC-3 | TC-012 | ✅ Complete |
+| FR-003 | FR-003-AC-4 | TC-081 | ✅ Complete |
+| FR-003 | FR-003-AC-5 | TC-082 | ✅ Complete |
+| FR-003 | FR-003-AC-6 | TC-083 | ✅ Complete |
+| FR-003 | FR-003-AC-7 | TC-084 | ✅ Complete |
+| FR-003 | FR-003-AC-8 | TC-009, TC-010, TC-011, TC-012 | ✅ Complete |
+| FR-003 | FR-003-CON-1 | TC-085 | ✅ Complete |
 | FR-004 | FR-004-AC-1 | TC-017 | ✅ Complete |
 | FR-004 | FR-004-AC-4 | TC-020 | ✅ Complete |
 | FR-004 | FR-004-AC-5 | TC-021 | ✅ Complete |
@@ -125,7 +126,7 @@ Method` rows — so NFR rows trace to `NFR-001 (metric n)` (SR-003 FND-006).
 | TC-009 | I1): the manifest asserts are consistent with / derived from the skeleton — every asserted heading exists in the skeleton at the asserted level, every asserted table's header row is present in the skeleton, and every asserted id_p (`test_fr002_ac6_asserts_derived_from_skeleton`) | Unit | P0 | FR-002-AC-6 | ✅ |
 | TC-010 | I2): the skeleton's heading set and literal table header rows match the archetype's asserts exactly — a diff in either direction fails. Forward: skeleton ⊇ asserts (covered by AC-6). Reverse: every *asserted-level* skeleton headin (`test_fr002_ac7_literal_consistency_both_directions`) | Unit | P0 | FR-002-AC-7 | ✅ |
 | TC-011 | I3): heading-presence locators are distinguished from ``section_body`` locators; the skeleton supplies substantive (non-empty, non-placeholder) body for every ``section_body``-asserted section (`test_fr002_ac8_locator_kinds_and_substantive_bodies`) | Unit | P0 | FR-002-AC-8 | ✅ |
-| TC-012 | a filled skeleton passes validate_document. Skips when the installed quire wheel predates the markdown-default validator (FR-032); build/install a local quire-rs wheel to exercise it (`test_it002_ac1_skeleton_validates`) | Unit | P0 | FR-002-AC-5 | ✅ |
+| TC-012 | a filled skeleton passes validate_document. Skips when the installed quire wheel predates the markdown-default validator (FR-032); build/install a local quire-rs wheel to exercise it (`test_it002_ac1_skeleton_validates`) | Unit | P0 | FR-002-AC-5, FR-003-AC-3, FR-003-AC-8 | ✅ |
 | TC-013 | deleting a section, breaking AC columns, breaking an AC id, and duplicating a heading each fail validation with the expected reason (`test_it002_ac2_fr_mutations_fail`) | Unit | P0 | FR-002-AC-2, FR-002-AC-3 | ✅ |
 | TC-014 | StR binding criteria are addressable rows under `## Validation Criteria`. The heading and the `Validation` column are deliberately NOT renamed to the FR spelling: ISO/IEC/IEEE 29148 validates a stakeholder requirement against the  (`test_str_validation_criteria_table_is_binding`) | Unit | P0 | FR-002-AC-1 | ✅ |
 | TC-015 | NFR's AC section stays optional but takes the FR table shape when present. A *measurable* NFR's criteria are its `Metric \| Target \| Threshold \| Method` rows and it omits the section; a *policy* NFR authors the table. What is no (`test_nfr_acceptance_criteria_is_absent_or_well_formed`) | Unit | P0 | FR-002-AC-1 | ✅ |
@@ -165,6 +166,11 @@ Method` rows — so NFR rows trace to `NFR-001 (metric n)` (SR-003 FND-006).
 | TC-078 | The manifest declares the `software_safety_class` `carried_fields` entry for `StR`, `US`, `FR`, `NFR` and none for `criticality`; the coverage report carries a stated class as written under `carried`, carries none for a document stating none, and exposes the ordered vocabulary as `carried_vocabulary` (`test_fr009_ac14_*`) | Integration | P1 | FR-009-AC-14 | ✅ |
 | TC-079 | The two control verification verbs are declared as `traceability` verbs beside `verifies`, and an `NFR`, `IT` or `TC` file carrying either verb validates with no `disallowed-edge-type` while a verb outside `allowed_links` still warns (`test_fr004_ac8_control_verification_verbs_are_authorable`) | Integration | P1 | FR-004-AC-8 | ✅ |
 | TC-080 | `FR` and `NFR` allow `soup_requirement_for` in `allowed_links`, the manifest declares neither it nor `has_soup_requirement`, and a file carrying the verb validates with no `disallowed-edge-type` while a verb outside `allowed_links` still warns (`test_fr004_ac9_soup_requirement_verbs_are_authorable`) | Integration | P1 | FR-004-AC-9 | ✅ |
+| TC-081 | A master spec with missing or empty `component_type` fails validation with a diagnostic naming the field (`test_fr003_ac4_missing_or_empty_component_type_is_rejected`) | Unit | P0 | FR-003-AC-4 | ✅ |
+| TC-082 | Multi-word, underscored, and capitalized `component_type` values fail the kebab-case schema pattern (`test_fr003_ac5_non_kebab_component_type_is_rejected`) | Unit | P0 | FR-003-AC-5 | ✅ |
+| TC-083 | A master spec missing its H1 or any canonical H2 section fails with a line-numbered diagnostic (`test_fr003_ac6_missing_canonical_structure_has_line_diagnostic`) | Unit | P0 | FR-003-AC-6 | ✅ |
+| TC-084 | Optional Domain Model and Security Model sections, plus an additional unique section, still validate (`test_fr003_ac7_optional_and_additional_sections_are_accepted`) | Unit | P0 | FR-003-AC-7 | ✅ |
+| TC-085 | Library, service, and React-application component types validate through the one generic master-requirements archetype (`test_fr003_con1_component_types_share_one_generic_master_spec_shape`) | Schema Test | P0 | FR-003-CON-1 | ✅ |
 | TC-056 | Two consecutive `make schemas` runs on one tree produce byte-identical bundles for every emitted file (NFR-001 metric 1) | Property | P1 | NFR-001 (metric 1) | ✅ |
 | TC-057 | `make schemas-check` and `make test` exit 0 with the network namespace disabled after `npm ci` and `poetry install` (NFR-001 metric 2) | Manual | P2 | NFR-001 (metric 2) | ✅ |
 | TC-058 | `make schemas-check` completes within 30 s on the reference machine (NFR-001 metric 3) | Benchmark | P3 | NFR-001 (metric 3) | ✅ |
