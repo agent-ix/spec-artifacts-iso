@@ -147,7 +147,7 @@ Method` rows — so NFR rows trace to `NFR-001 (metric n)` (SR-003 FND-006).
 | TC-052 | `mappings.yaml` validates against `mappings.schema.json`, names every model property exactly once with one of the eight mapping kinds, names no undeclared property, matches locator `assert.columns` on tables, and records `authority`, `round_trip`, per-property `lossless`, and the dropped frontmatter keys (FR-007-AC-1, AC-7) | Unit | P0 | FR-007-AC-1, FR-007-AC-7 | ✅ |
 | TC-053 | The FR skeleton's AC rows map to a plain method cell (`method` only, no `annotation`, `testRefs: []`), its constraint row carries `type: Security`, and the split still parses an annotated cell (`Test (TC-035, TC-036)`) for a caller that authors one (FR-007-AC-3) | Unit | P0 | FR-007-AC-3 | ✅ |
 | TC-054 | The TypeSpec package carries a committed lockfile, no `file:`/`link:` reference, and no `.npmrc` in the repository (FR-005-CON-3) | Static | P1 | FR-005-CON-3 | ✅ |
-| TC-055 | `/tmp/regfinish-quoin-v0.37.0/quoin module install path:/home/peter/dev/spec-artifacts-iso/.worktrees/older-test-coverage/spec_artifacts_iso --config-root /tmp/iso-fr006-demo-config` exits 0 with no stderr diagnostic and reports the module installed into the isolated root; no registry version was present to restore (FR-006-AC-6) | Manual | P1 | FR-006-AC-6 | ✅ |
+| TC-055 | Quoin 0.37.0 installs the module with no diagnostic in a clean isolated config root; verbatim command, output, and exit status appear under Demonstration Evidence (FR-006-AC-6) | Manual | P1 | FR-006-AC-6 | ✅ |
 | TC-064 | quoin main resolves `semantic.exports` and `data_schema` against `object_types` only (`src/semantic/manifest.ts:175-186,258`), so an artifact-type export yields `semantic.unknown-export` and `semantic.export-without-schema`; a source reading, because no quoin carrying it is published (agent-ix/quoin#336) (FR-006-AC-9) | Manual | P2 | FR-006-AC-9 | ✅ |
 | TC-065 | `specifies` declares inverse `specified_by` (`test_fr004_ac6_specifies_declares_the_specified_by_inverse`) | Unit | P0 | FR-004-AC-6 | ✅ |
 | TC-070 | A single NFR file with a `mitigates` relationship validates with no `disallowed-edge-type`; the same file with an unrelated disallowed verb still warns, so the allowance is a membership check and not a disabled one (`test_fr004_ac7_nfr_allows_a_mitigates_edge`) | Integration | P1 | FR-004-AC-7 | ✅ |
@@ -176,3 +176,32 @@ Method` rows — so NFR rows trace to `NFR-001 (metric n)` (SR-003 FND-006).
 | TC-059 | No file in the module or its test support writes a Markdown document, and the reference mapping opens every document read-only — enumerated over the tree, not sampled (FR-007-CON-3) | Static | P2 | FR-007-CON-3 | ✅ |
 | TC-060 | Every emitted object schema declares its properties inline (no `allOf`/`oneOf`/`anyOf`/`$ref` at the object's top level except a nullable scalar's `anyOf`), and the Python `jsonschema` validator accepts every golden record and rejects every TC-045 mutation (FR-005-AC-8) | Unit | P0 | FR-005-AC-8 | ✅ |
 | TC-062 | The sdist/wheel `include` list and the npm `files` list name every shipped payload entry and no TypeSpec toolchain file; a built sdist and a packed npm tarball carry the same payload entry set (FR-005-AC-9) | Integration | P1 | FR-005-AC-9 | ✅ |
+
+## Demonstration Evidence
+
+### TC-055 — FR-006-AC-6
+
+Command:
+
+```text
+/tmp/regfinish-quoin-v0.37.0/quoin module install path:/home/peter/dev/spec-artifacts-iso/.worktrees/older-test-coverage/spec_artifacts_iso --config-root /tmp/iso-fr006-demo-pr80.LUlZ2B2J
+```
+
+Exit status: `0`
+
+Standard output, verbatim:
+
+```json
+{
+  "name": "spec-artifacts-iso",
+  "source": {
+    "type": "path",
+    "path": "/home/peter/dev/spec-artifacts-iso/.worktrees/older-test-coverage/spec_artifacts_iso"
+  },
+  "resolvedPath": "/home/peter/dev/spec-artifacts-iso/.worktrees/older-test-coverage/spec_artifacts_iso",
+  "targetPath": "/tmp/iso-fr006-demo-pr80.LUlZ2B2J/filament/modules/spec-artifacts-iso",
+  "installedAt": "2026-11-26T17:21:08.053Z"
+}
+```
+
+Standard error: empty.
