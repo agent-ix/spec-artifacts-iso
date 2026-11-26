@@ -552,43 +552,69 @@ def test_fr003_ac5_non_kebab_component_type_is_rejected(component_type: str) -> 
     assert "component_type" in _master_spec_error_text(result), result["errors"]
 
 
-@pytest.mark.trace("TC-083")
+@pytest.mark.trace("TC-083", "FR-003-AC-6")
 @pytest.mark.parametrize(
-    "mutation",
+    "mutation,expected_locator",
     [
-        lambda text: re.sub(
-            r"^# Master Requirements Specification\n",
-            "",
-            text,
-            count=1,
-            flags=re.MULTILINE,
+        (
+            lambda text: re.sub(
+                r"^# Master Requirements Specification\n",
+                "",
+                text,
+                count=1,
+                flags=re.MULTILINE,
+            ),
+            "title",
         ),
-        lambda text: re.sub(
-            r"^## Purpose\n.*?(?=^## )",
-            "",
-            text,
-            count=1,
-            flags=re.MULTILINE | re.DOTALL,
+        (
+            lambda text: re.sub(
+                r"^## Purpose\n.*?(?=^## )",
+                "",
+                text,
+                count=1,
+                flags=re.MULTILINE | re.DOTALL,
+            ),
+            "purpose",
         ),
-        lambda text: re.sub(
-            r"^## Scope\n.*?(?=^## )", "", text, count=1, flags=re.MULTILINE | re.DOTALL
+        (
+            lambda text: re.sub(
+                r"^## Scope\n.*?(?=^## )",
+                "",
+                text,
+                count=1,
+                flags=re.MULTILINE | re.DOTALL,
+            ),
+            "scope",
         ),
-        lambda text: re.sub(
-            r"^## System Overview\n.*?(?=^## )",
-            "",
-            text,
-            count=1,
-            flags=re.MULTILINE | re.DOTALL,
+        (
+            lambda text: re.sub(
+                r"^## System Overview\n.*?(?=^## )",
+                "",
+                text,
+                count=1,
+                flags=re.MULTILINE | re.DOTALL,
+            ),
+            "system_overview",
         ),
-        lambda text: re.sub(
-            r"^## Requirements Architecture\n.*?(?=^## )",
-            "",
-            text,
-            count=1,
-            flags=re.MULTILINE | re.DOTALL,
+        (
+            lambda text: re.sub(
+                r"^## Requirements Architecture\n.*?(?=^## )",
+                "",
+                text,
+                count=1,
+                flags=re.MULTILINE | re.DOTALL,
+            ),
+            "requirements_architecture",
         ),
-        lambda text: re.sub(
-            r"^## References\n.*$", "", text, count=1, flags=re.MULTILINE | re.DOTALL
+        (
+            lambda text: re.sub(
+                r"^## References\n.*$",
+                "",
+                text,
+                count=1,
+                flags=re.MULTILINE | re.DOTALL,
+            ),
+            "references",
         ),
     ],
     ids=[
@@ -600,16 +626,16 @@ def test_fr003_ac5_non_kebab_component_type_is_rejected(component_type: str) -> 
         "references",
     ],
 )
-def test_fr003_ac6_missing_canonical_structure_has_line_diagnostic(mutation) -> None:
-    """Missing canonical headings fail validation but currently lack line numbers.
+def test_fr003_ac6_missing_canonical_structure_has_absence_diagnostic(
+    mutation, expected_locator: str
+) -> None:
+    """Missing canonical headings have a named diagnostic without a source line.
 
     Assumptions:
         Each mutation removes exactly one required heading or section.
 
     Criteria:
-        Validation fails with a missing-structure diagnostic.
-        Quire 0.60.0 currently reports no line for absent headings; therefore
-        this test is not tagged as satisfying FR-003-AC-6.
+        Validation reports reason missing, names the locator, and returns line null.
 
     Trace: FR-003-AC-6
     """
@@ -618,10 +644,61 @@ def test_fr003_ac6_missing_canonical_structure_has_line_diagnostic(mutation) -> 
     assert invalid != skeleton, "canonical-structure mutation did not apply"
     result = _master_spec_validation(invalid)
     assert not result["is_valid"], result
-    assert result["errors"], result
-    assert all(error.get("reason") == "missing" for error in result["errors"]), result[
-        "errors"
-    ]
+    assert len(result["errors"]) == 1, result["errors"]
+    error = result["errors"][0]
+    assert error["reason"] == "missing", error
+    assert expected_locator in error["message"], error
+    assert error["line"] is None, error
+
+
+@pytest.mark.trace("FR-003-AC-6")
+@pytest.mark.parametrize(
+    "section,mutation",
+    [
+        (
+            "purpose",
+            lambda text: re.sub(
+                r"^## Purpose\n.*?(?=^## )",
+                "## Purpose\n\n",
+                text,
+                count=1,
+                flags=re.MULTILINE | re.DOTALL,
+            ),
+        ),
+        (
+            "references",
+            lambda text: re.sub(
+                r"^## References\n.*$",
+                "## References\n",
+                text,
+                count=1,
+                flags=re.MULTILINE | re.DOTALL,
+            ),
+        ),
+    ],
+    ids=["empty-purpose", "empty-references"],
+)
+def test_fr003_ac6_empty_leaf_section_has_source_line(section: str, mutation) -> None:
+    """A resolved but empty required leaf section fails at its source line.
+
+    Assumptions:
+        The section heading is present while its body is empty.
+
+    Criteria:
+        Validation reports reason empty, names the section, and gives a line.
+
+    Trace: FR-003-AC-6
+    """
+    skeleton = _skeleton_text("master-requirements")
+    invalid = mutation(skeleton)
+    assert invalid != skeleton, "empty-section mutation did not apply"
+    result = _master_spec_validation(invalid)
+    assert not result["is_valid"], result
+    assert len(result["errors"]) == 1, result["errors"]
+    error = result["errors"][0]
+    assert error["reason"] == "empty", error
+    assert section in error["message"], error
+    assert isinstance(error["line"], int) and error["line"] > 0, error
 
 
 @pytest.mark.trace("TC-084", "FR-003-AC-7")
