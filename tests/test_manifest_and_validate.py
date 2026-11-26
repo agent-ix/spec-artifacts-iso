@@ -651,6 +651,7 @@ def _roles() -> dict:
 
 
 @pytest.mark.trace("TC-017", "FR-004-AC-1")
+@pytest.mark.trace("TC-017", "FR-004-AC-1")
 def test_fr004_ac1_every_edge_type_has_a_description_and_known_category() -> None:
     """TC-017: (FR-004-AC-1).
 
@@ -669,6 +670,9 @@ def test_fr004_ac1_every_edge_type_has_a_description_and_known_category() -> Non
             f"{verb}: category {category!r} is not one of the seven declared "
             f"categories {sorted(_EDGE_CATEGORIES)}"
         )
+
+    assert edges["conflicts_with"]["category"] == "traceability"
+    assert edges["resolves"]["inverse"] == "resolved_by"
 
 
 @pytest.mark.trace("TC-070", "FR-004-AC-7")

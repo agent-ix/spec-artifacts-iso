@@ -904,6 +904,8 @@ edge_types:
   verifies_effectiveness: { description: "Verification artifact shows a control does its job against the risk it was chosen for.", category: traceability }
   exercises: { description: "User story exercises a functional requirement.", category: traceability }
   peer: { description: "Lateral sibling linkage between peer specs/bundles.", category: traceability }
+  conflicts_with: { description: "Artifact or requirement conflicts with another artifact or requirement.", category: traceability }
+  resolves: { description: "Design element or decision resolves a recorded tension.", category: traceability, inverse: resolved_by }
   # ── FR-041 ecosystem vocabulary (2026-06-21): verbs the real corpus uses ──
   # behavioral
   delegates_to: { description: "Source delegates behaviour/handling to the target.", category: behavioral }
