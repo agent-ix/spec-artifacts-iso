@@ -88,7 +88,7 @@ by a different `spec.md` shape. This supersedes the prior two-template split
 | FR-003-AC-3 | A conformant master `spec.md` passes `validate_document` | Integration Test |
 | FR-003-AC-4 | A master spec missing `component_type` (or with an empty value) fails frontmatter validation with a diagnostic naming the field | Integration Test |
 | FR-003-AC-5 | A master spec whose `component_type` is multi-word / capitalized / underscored / empty (e.g. `"Fast API Service"`, `React_Lib`, `""`) fails the kebab-case pattern. (An unquoted trailing `# …` is a YAML comment and is correctly ignored, not a violation.) | Integration Test |
-| FR-003-AC-6 | A master spec missing the H1 title or any required canonical section fails with reason `missing` and a diagnostic naming the missing heading or section; `line` is null when the structure is wholly absent. A present but empty required leaf section (Purpose or References) fails with reason `empty` and a source line. | Integration Test |
+| FR-003-AC-6 | A master spec missing its H1 title or a required canonical heading/section fails with reason `missing` and a diagnostic naming the archetype and missing locator; `line` is null when the structure is wholly absent. A present but empty required leaf section (Purpose or References) fails with reason `empty` and a source line. | Integration Test |
 | FR-003-AC-7 | A master spec carrying optional sections (Domain Model, Security Model) and additional H2 sections still passes | Integration Test |
 | FR-003-AC-8 | The `master-requirements` skeleton (`skeletons/spec.md`) itself passes `validate_document` and satisfies the assert↔skeleton parity checks ([FR-002-AC-6](./FR-002-unified-archetype-validation.md)/7/8) | Schema + Integration Test |
 

@@ -647,6 +647,7 @@ def test_fr003_ac6_missing_canonical_structure_has_absence_diagnostic(
     assert len(result["errors"]) == 1, result["errors"]
     error = result["errors"][0]
     assert error["reason"] == "missing", error
+    assert "master-requirements" in error["message"], error
     assert expected_locator in error["message"], error
     assert error["line"] is None, error
 
