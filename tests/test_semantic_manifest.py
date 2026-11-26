@@ -216,16 +216,19 @@ def test_tc046_legacy_fixture_loads_under_quire(tmp_path: pathlib.Path) -> None:
 # ─── TC-047: the references ──────────
 
 
-@pytest.mark.trace("TC-047", "FR-006-AC-2")
+@pytest.mark.trace("TC-047", "FR-006-AC-2", "FR-006-CON-2")
 def test_tc047_every_export_carries_a_reference_to_its_mapped_file() -> None:
-    """TC-047: FR-006-AC-2: each of the nine exported artifact types carries a
-    ``data_schema.schema`` naming the existing file the FR-005 map fixes."""
+    """TC-047: FR-006-AC-2 and FR-006-CON-2: each of the nine exported artifact
+    types carries only a ``data_schema.schema`` reference to the existing file
+    the FR-005 map fixes; inline schema objects are rejected."""
     manifest = _manifest()
     types = _artifact_types(manifest)
     for name, expected in EXPORT_SCHEMA_FILE.items():
         assert name in types, f"manifest declares no {name} artifact_type"
         ref = types[name].get("data_schema")
         assert ref, f"{name} carries no data_schema reference"
+        ref_fields = set(ref)
+        assert ref_fields == {"schema"}
         assert ref["schema"] == expected, f"{name}: {ref['schema']} != {expected}"
         assert (PKG_ROOT / expected).is_file(), f"{name}: {expected} does not exist"
 
