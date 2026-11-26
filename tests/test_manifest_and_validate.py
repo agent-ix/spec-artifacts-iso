@@ -670,6 +670,9 @@ def test_fr004_ac1_every_edge_type_has_a_description_and_known_category() -> Non
             f"categories {sorted(_EDGE_CATEGORIES)}"
         )
 
+    assert edges["conflicts_with"]["category"] == "traceability"
+    assert edges["resolves"]["inverse"] == "resolved_by"
+
 
 @pytest.mark.trace("TC-070", "FR-004-AC-7")
 @pytest.mark.skipif(shutil.which("quire") is None, reason="quire CLI not installed")
