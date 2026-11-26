@@ -310,7 +310,7 @@ def test_fr002_skeleton_exists_and_has_required_headings(name: str) -> None:
 # ─── I1: assert ↔ skeleton parity (FR-002-AC-6) ──────────────────────────
 
 
-@pytest.mark.trace("TC-009", "FR-002-AC-6")
+@pytest.mark.trace("TC-009", "FR-002-AC-6", "FR-003-AC-8")
 @pytest.mark.parametrize("name", sorted(_SKELETON_FILE), ids=lambda n: n)
 def test_fr002_ac6_asserts_derived_from_skeleton(name: str) -> None:
     """TC-009: FR-002-AC-6 (I1): the manifest asserts are consistent with / derived from
@@ -358,7 +358,7 @@ def test_fr002_ac6_asserts_derived_from_skeleton(name: str) -> None:
 # ─── I2: literal consistency, both directions (FR-002-AC-7) ──────────────
 
 
-@pytest.mark.trace("TC-010", "FR-002-AC-7")
+@pytest.mark.trace("TC-010", "FR-002-AC-7", "FR-003-AC-8")
 @pytest.mark.parametrize("name", sorted(_SKELETON_FILE), ids=lambda n: n)
 def test_fr002_ac7_literal_consistency_both_directions(name: str) -> None:
     """TC-010.
@@ -393,7 +393,7 @@ def test_fr002_ac7_literal_consistency_both_directions(name: str) -> None:
 # ─── I3: locator-kind distinction + substantive bodies (FR-002-AC-8) ─────
 
 
-@pytest.mark.trace("TC-011", "FR-002-AC-8")
+@pytest.mark.trace("TC-011", "FR-002-AC-8", "FR-003-AC-8")
 @pytest.mark.parametrize("name", sorted(_SKELETON_FILE), ids=lambda n: n)
 def test_fr002_ac8_locator_kinds_and_substantive_bodies(name: str) -> None:
     """TC-011: FR-002-AC-8 (I3): heading-presence locators are distinguished from
@@ -459,7 +459,7 @@ def _quire_doc_validator():
     return quire
 
 
-@pytest.mark.trace("TC-012", "FR-002-AC-5")
+@pytest.mark.trace("TC-012", "FR-002-AC-5", "FR-003-AC-3", "FR-003-AC-8")
 @pytest.mark.parametrize("name", sorted(_SKELETON_FILE), ids=lambda n: n)
 def test_it002_ac1_skeleton_validates(name: str) -> None:
     """TC-012: IT-002-AC-1 / FR-002-AC-5: a filled skeleton passes validate_document.
@@ -472,6 +472,293 @@ def test_it002_ac1_skeleton_validates(name: str) -> None:
     text = _skeleton_text(name)
     res = quire.validate_document(name, str(PKG_ROOT), text)
     assert res["is_valid"], res["errors"]
+
+
+def _master_spec_validation(markdown: str) -> dict:
+    """Validate a master spec with the installed quire wheel when supported."""
+    quire = _quire_doc_validator()
+    if quire is None:
+        pytest.skip("quire wheel lacks validate_document (FR-032)")
+    return quire.validate_document("master-requirements", str(PKG_ROOT), markdown)
+
+
+def _master_spec_error_text(result: dict) -> str:
+    """Return diagnostic fields as text so tests check the named schema key."""
+    return json.dumps(result.get("errors", []), sort_keys=True)
+
+
+@pytest.mark.trace("TC-081", "FR-003-AC-4")
+@pytest.mark.parametrize("replacement", [None, ""], ids=["missing", "empty"])
+def test_fr003_ac4_missing_or_empty_component_type_is_rejected(
+    replacement: str | None,
+) -> None:
+    """A missing or empty component_type fails and names the invalid field.
+
+    Assumptions:
+        The installed quire wheel can load the module manifest.
+
+    Criteria:
+        Validation fails with a diagnostic that identifies component_type.
+
+    Trace: FR-003-AC-4
+    """
+    skeleton = _skeleton_text("master-requirements")
+    if replacement is None:
+        invalid = re.sub(
+            r"^component_type:.*\n", "", skeleton, count=1, flags=re.MULTILINE
+        )
+    else:
+        invalid = re.sub(
+            r"^component_type:.*$",
+            'component_type: ""',
+            skeleton,
+            count=1,
+            flags=re.MULTILINE,
+        )
+    assert invalid != skeleton, "component_type mutation did not apply"
+    result = _master_spec_validation(invalid)
+    assert not result["is_valid"], result
+    assert "component_type" in _master_spec_error_text(result), result["errors"]
+
+
+@pytest.mark.trace("TC-082", "FR-003-AC-5")
+@pytest.mark.parametrize(
+    "component_type",
+    ["Fast API Service", "React_Lib", "ReactLib", ""],
+    ids=["multi-word", "underscored", "capitalized", "empty"],
+)
+def test_fr003_ac5_non_kebab_component_type_is_rejected(component_type: str) -> None:
+    """Multi-word, underscored, and capitalized tokens fail the schema pattern.
+
+    Assumptions:
+        The master spec skeleton is otherwise conformant.
+
+    Criteria:
+        Validation fails and identifies component_type in its diagnostics.
+
+    Trace: FR-003-AC-5
+    """
+    skeleton = _skeleton_text("master-requirements")
+    invalid = re.sub(
+        r"^component_type:.*$",
+        f'component_type: "{component_type}"',
+        skeleton,
+        count=1,
+        flags=re.MULTILINE,
+    )
+    assert invalid != skeleton, "component_type mutation did not apply"
+    result = _master_spec_validation(invalid)
+    assert not result["is_valid"], result
+    assert "component_type" in _master_spec_error_text(result), result["errors"]
+
+
+@pytest.mark.trace("TC-083", "FR-003-AC-6")
+@pytest.mark.parametrize(
+    "mutation,expected_locator",
+    [
+        (
+            lambda text: re.sub(
+                r"^# Master Requirements Specification\n",
+                "",
+                text,
+                count=1,
+                flags=re.MULTILINE,
+            ),
+            "title",
+        ),
+        (
+            lambda text: re.sub(
+                r"^## Purpose\n.*?(?=^## )",
+                "",
+                text,
+                count=1,
+                flags=re.MULTILINE | re.DOTALL,
+            ),
+            "purpose",
+        ),
+        (
+            lambda text: re.sub(
+                r"^## Scope\n.*?(?=^## )",
+                "",
+                text,
+                count=1,
+                flags=re.MULTILINE | re.DOTALL,
+            ),
+            "scope",
+        ),
+        (
+            lambda text: re.sub(
+                r"^## System Overview\n.*?(?=^## )",
+                "",
+                text,
+                count=1,
+                flags=re.MULTILINE | re.DOTALL,
+            ),
+            "system_overview",
+        ),
+        (
+            lambda text: re.sub(
+                r"^## Requirements Architecture\n.*?(?=^## )",
+                "",
+                text,
+                count=1,
+                flags=re.MULTILINE | re.DOTALL,
+            ),
+            "requirements_architecture",
+        ),
+        (
+            lambda text: re.sub(
+                r"^## References\n.*$",
+                "",
+                text,
+                count=1,
+                flags=re.MULTILINE | re.DOTALL,
+            ),
+            "references",
+        ),
+    ],
+    ids=[
+        "h1",
+        "purpose",
+        "scope",
+        "system-overview",
+        "requirements-architecture",
+        "references",
+    ],
+)
+def test_fr003_ac6_missing_canonical_structure_has_absence_diagnostic(
+    mutation, expected_locator: str
+) -> None:
+    """Missing canonical headings have a named diagnostic without a source line.
+
+    Assumptions:
+        Each mutation removes exactly one required heading or section.
+
+    Criteria:
+        Validation reports reason missing, names the locator, and returns line null.
+
+    Trace: FR-003-AC-6
+    """
+    skeleton = _skeleton_text("master-requirements")
+    invalid = mutation(skeleton)
+    assert invalid != skeleton, "canonical-structure mutation did not apply"
+    result = _master_spec_validation(invalid)
+    assert not result["is_valid"], result
+    assert len(result["errors"]) == 1, result["errors"]
+    error = result["errors"][0]
+    assert error["reason"] == "missing", error
+    assert "master-requirements" in error["message"], error
+    assert expected_locator in error["message"], error
+    assert error["line"] is None, error
+
+
+@pytest.mark.trace("FR-003-AC-6")
+@pytest.mark.parametrize(
+    "section,mutation",
+    [
+        (
+            "purpose",
+            lambda text: re.sub(
+                r"^## Purpose\n.*?(?=^## )",
+                "## Purpose\n\n",
+                text,
+                count=1,
+                flags=re.MULTILINE | re.DOTALL,
+            ),
+        ),
+        (
+            "references",
+            lambda text: re.sub(
+                r"^## References\n.*$",
+                "## References\n",
+                text,
+                count=1,
+                flags=re.MULTILINE | re.DOTALL,
+            ),
+        ),
+    ],
+    ids=["empty-purpose", "empty-references"],
+)
+def test_fr003_ac6_empty_leaf_section_has_source_line(section: str, mutation) -> None:
+    """A resolved but empty required leaf section fails at its source line.
+
+    Assumptions:
+        The section heading is present while its body is empty.
+
+    Criteria:
+        Validation reports reason empty, names the section, and gives a line.
+
+    Trace: FR-003-AC-6
+    """
+    skeleton = _skeleton_text("master-requirements")
+    invalid = mutation(skeleton)
+    assert invalid != skeleton, "empty-section mutation did not apply"
+    result = _master_spec_validation(invalid)
+    assert not result["is_valid"], result
+    assert len(result["errors"]) == 1, result["errors"]
+    error = result["errors"][0]
+    assert error["reason"] == "empty", error
+    assert section in error["message"], error
+    assert isinstance(error["line"], int) and error["line"] > 0, error
+
+
+@pytest.mark.trace("TC-084", "FR-003-AC-7")
+def test_fr003_ac7_optional_and_additional_sections_are_accepted() -> None:
+    """Optional and additional unique H2 sections remain valid.
+
+    Assumptions:
+        The canonical master-spec skeleton supplies all required sections.
+
+    Criteria:
+        Domain Model, Security Model, and another additional section validate.
+
+    Trace: FR-003-AC-7
+    """
+    skeleton = _skeleton_text("master-requirements")
+    extended = skeleton.replace(
+        "## References\n",
+        "## Domain Model\nDomain entities and relationships.\n\n"
+        "## Security Model\nSecurity boundaries and controls.\n\n"
+        "## Deployment Notes\nDeployment assumptions.\n\n## References\n",
+        1,
+    )
+    assert extended != skeleton, "optional section insertion did not apply"
+    result = _master_spec_validation(extended)
+    assert result["is_valid"], result["errors"]
+
+
+@pytest.mark.trace("TC-085", "FR-003-CON-1")
+@pytest.mark.parametrize("component_type", ["library", "service", "react-application"])
+def test_fr003_con1_component_types_share_one_generic_master_spec_shape(
+    component_type: str,
+) -> None:
+    """Distinct component types validate through one master-requirements archetype.
+
+    Assumptions:
+        All component-type variants use the same canonical skeleton structure.
+
+    Criteria:
+        The manifest has one master-requirements archetype and each type validates.
+
+    Trace: FR-003-CON-1
+    """
+    archetypes = [
+        artifact
+        for artifact in _artifact_types()
+        if artifact["name"] == "master-requirements"
+    ]
+    assert len(archetypes) == 1, archetypes
+    skeleton = _skeleton_text("master-requirements")
+    variant = re.sub(
+        r"^component_type:.*$",
+        f"component_type: {component_type}",
+        skeleton,
+        count=1,
+        flags=re.MULTILINE,
+    )
+    assert variant != skeleton, "component_type mutation did not apply"
+    result = _master_spec_validation(variant)
+    assert result["is_valid"], result["errors"]
 
 
 def test_fr_authoring_contract_offers_satisfies() -> None:

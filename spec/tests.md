@@ -9,12 +9,11 @@ title: "Test Matrix"
 
 Maps every acceptance criterion to the test that backs it.
 
-Two rows depend on a release outside this repository and cannot be green
-here until it lands. TC-055 and TC-064 are manual because the
-published quoin carries no semantic-block reader: the refusal
-agent-ix/quoin#336 tracks can be read out of quoin main's source, not run. TC-057 is the manual offline gate that
-no CI job claims. Every other row is dischargeable at the module's committed
-floor.
+TC-064 depends on a quoin release that carries a semantic-block reader; the
+refusal agent-ix/quoin#336 tracks can be read out of quoin main's source, not
+run. TC-055 was demonstrated with Quoin 0.37.0 in an isolated config root.
+TC-057 remains the manual offline gate that no CI job claims. Every other row
+is dischargeable at the module's committed floor.
 
 An NFR has no `-AC-` ids — its criteria are its `Metric | Target | Threshold |
 Method` rows — so NFR rows trace to `NFR-001 (metric n)` (SR-003 FND-006).
@@ -25,9 +24,9 @@ Method` rows — so NFR rows trace to `NFR-001 (metric n)` (SR-003 FND-006).
 
 | Functional Req | Acceptance Criteria | Test Cases | Status |
 |----------------|---------------------|------------|-----------------|
-| FR-001 | FR-001-AC-2 | — | 🚧 Pending |
-| FR-001 | FR-001-AC-3 | — | 🚧 Pending |
-| FR-001 | FR-001-AC-4 | — | 🚧 Pending |
+| FR-001 | FR-001-AC-2 | — | 🚧 Pending (IT-001 needs live clean filament-core-service; `tests_integration/` has no test implementation) |
+| FR-001 | FR-001-AC-3 | — | 🚧 Pending (IT-001 needs live clean filament-core-service; `tests_integration/` has no test implementation) |
+| FR-001 | FR-001-AC-4 | — | 🚧 Pending (IT-001 needs live clean filament-core-service; `tests_integration/` has no test implementation) |
 | FR-002 | FR-002-AC-1 | TC-005, TC-006, TC-014, TC-015, TC-016 | ✅ Complete |
 | FR-002 | FR-002-AC-2 | TC-013 | ✅ Complete |
 | FR-002 | FR-002-AC-3 | TC-013 | ✅ Complete |
@@ -39,12 +38,13 @@ Method` rows — so NFR rows trace to `NFR-001 (metric n)` (SR-003 FND-006).
 | FR-003 | FR-003-AC-1 | TC-003 | ✅ Complete |
 | FR-003 | FR-003-AC-2 | TC-004 | ✅ Complete |
 | FR-003 | FR-003-CON-2 | TC-004 | ✅ Complete |
-| FR-003 | FR-003-AC-3 | — | 🚧 Pending |
-| FR-003 | FR-003-AC-4 | — | 🚧 Pending |
-| FR-003 | FR-003-AC-5 | — | 🚧 Pending |
-| FR-003 | FR-003-AC-6 | — | 🚧 Pending |
-| FR-003 | FR-003-AC-7 | — | 🚧 Pending |
-| FR-003 | FR-003-AC-8 | — | 🚧 Pending |
+| FR-003 | FR-003-AC-3 | TC-012 | ✅ Complete |
+| FR-003 | FR-003-AC-4 | TC-081 | ✅ Complete |
+| FR-003 | FR-003-AC-5 | TC-082 | ✅ Complete |
+| FR-003 | FR-003-AC-6 | TC-083 | ✅ Complete |
+| FR-003 | FR-003-AC-7 | TC-084 | ✅ Complete |
+| FR-003 | FR-003-AC-8 | TC-009, TC-010, TC-011, TC-012 | ✅ Complete |
+| FR-003 | FR-003-CON-1 | TC-085 | ✅ Complete |
 | FR-004 | FR-004-AC-1 | TC-017 | ✅ Complete |
 | FR-004 | FR-004-AC-4 | TC-020 | ✅ Complete |
 | FR-004 | FR-004-AC-5 | TC-021 | ✅ Complete |
@@ -67,7 +67,7 @@ Method` rows — so NFR rows trace to `NFR-001 (metric n)` (SR-003 FND-006).
 | FR-006 | FR-006-AC-1 | TC-046 | ✅ Complete |
 | FR-006 | FR-006-AC-2 | TC-047 | ✅ Complete |
 | FR-006 | FR-006-AC-3 | TC-048 | ✅ Complete |
-| FR-006 | FR-006-AC-6 | TC-055 | 🚧 Pending (no tagged test) |
+| FR-006 | FR-006-AC-6 | TC-055 | ✅ Complete (Demonstrated) |
 | FR-006 | FR-006-AC-9 | TC-064 | ✅ Complete (manual/inspection, not matrix-bound) |
 | FR-006 | FR-006-AC-7 | TC-046 | ✅ Complete |
 | FR-006 | FR-006-CON-1 | TC-046 | ✅ Complete |
@@ -109,7 +109,7 @@ Method` rows — so NFR rows trace to `NFR-001 (metric n)` (SR-003 FND-006).
 | Non-Functional Req | Verification Method | Evidence/Test Cases | Status |
 |--------------------|---------------------|---------------------|--------|
 | NFR-001 | Test (metric 1: byte differences between two `make schemas` runs) | TC-056 | ✅ Complete |
-| NFR-001 | Demonstration (metric 2: network reads during `make schemas-check` and `make test`) | TC-057 | ✅ Complete |
+| NFR-001 | Demonstration (metric 2: network reads during `make schemas-check` and `make test`) | TC-057 | 🚧 Pending (`schemas-check` passed offline; full `make test` deferred) |
 | NFR-001 | Benchmark (metric 3: wall time of `make schemas-check`) | TC-058 | ✅ Complete |
 
 ## Test Case Summary
@@ -122,10 +122,10 @@ Method` rows — so NFR rows trace to `NFR-001 (metric n)` (SR-003 FND-006).
 | TC-006 | templates/ is removed and no archetype references one (`test_fr002_ac1_no_template_dir_or_refs`) | Unit | P0 | FR-002-AC-1 | ✅ |
 | TC-007 | declared section headings are unique per level (`test_fr002_ac4_headings_unique_per_level`) | Unit | P0 | FR-002-AC-4 | ✅ |
 | TC-008 | Each archetype ships an authoring skeleton carrying its required headings (`test_fr002_skeleton_exists_and_has_required_headings`) | Unit | P0 | FR-002-AC-5 | ✅ |
-| TC-009 | I1): the manifest asserts are consistent with / derived from the skeleton — every asserted heading exists in the skeleton at the asserted level, every asserted table's header row is present in the skeleton, and every asserted id_p (`test_fr002_ac6_asserts_derived_from_skeleton`) | Unit | P0 | FR-002-AC-6 | ✅ |
-| TC-010 | I2): the skeleton's heading set and literal table header rows match the archetype's asserts exactly — a diff in either direction fails. Forward: skeleton ⊇ asserts (covered by AC-6). Reverse: every *asserted-level* skeleton headin (`test_fr002_ac7_literal_consistency_both_directions`) | Unit | P0 | FR-002-AC-7 | ✅ |
-| TC-011 | I3): heading-presence locators are distinguished from ``section_body`` locators; the skeleton supplies substantive (non-empty, non-placeholder) body for every ``section_body``-asserted section (`test_fr002_ac8_locator_kinds_and_substantive_bodies`) | Unit | P0 | FR-002-AC-8 | ✅ |
-| TC-012 | a filled skeleton passes validate_document. Skips when the installed quire wheel predates the markdown-default validator (FR-032); build/install a local quire-rs wheel to exercise it (`test_it002_ac1_skeleton_validates`) | Unit | P0 | FR-002-AC-5 | ✅ |
+| TC-009 | I1): the manifest asserts are consistent with / derived from the skeleton — every asserted heading exists in the skeleton at the asserted level, every asserted table's header row is present in the skeleton, and every asserted id_p (`test_fr002_ac6_asserts_derived_from_skeleton`) | Unit | P0 | FR-002-AC-6, FR-003-AC-8 | ✅ |
+| TC-010 | I2): the skeleton's heading set and literal table header rows match the archetype's asserts exactly — a diff in either direction fails. Forward: skeleton ⊇ asserts (covered by AC-6). Reverse: every *asserted-level* skeleton headin (`test_fr002_ac7_literal_consistency_both_directions`) | Unit | P0 | FR-002-AC-7, FR-003-AC-8 | ✅ |
+| TC-011 | I3): heading-presence locators are distinguished from ``section_body`` locators; the skeleton supplies substantive (non-empty, non-placeholder) body for every ``section_body``-asserted section (`test_fr002_ac8_locator_kinds_and_substantive_bodies`) | Unit | P0 | FR-002-AC-8, FR-003-AC-8 | ✅ |
+| TC-012 | a filled skeleton passes validate_document. Skips when the installed quire wheel predates the markdown-default validator (FR-032); build/install a local quire-rs wheel to exercise it (`test_it002_ac1_skeleton_validates`) | Unit | P0 | FR-002-AC-5, FR-003-AC-3, FR-003-AC-8 | ✅ |
 | TC-013 | deleting a section, breaking AC columns, breaking an AC id, and duplicating a heading each fail validation with the expected reason (`test_it002_ac2_fr_mutations_fail`) | Unit | P0 | FR-002-AC-2, FR-002-AC-3 | ✅ |
 | TC-014 | StR binding criteria are addressable rows under `## Validation Criteria`. The heading and the `Validation` column are deliberately NOT renamed to the FR spelling: ISO/IEC/IEEE 29148 validates a stakeholder requirement against the  (`test_str_validation_criteria_table_is_binding`) | Unit | P0 | FR-002-AC-1 | ✅ |
 | TC-015 | NFR's AC section stays optional but takes the FR table shape when present. A *measurable* NFR's criteria are its `Metric \| Target \| Threshold \| Method` rows and it omits the section; a *policy* NFR authors the table. What is no (`test_nfr_acceptance_criteria_is_absent_or_well_formed`) | Unit | P0 | FR-002-AC-1 | ✅ |
@@ -147,7 +147,7 @@ Method` rows — so NFR rows trace to `NFR-001 (metric n)` (SR-003 FND-006).
 | TC-052 | `mappings.yaml` validates against `mappings.schema.json`, names every model property exactly once with one of the eight mapping kinds, names no undeclared property, matches locator `assert.columns` on tables, and records `authority`, `round_trip`, per-property `lossless`, and the dropped frontmatter keys (FR-007-AC-1, AC-7) | Unit | P0 | FR-007-AC-1, FR-007-AC-7 | ✅ |
 | TC-053 | The FR skeleton's AC rows map to a plain method cell (`method` only, no `annotation`, `testRefs: []`), its constraint row carries `type: Security`, and the split still parses an annotated cell (`Test (TC-035, TC-036)`) for a caller that authors one (FR-007-AC-3) | Unit | P0 | FR-007-AC-3 | ✅ |
 | TC-054 | The TypeSpec package carries a committed lockfile, no `file:`/`link:` reference, and no `.npmrc` in the repository (FR-005-CON-3) | Static | P1 | FR-005-CON-3 | ✅ |
-| TC-055 | `quoin module install path:<module root>` on the published quoin installs the module with no diagnostic, so the block is inert to every quoin a user can install today; output recorded verbatim and the previous registry version restored (FR-006-AC-6) | Manual | P1 | FR-006-AC-6 | ✅ |
+| TC-055 | Quoin 0.37.0 installs the module with no diagnostic in a clean isolated config root; verbatim command, output, and exit status appear under Demonstration Evidence (FR-006-AC-6) | Manual | P1 | FR-006-AC-6 | ✅ |
 | TC-064 | quoin main resolves `semantic.exports` and `data_schema` against `object_types` only (`src/semantic/manifest.ts:175-186,258`), so an artifact-type export yields `semantic.unknown-export` and `semantic.export-without-schema`; a source reading, because no quoin carrying it is published (agent-ix/quoin#336) (FR-006-AC-9) | Manual | P2 | FR-006-AC-9 | ✅ |
 | TC-065 | `specifies` declares inverse `specified_by` (`test_fr004_ac6_specifies_declares_the_specified_by_inverse`) | Unit | P0 | FR-004-AC-6 | ✅ |
 | TC-070 | A single NFR file with a `mitigates` relationship validates with no `disallowed-edge-type`; the same file with an unrelated disallowed verb still warns, so the allowance is a membership check and not a disabled one (`test_fr004_ac7_nfr_allows_a_mitigates_edge`) | Integration | P1 | FR-004-AC-7 | ✅ |
@@ -165,9 +165,43 @@ Method` rows — so NFR rows trace to `NFR-001 (metric n)` (SR-003 FND-006).
 | TC-078 | The manifest declares the `software_safety_class` `carried_fields` entry for `StR`, `US`, `FR`, `NFR` and none for `criticality`; the coverage report carries a stated class as written under `carried`, carries none for a document stating none, and exposes the ordered vocabulary as `carried_vocabulary` (`test_fr009_ac14_*`) | Integration | P1 | FR-009-AC-14 | ✅ |
 | TC-079 | The two control verification verbs are declared as `traceability` verbs beside `verifies`, and an `NFR`, `IT` or `TC` file carrying either verb validates with no `disallowed-edge-type` while a verb outside `allowed_links` still warns (`test_fr004_ac8_control_verification_verbs_are_authorable`) | Integration | P1 | FR-004-AC-8 | ✅ |
 | TC-080 | `FR` and `NFR` allow `soup_requirement_for` in `allowed_links`, the manifest declares neither it nor `has_soup_requirement`, and a file carrying the verb validates with no `disallowed-edge-type` while a verb outside `allowed_links` still warns (`test_fr004_ac9_soup_requirement_verbs_are_authorable`) | Integration | P1 | FR-004-AC-9 | ✅ |
+| TC-081 | A master spec with missing or empty `component_type` fails validation with a diagnostic naming the field (`test_fr003_ac4_missing_or_empty_component_type_is_rejected`) | Unit | P0 | FR-003-AC-4 | ✅ |
+| TC-082 | Multi-word, underscored, and capitalized `component_type` values fail the kebab-case schema pattern (`test_fr003_ac5_non_kebab_component_type_is_rejected`) | Unit | P0 | FR-003-AC-5 | ✅ |
+| TC-083 | A master spec missing its H1 or any canonical H2 section fails with a named `missing` diagnostic and null line; an empty Purpose or References section fails with a named `empty` diagnostic and its source line (`test_fr003_ac6_missing_canonical_structure_has_absence_diagnostic`, `test_fr003_ac6_empty_leaf_section_has_source_line`) | Unit | P0 | FR-003-AC-6 | ✅ |
+| TC-084 | Optional Domain Model and Security Model sections, plus an additional unique section, still validate (`test_fr003_ac7_optional_and_additional_sections_are_accepted`) | Unit | P0 | FR-003-AC-7 | ✅ |
+| TC-085 | Library, service, and React-application component types validate through the one generic master-requirements archetype (`test_fr003_con1_component_types_share_one_generic_master_spec_shape`) | Unit | P0 | FR-003-CON-1 | ✅ |
 | TC-056 | Two consecutive `make schemas` runs on one tree produce byte-identical bundles for every emitted file (NFR-001 metric 1) | Property | P1 | NFR-001 (metric 1) | ✅ |
-| TC-057 | `make schemas-check` and `make test` exit 0 with the network namespace disabled after `npm ci` and `poetry install` (NFR-001 metric 2) | Manual | P2 | NFR-001 (metric 2) | ✅ |
+| TC-057 | After `npm ci` and `poetry install`, `unshare -rn make schemas-check` exits 0 (`schema projection is up to date (45 files)`). `make test` remains unrun under the offline namespace, so NFR-001 metric 2 stays pending | Manual | P2 | NFR-001 (metric 2) | 🚧 |
 | TC-058 | `make schemas-check` completes within 30 s on the reference machine (NFR-001 metric 3) | Benchmark | P3 | NFR-001 (metric 3) | ✅ |
 | TC-059 | No file in the module or its test support writes a Markdown document, and the reference mapping opens every document read-only — enumerated over the tree, not sampled (FR-007-CON-3) | Static | P2 | FR-007-CON-3 | ✅ |
 | TC-060 | Every emitted object schema declares its properties inline (no `allOf`/`oneOf`/`anyOf`/`$ref` at the object's top level except a nullable scalar's `anyOf`), and the Python `jsonschema` validator accepts every golden record and rejects every TC-045 mutation (FR-005-AC-8) | Unit | P0 | FR-005-AC-8 | ✅ |
 | TC-062 | The sdist/wheel `include` list and the npm `files` list name every shipped payload entry and no TypeSpec toolchain file; a built sdist and a packed npm tarball carry the same payload entry set (FR-005-AC-9) | Integration | P1 | FR-005-AC-9 | ✅ |
+
+## Demonstration Evidence
+
+### TC-055 — FR-006-AC-6
+
+Command:
+
+```text
+/tmp/regfinish-quoin-v0.37.0/quoin module install path:/home/peter/dev/spec-artifacts-iso/.worktrees/older-test-coverage/spec_artifacts_iso --config-root /tmp/iso-fr006-demo-pr80.LUlZ2B2J
+```
+
+Exit status: `0`
+
+Standard output, verbatim:
+
+```json
+{
+  "name": "spec-artifacts-iso",
+  "source": {
+    "type": "path",
+    "path": "/home/peter/dev/spec-artifacts-iso/.worktrees/older-test-coverage/spec_artifacts_iso"
+  },
+  "resolvedPath": "/home/peter/dev/spec-artifacts-iso/.worktrees/older-test-coverage/spec_artifacts_iso",
+  "targetPath": "/tmp/iso-fr006-demo-pr80.LUlZ2B2J/filament/modules/spec-artifacts-iso",
+  "installedAt": "2026-11-26T17:21:08.053Z"
+}
+```
+
+Standard error: empty.
