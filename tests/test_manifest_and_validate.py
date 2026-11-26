@@ -504,11 +504,13 @@ def test_fr003_ac4_missing_or_empty_component_type_is_rejected(
     """
     skeleton = _skeleton_text("master-requirements")
     if replacement is None:
-        invalid = re.sub(r"^component_type:.*\n", "", skeleton, count=1, flags=re.MULTILINE)
+        invalid = re.sub(
+            r"^component_type:.*\n", "", skeleton, count=1, flags=re.MULTILINE
+        )
     else:
         invalid = re.sub(
             r"^component_type:.*$",
-            "component_type: \"\"",
+            'component_type: ""',
             skeleton,
             count=1,
             flags=re.MULTILINE,
@@ -521,7 +523,8 @@ def test_fr003_ac4_missing_or_empty_component_type_is_rejected(
 
 @pytest.mark.trace("TC-082", "FR-003-AC-5")
 @pytest.mark.parametrize(
-    "component_type", ["Fast API Service", "React_Lib", "ReactLib", ""],
+    "component_type",
+    ["Fast API Service", "React_Lib", "ReactLib", ""],
     ids=["multi-word", "underscored", "capitalized", "empty"],
 )
 def test_fr003_ac5_non_kebab_component_type_is_rejected(component_type: str) -> None:
@@ -553,14 +556,49 @@ def test_fr003_ac5_non_kebab_component_type_is_rejected(component_type: str) -> 
 @pytest.mark.parametrize(
     "mutation",
     [
-        lambda text: re.sub(r"^# Master Requirements Specification\n", "", text, count=1, flags=re.MULTILINE),
-        lambda text: re.sub(r"^## Purpose\n.*?(?=^## )", "", text, count=1, flags=re.MULTILINE | re.DOTALL),
-        lambda text: re.sub(r"^## Scope\n.*?(?=^## )", "", text, count=1, flags=re.MULTILINE | re.DOTALL),
-        lambda text: re.sub(r"^## System Overview\n.*?(?=^## )", "", text, count=1, flags=re.MULTILINE | re.DOTALL),
-        lambda text: re.sub(r"^## Requirements Architecture\n.*?(?=^## )", "", text, count=1, flags=re.MULTILINE | re.DOTALL),
-        lambda text: re.sub(r"^## References\n.*$", "", text, count=1, flags=re.MULTILINE | re.DOTALL),
+        lambda text: re.sub(
+            r"^# Master Requirements Specification\n",
+            "",
+            text,
+            count=1,
+            flags=re.MULTILINE,
+        ),
+        lambda text: re.sub(
+            r"^## Purpose\n.*?(?=^## )",
+            "",
+            text,
+            count=1,
+            flags=re.MULTILINE | re.DOTALL,
+        ),
+        lambda text: re.sub(
+            r"^## Scope\n.*?(?=^## )", "", text, count=1, flags=re.MULTILINE | re.DOTALL
+        ),
+        lambda text: re.sub(
+            r"^## System Overview\n.*?(?=^## )",
+            "",
+            text,
+            count=1,
+            flags=re.MULTILINE | re.DOTALL,
+        ),
+        lambda text: re.sub(
+            r"^## Requirements Architecture\n.*?(?=^## )",
+            "",
+            text,
+            count=1,
+            flags=re.MULTILINE | re.DOTALL,
+        ),
+        lambda text: re.sub(
+            r"^## References\n.*$", "", text, count=1, flags=re.MULTILINE | re.DOTALL
+        ),
     ],
-    ids=["h1", "purpose", "scope", "system-overview", "requirements-architecture", "references"],
+    ids=[
+        "h1",
+        "purpose",
+        "scope",
+        "system-overview",
+        "requirements-architecture",
+        "references",
+    ],
 )
 def test_fr003_ac6_missing_canonical_structure_has_line_diagnostic(mutation) -> None:
     """Missing canonical headings fail validation but currently lack line numbers.
@@ -581,7 +619,9 @@ def test_fr003_ac6_missing_canonical_structure_has_line_diagnostic(mutation) -> 
     result = _master_spec_validation(invalid)
     assert not result["is_valid"], result
     assert result["errors"], result
-    assert all(error.get("reason") == "missing" for error in result["errors"]), result["errors"]
+    assert all(error.get("reason") == "missing" for error in result["errors"]), result[
+        "errors"
+    ]
 
 
 @pytest.mark.trace("TC-084", "FR-003-AC-7")
