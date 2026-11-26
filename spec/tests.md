@@ -42,7 +42,7 @@ Method` rows — so NFR rows trace to `NFR-001 (metric n)` (SR-003 FND-006).
 | FR-003 | FR-003-AC-3 | TC-012 | ✅ Complete |
 | FR-003 | FR-003-AC-4 | TC-081 | ✅ Complete |
 | FR-003 | FR-003-AC-5 | TC-082 | ✅ Complete |
-| FR-003 | FR-003-AC-6 | TC-083 | ✅ Complete |
+| FR-003 | FR-003-AC-6 | TC-083 | 🚧 Pending (quire returns no line for a missing heading) |
 | FR-003 | FR-003-AC-7 | TC-084 | ✅ Complete |
 | FR-003 | FR-003-AC-8 | TC-009, TC-010, TC-011, TC-012 | ✅ Complete |
 | FR-003 | FR-003-CON-1 | TC-085 | ✅ Complete |
@@ -168,7 +168,7 @@ Method` rows — so NFR rows trace to `NFR-001 (metric n)` (SR-003 FND-006).
 | TC-080 | `FR` and `NFR` allow `soup_requirement_for` in `allowed_links`, the manifest declares neither it nor `has_soup_requirement`, and a file carrying the verb validates with no `disallowed-edge-type` while a verb outside `allowed_links` still warns (`test_fr004_ac9_soup_requirement_verbs_are_authorable`) | Integration | P1 | FR-004-AC-9 | ✅ |
 | TC-081 | A master spec with missing or empty `component_type` fails validation with a diagnostic naming the field (`test_fr003_ac4_missing_or_empty_component_type_is_rejected`) | Unit | P0 | FR-003-AC-4 | ✅ |
 | TC-082 | Multi-word, underscored, and capitalized `component_type` values fail the kebab-case schema pattern (`test_fr003_ac5_non_kebab_component_type_is_rejected`) | Unit | P0 | FR-003-AC-5 | ✅ |
-| TC-083 | A master spec missing its H1 or any canonical H2 section fails with a line-numbered diagnostic (`test_fr003_ac6_missing_canonical_structure_has_line_diagnostic`) | Unit | P0 | FR-003-AC-6 | ✅ |
+| TC-083 | A master spec missing its H1 or any canonical H2 section fails validation; Quire 0.60.0 reports `reason=missing` without a line, so this does not discharge FR-003-AC-6 (`test_fr003_ac6_missing_canonical_structure_has_line_diagnostic`) | Unit | P0 | — | ✅ |
 | TC-084 | Optional Domain Model and Security Model sections, plus an additional unique section, still validate (`test_fr003_ac7_optional_and_additional_sections_are_accepted`) | Unit | P0 | FR-003-AC-7 | ✅ |
 | TC-085 | Library, service, and React-application component types validate through the one generic master-requirements archetype (`test_fr003_con1_component_types_share_one_generic_master_spec_shape`) | Schema Test | P0 | FR-003-CON-1 | ✅ |
 | TC-056 | Two consecutive `make schemas` runs on one tree produce byte-identical bundles for every emitted file (NFR-001 metric 1) | Property | P1 | NFR-001 (metric 1) | ✅ |
