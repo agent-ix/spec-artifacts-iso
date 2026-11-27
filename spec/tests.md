@@ -12,8 +12,9 @@ Maps every acceptance criterion to the test that backs it.
 TC-064 depends on a quoin release that carries a semantic-block reader; the
 refusal agent-ix/quoin#336 tracks can be read out of quoin main's source, not
 run. TC-055 was demonstrated with Quoin 0.37.0 in an isolated config root.
-TC-057 remains the manual offline gate that no CI job claims. Every other row
-is dischargeable at the module's committed floor.
+TC-057 provides an executable offline verifier, but the CI workflow invocation
+and a passing isolated-run result remain open. Every other row is dischargeable
+at the module's committed floor.
 
 An NFR has no `-AC-` ids — its criteria are its `Metric | Target | Threshold |
 Method` rows — so NFR rows trace to `NFR-001 (metric n)` (SR-003 FND-006).
@@ -109,7 +110,7 @@ Method` rows — so NFR rows trace to `NFR-001 (metric n)` (SR-003 FND-006).
 | Non-Functional Req | Verification Method | Evidence/Test Cases | Status |
 |--------------------|---------------------|---------------------|--------|
 | NFR-001 | Test (metric 1: byte differences between two `make schemas` runs) | TC-056 | ✅ Complete |
-| NFR-001 | Demonstration (metric 2: network reads during `make schemas-check` and `make test`) | TC-057 | 🚧 Pending (`schemas-check` passed offline; full `make test` deferred) |
+| NFR-001 | Demonstration (metric 2: network reads during `make schemas-check` and `make test`) | TC-057 | 🚧 Pending (verifier implemented; isolated run and CI invocation remain open) |
 | NFR-001 | Benchmark (metric 3: wall time of `make schemas-check`) | TC-058 | ✅ Complete |
 
 ## Test Case Summary
@@ -171,7 +172,7 @@ Method` rows — so NFR rows trace to `NFR-001 (metric n)` (SR-003 FND-006).
 | TC-084 | Optional Domain Model and Security Model sections, plus an additional unique section, still validate (`test_fr003_ac7_optional_and_additional_sections_are_accepted`) | Unit | P0 | FR-003-AC-7 | ✅ |
 | TC-085 | Library, service, and React-application component types validate through the one generic master-requirements archetype (`test_fr003_con1_component_types_share_one_generic_master_spec_shape`) | Unit | P0 | FR-003-CON-1 | ✅ |
 | TC-056 | Two consecutive `make schemas` runs on one tree produce byte-identical bundles for every emitted file (NFR-001 metric 1) | Property | P1 | NFR-001 (metric 1) | ✅ |
-| TC-057 | After `npm ci` and `poetry install`, `unshare -rn make schemas-check` exits 0 (`schema projection is up to date (45 files)`). `make test` remains unrun under the offline namespace, so NFR-001 metric 2 stays pending | Manual | P2 | NFR-001 (metric 2) | 🚧 |
+| TC-057 | After dependency installation, `scripts/verify_offline.sh` requires a network namespace, then runs `make schemas-check` and `make test` without network access and propagates failures | Unit + Demonstration | P2 | NFR-001 (metric 2) | 🚧 |
 | TC-058 | `make schemas-check` completes within 30 s on the reference machine (NFR-001 metric 3) | Benchmark | P3 | NFR-001 (metric 3) | ✅ |
 | TC-059 | No file in the module or its test support writes a Markdown document, and the reference mapping opens every document read-only — enumerated over the tree, not sampled (FR-007-CON-3) | Static | P2 | FR-007-CON-3 | ✅ |
 | TC-060 | Every emitted object schema declares its properties inline (no `allOf`/`oneOf`/`anyOf`/`$ref` at the object's top level except a nullable scalar's `anyOf`), and the Python `jsonschema` validator accepts every golden record and rejects every TC-045 mutation (FR-005-AC-8) | Unit | P0 | FR-005-AC-8 | ✅ |
