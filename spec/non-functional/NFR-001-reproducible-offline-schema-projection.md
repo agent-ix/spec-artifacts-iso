@@ -56,10 +56,12 @@ FR-073-CON-1 boundary quoin and quire both enforce.
 ## Verification
 
 A test regenerates the bundle into a scratch directory and compares every file
-to the committed one; the offline run is a manual gate of this
-repository, recorded in the release notes. No CI job is claimed by this
-requirement or by the ticket that introduces it; the manual gate stands until a
-CI job for it is filed against this repository.
+to the committed one. `scripts/verify_offline.sh` first proves that a network
+namespace can be created, then runs `make schemas-check` and `make test` in
+separate network-disabled processes. The verifier fails closed if isolation is
+unavailable or either command fails. The CI workflow invocation remains a
+separately tracked gap; a passing verifier run on an isolated runner is needed
+to discharge metric 2.
 
 ## Dependencies
 

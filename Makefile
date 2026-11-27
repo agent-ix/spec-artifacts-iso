@@ -19,6 +19,7 @@ help:
 	@echo "  make semantic-install - npm ci the TypeSpec package (spec_artifacts_iso/semantic)"
 	@echo "  make schemas        - Regenerate the semantic JSON Schemas from TypeSpec (FR-005)"
 	@echo "  make schemas-check  - Fail if the committed schemas differ from a fresh projection"
+	@echo "  make verify-offline - Run schemas-check and tests with networking disabled (NFR-001)"
 	@echo "  make clean          - Clean build artifacts"
 	@echo "  make version        - Show computed version"
 	@echo "  make info           - Show git and version info"
@@ -89,6 +90,10 @@ schemas:
 .PHONY: schemas-check
 schemas-check:
 	cd $(SEMANTIC_DIR) && npm run --silent check
+
+.PHONY: verify-offline
+verify-offline:
+	./scripts/verify_offline.sh
 
 .PHONY: build-dist
 build-dist: build
