@@ -1,0 +1,61 @@
+name: Offline verification
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  offline-verification:
+    # Forked pull requests cannot read the private package-index credential.
+    # The normal public checks still run there; this job runs on trusted PRs.
+    if: github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: actions/setup-python@v7
+        with:
+          python-version: "3.13"
+
+      - uses: abatilo/actions-poetry@v3
+        with:
+          poetry-version: 2.3.1
+
+      - uses: actions/setup-node@v7
+        with:
+          node-version: "22"
+          registry-url: https://npm.pkg.github.com
+          scope: "@agent-ix"
+
+      - name: Configure internal Python package index
+        shell: bash
+        env:
+          EXTRA_INDEX_URL: https://${{ vars.GCP_REGION }}-python.pkg.dev/${{ vars.GCP_PROJECT_NAME }}/${{ vars.GCP_PYPI }}/simple/
+          GCP_KEY: ${{ secrets.GCP_SERVICE_ACCOUNT_KEY }}
+        run: |
+          set -euo pipefail
+          poetry config repositories.internal-pypi "$EXTRA_INDEX_URL"
+          if [ -n "$GCP_KEY" ]; then
+            KEY64=$(printf '%s' "$GCP_KEY" | base64 -w 0)
+            echo "::add-mask::$KEY64"
+            echo "::add-mask::_json_key_base64"
+            poetry config http-basic.internal-pypi _json_key_base64 "$KEY64"
+          fi
+
+      - name: Install Python dependencies
+        run: poetry install --no-interaction
+
+      - name: Install TypeSpec dependencies
+        working-directory: spec_artifacts_iso/semantic
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.REGISTRY_TOKEN }}
+        # setup-node supplies a clean temporary npmrc for scoped GitHub Packages
+        # auth; unscoped packages still resolve from the public npm registry.
+        run: npm ci --userconfig "$NPM_CONFIG_USERCONFIG" --registry https://registry.npmjs.org/
+
+      - name: Run schema and test gates without network access
+        run: sudo -E env "HOME=$HOME" "PATH=$PATH" make verify-offline
