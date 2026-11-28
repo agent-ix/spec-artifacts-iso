@@ -10,9 +10,12 @@ permissions:
 
 jobs:
   offline-verification:
-    # Forked pull requests cannot read the private package-index credential.
-    # The normal public checks still run there; this job runs on trusted PRs.
-    if: github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository
+    # Fork repositories cannot read the private package-index credentials.
+    # Public CI still runs there; this job runs only in the canonical repo and
+    # on pull requests whose head is in that repo.
+    if: >-
+      github.repository == 'agent-ix/spec-artifacts-iso' &&
+      (github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository)
     runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v7
